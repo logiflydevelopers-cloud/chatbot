@@ -33,7 +33,7 @@ const UserDetails = () => {
           try {
             console.log("Access Token Expxired");
             const refreshRes = await axios.get(
-              "http://localhost:3001/api/auth/refresh",
+              "https://admin-chatbot-backend.vercel.app/api/auth/refresh",
               {
                 withCredentials: true,
               }
@@ -58,7 +58,7 @@ const UserDetails = () => {
   const handleLogout = async () => {
     try {
       await axios.post(
-        "http://localhost:3001/api/auth/logout",
+        "https://admin-chatbot-backend.vercel.app/api/auth/logout",
         {},
         {
           withCredentials: true,
