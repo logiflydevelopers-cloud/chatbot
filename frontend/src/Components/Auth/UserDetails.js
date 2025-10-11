@@ -8,7 +8,7 @@ const UserDetails = () => {
   const navigate = useNavigate();
 
   const fetchUserDetails = async (token) => {
-    return await axios.get("http://localhost:3001/api/auth/getUserDetails", {
+    return await axios.get("https://admin-chatbot-backend.vercel.app/api/auth/getUserDetails", {
       withCredentials: true, // send cookie
       headers: {
         Authorization: `Bearer ${token}`,

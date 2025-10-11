@@ -20,7 +20,7 @@ const onSubmit = async (data) => {
   try {
     console.log('Registration form submitted', data);
 
-    const response = await axios.post('http://localhost:3001/api/auth/register', data);
+    const response = await axios.post('https://admin-chatbot-backend.vercel.app/api/auth/register', data);
 
     if (response.status === 201) {
       alert('Registration successful!');

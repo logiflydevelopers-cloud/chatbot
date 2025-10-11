@@ -17,7 +17,7 @@ const Login = () => {
 
   const onSubmit = async (data) => {
   try {
-    const response = await axios.post('http://localhost:3001/api/auth/login', data, {
+    const response = await axios.post('https://admin-chatbot-backend.vercel.app/api/auth/login', data, {
       withCredentials: true, // to send and receive cookies
     });
 
