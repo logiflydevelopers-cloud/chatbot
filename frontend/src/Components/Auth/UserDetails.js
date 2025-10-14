@@ -1,51 +1,49 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import styles from "./Auth.module.css";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
-const UserDetails = () => {
-  const [user, setUser] = useState(null);
+const UserDetails = ({ user, setUser }) => {
   const navigate = useNavigate();
 
   const fetchUserDetails = async (token) => {
-    return await axios.get("https://admin-chatbot-backend.vercel.app/api/auth/getUserDetails", {
-      withCredentials: true, // send cookie
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
+    return await axios.get(
+      "https://admin-chatbot-backend.vercel.app/api/auth/getUserDetails",
+      {
+        withCredentials: true,
+        headers: { Authorization: `Bearer ${token}` },
+      }
+    );
   };
 
   useEffect(() => {
-    // Fetch user details from backend
     const fetchUser = async () => {
       const accessToken = localStorage.getItem("accessToken");
       if (!accessToken) {
         navigate("/login");
         return;
       }
+
       try {
         const res = await fetchUserDetails(accessToken);
-        setUser(res.data);
+        setUser(res.data); // update App.js state
       } catch (error) {
-        const status = error.response.status;
+        const status = error?.response?.status;
         if (status === 401 || status === 403) {
           try {
-            console.log("Access Token Expxired");
+            console.log("Access Token Expired");
             const refreshRes = await axios.get(
               "https://admin-chatbot-backend.vercel.app/api/auth/refresh",
-              {
-                withCredentials: true,
-              }
+              { withCredentials: true }
             );
             const newAccessToken = refreshRes.data.accessToken;
             localStorage.setItem("accessToken", newAccessToken);
             const retryRes = await fetchUserDetails(newAccessToken);
-            setUser(retryRes.data);
-          } catch (refresherror) {
+            setUser(retryRes.data); // update App.js state
+          } catch (refreshError) {
             console.log("Refresh token expired");
-
             localStorage.clear();
+            setUser(null);  // clear App.js state
             navigate("/login");
           }
         }
@@ -53,17 +51,17 @@ const UserDetails = () => {
     };
 
     fetchUser();
-  }, [navigate]);
+  }, [navigate, setUser]);
 
   const handleLogout = async () => {
     try {
       await axios.post(
         "https://admin-chatbot-backend.vercel.app/api/auth/logout",
         {},
-        {
-          withCredentials: true,
-        }
+        { withCredentials: true }
       );
+      localStorage.removeItem("accessToken");
+      setUser(null);      // clear App.js state
       navigate("/login");
     } catch (error) {
       console.error("Logout failed:", error);
@@ -76,7 +74,7 @@ const UserDetails = () => {
   return (
     <div className={styles.authContainer}>
       <div className={styles.authForm}>
-        <h2 className={styles.authTitle}>User Details</h2>                                                                                  
+        <h2 className={styles.authTitle}>User Details</h2>
         <p>
           <strong>Name:</strong> {user.name}
         </p>

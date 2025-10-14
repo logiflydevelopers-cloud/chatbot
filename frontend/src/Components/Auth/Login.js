@@ -1,9 +1,9 @@
-import { useForm } from 'react-hook-form';
-import styles from './Auth.module.css';
-import { Link, useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import { useForm } from "react-hook-form";
+import styles from "./Auth.module.css";
+import { Link, useNavigate } from "react-router-dom";
+import axios from "axios";
 
-const Login = () => {
+const Login = ({ setUser }) => {
   const navigate = useNavigate();
 
   const {
@@ -11,41 +11,49 @@ const Login = () => {
     handleSubmit,
     formState: { errors },
   } = useForm({
-    mode: 'onBlur',
-    reValidateMode: 'onBlur',
+    mode: "onBlur",
+    reValidateMode: "onBlur",
   });
 
   const onSubmit = async (data) => {
-  try {
-    const response = await axios.post('https://admin-chatbot-backend.vercel.app/api/auth/login', data, {
-      withCredentials: true, // to send and receive cookies
-    });
+    try {
+      const response = await axios.post(
+        "https://admin-chatbot-backend.vercel.app/api/auth/login",
+        data,
+        { withCredentials: true }
+      );
 
+      if (response.status === 200) {
+        alert("Login successful!");
+        const { accessToken } = response.data;
 
-    if (response.status === 200) {
-      alert('Login successful!');
-      const {accessToken} =response.data;
-      if(accessToken){
-        localStorage.setItem("accessToken",accessToken)
-      }else{
-        console.log("Token Not Received");
-        
+        if (accessToken) {
+          localStorage.setItem("accessToken", accessToken);
+
+          // Fetch user details immediately after login
+          const userRes = await axios.get(
+            "https://admin-chatbot-backend.vercel.app/api/auth/getUserDetails",
+            {
+              headers: { Authorization: `Bearer ${accessToken}` },
+              withCredentials: true,
+            }
+          );
+
+          setUser(userRes.data); // update App.js state
+          navigate("/");         // redirect to home
+        } else {
+          console.log("Token not received");
+        }
       }
-      // No localStorage usage anymore
-
-      // Navigate to dashboard or protected route
-      navigate('/userDetails'); // adjust the route as per your app
+    } catch (error) {
+      console.error("Login error:", error);
+      if (error.response) {
+        alert(error.response.data.message || "Login failed");
+      } else {
+        alert("An unexpected error occurred. Please try again.");
+      }
     }
-  } catch (error) {
-    console.error('Login error:', error);
-    if (error.response) {
-      alert(error.response.data.message || 'Login failed');
-    } else {
-      alert('An unexpected error occurred. Please try again.');
-    }
-  }
-};
-
+  };
 
   return (
     <div className={styles.authContainer}>
@@ -53,37 +61,45 @@ const Login = () => {
         <h2 className={styles.authTitle}>Login to your account</h2>
 
         <div className={styles.inputGroup}>
-          <label htmlFor="email" className={styles.label}>Email</label>
+          <label htmlFor="email" className={styles.label}>
+            Email
+          </label>
           <input
             id="email"
             type="email"
             className={styles.input}
-            {...register('email', {
-              required: 'Email is required',
+            {...register("email", {
+              required: "Email is required",
               pattern: {
                 value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-                message: 'Invalid email address',
+                message: "Invalid email address",
               },
             })}
           />
-          {errors.email && <div className={styles.error}>{errors.email.message}</div>}
+          {errors.email && (
+            <div className={styles.error}>{errors.email.message}</div>
+          )}
         </div>
 
         <div className={styles.inputGroup}>
-          <label htmlFor="password" className={styles.label}>Password</label>
+          <label htmlFor="password" className={styles.label}>
+            Password
+          </label>
           <input
             id="password"
             type="password"
             className={styles.input}
-            {...register('password', {
-              required: 'Password is required',
+            {...register("password", {
+              required: "Password is required",
               minLength: {
                 value: 6,
-                message: 'Password must be at least 6 characters',
+                message: "Password must be at least 6 characters",
               },
             })}
           />
-          {errors.password && <div className={styles.error}>{errors.password.message}</div>}
+          {errors.password && (
+            <div className={styles.error}>{errors.password.message}</div>
+          )}
         </div>
 
         <button type="submit" className={styles.submitButton}>
@@ -91,8 +107,10 @@ const Login = () => {
         </button>
 
         <p className={styles.toggleText}>
-          Don't have an account?{' '}
-          <Link to="/register" className={styles.toggleLink}>Register</Link>
+          Don't have an account?{" "}
+          <Link to="/register" className={styles.toggleLink}>
+            Register
+          </Link>
         </p>
       </form>
     </div>
