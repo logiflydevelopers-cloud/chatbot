@@ -1,17 +1,19 @@
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import React, { useState, useEffect } from "react";
+import axios from "axios";
+
+// Node.js બેકએન્ડનો URL જ્યાંથી ડેટા મેળવવાનો છે
+const API_URL = "http://localhost:5000/api/data";
 
 const N8nDataDisplay = () => {
-  const [n8nData, setN8nData] = useState(null);
+  const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    // Node.js બેકએન્ડથી ડેટા મેળવવાનો કોડ
     const fetchData = async () => {
       try {
-        const response = await axios.get('https://logifly.app.n8n.cloud/webhook-test/add-website');
-        setN8nData(response.data);
+        const response = await axios.get(API_URL);
+        setData(response.data);
       } catch (err) {
         setError(err);
       } finally {
@@ -23,27 +25,33 @@ const N8nDataDisplay = () => {
   }, []);
 
   if (loading) {
-    return <p>ડેટા લોડ થઈ રહ્યો છે...</p>;
+    return <div>ડેટા લોડ થઈ રહ્યો છે...</div>;
   }
 
   if (error) {
-    return <p>ડેટા મેળવવામાં ભૂલ: {error.message}</p>;
+    return <div>ડેટા મેળવવામાં ભૂલ: {error.message}</div>;
   }
 
-  return (
-    <div>
-      <h1>n8n ડેટા</h1>
-      <p>{n8nData.message}</p>
-      <h2>ઉત્પાદનો</h2>
-      <ul>
-        {n8nData.data.map((item) => (
-          <li key={item.id}>
-            <strong>{item.name}</strong> - ₹{item.price}
-          </li>
-        ))}
-      </ul>
-    </div>
-  );
+  // જો ડેટા મળ્યો હોય અને તેમાં data પ્રોપર્ટી હોય
+  if (data && data.data) {
+    return (
+      <div>
+        <h1>n8n માંથી મળેલ ડેટા</h1>
+        <p>{data.message}</p>
+        <h2>વેબસાઇટ્સ</h2>
+        <ul>
+          {data.data.map((item, index) => (
+            <li key={index}>
+              <strong>ID:</strong> {item.id}, <strong>નામ:</strong> {item.name}, <strong>URL:</strong> {item.url}
+            </li>
+          ))}
+        </ul>
+      </div>
+    );
+  }
+
+  // જો કોઈ ડેટા મળ્યો જ ન હોય
+  return <div>કોઈ ડેટા ઉપલબ્ધ નથી.</div>;
 };
 
 export default N8nDataDisplay;
