@@ -1,5 +1,7 @@
 import mongoose from "mongoose";
 import dotenv from 'dotenv';
+import { terser } from '@rollup/plugin-terser';
+
 dotenv.config();
 const connectDB=async()=>{
     try {
