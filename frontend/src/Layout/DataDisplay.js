@@ -13,7 +13,7 @@ const DataDisplay = ({ user, triggerRefresh }) => {
       setError(null);
 
       try {
-        const n8nWebhookUrl = "https://n8n-production-b42f.up.railway.app/webhook-test/add-custom-website";
+        const n8nWebhookUrl = "https://n8n-production-b42f.up.railway.app/webhook/add-custom-website";
 
         const response = await fetch(n8nWebhookUrl, {
           method: "GET",
