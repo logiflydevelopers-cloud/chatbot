@@ -12,7 +12,7 @@ router.get("/:userId.js", async (req, res) => {
 
   // IMPORTANT: Dynamic Backend + Frontend BASE URLs
   const FRONTEND_URL = process.env.FRONTEND_URL || "http://localhost:3000";
-  const BACKEND_URL = process.env.BACKEND_URL || "http://localhost:4000";
+  const BACKEND_URL = process.env.BACKEND_URL || "https://demo-chatbot-backend.vercel.app/";
 
   const script = `
     (function () {
