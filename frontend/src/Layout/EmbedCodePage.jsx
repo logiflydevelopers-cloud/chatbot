@@ -11,7 +11,7 @@ const EmbedCodePage = ({ user }) => {
   }, [user, navigate]);
 
   // ✅ Correct API base (your chatbot backend is on port 5000)
-  const embedCode = `<script src="http://localhost:4000/embed/${userId}.js" async></script>`;
+  const embedCode = `<script src="https://demo-chatbot-backend.vercel.app/embed/${userId}.js" async></script>`;
 
   const copyCode = () => {
     navigator.clipboard.writeText(embedCode);
