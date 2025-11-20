@@ -14,7 +14,7 @@ export default function EmbedChatbotFrame() {
 
   const url = window.location.href;
   const userId = url.split("/").pop();
-  const apiBase = "http://localhost:4000";
+  const apiBase = "https://demo-chatbot-backend.vercel.app/";
 
   const chatRef = useRef();
   const [show, setShow] = useState(true);
