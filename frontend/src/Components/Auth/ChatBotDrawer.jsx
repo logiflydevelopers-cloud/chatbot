@@ -6,7 +6,7 @@ import axios from "axios";
  */
 export default function ChatBotDrawer({
   userId,
-  apiBase = "http://localhost:4000",   // ⚡ FIXED PORT
+  apiBase = "https://demo-chatbot-backend.vercel.app/",   // ⚡ FIXED PORT
   primaryColor = "#2563eb",
   avatar = "/bot1.png",
   firstMessage = "Hi there 👋 How can I assist you today?",
