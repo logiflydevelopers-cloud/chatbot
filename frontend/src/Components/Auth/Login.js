@@ -18,7 +18,7 @@ const Login = ({ setUser }) => {
   const onSubmit = async (data) => {
     try {
       const response = await axios.post(
-        "http://localhost:4000/api/auth/login",
+        "https://demo-chatbot-backend.vercel.app/api/auth/login",
         data
       );
 
