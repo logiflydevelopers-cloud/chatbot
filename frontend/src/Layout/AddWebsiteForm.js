@@ -25,7 +25,7 @@ const AddWebsiteForm = ({ user, onWebsiteAdded }) => {
     setMessage("");
 
     try {
-      const res = await axios.post("http://localhost:5678/webhook/add-custom-website", {
+      const res = await axios.post("https://n8n-production-5b8d.up.railway.app/webhook/add-custom-website", {
         userId: user?._id,
         name: websiteName,
         url: websiteURL,
