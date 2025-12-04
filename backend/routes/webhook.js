@@ -2,23 +2,23 @@ import express from "express";
 import axios from "axios";
 import xml2js from "xml2js";
 import Page from "../models/Page.js";
+import ChatbotSetting from "../models/ChatbotSetting.js";
 
 const router = express.Router();
 
-/**
- * Add a website and store sitemap URLs in MongoDB
- */
+/* ADD WEBSITE */
 router.post("/add-custom-website", async (req, res) => {
   try {
-    const { userId, name, url } = req.body;
+    let { userId, name, url, websiteURL } = req.body;
 
-    if (!userId || !url || !name) {
-      return res.status(400).json({ error: "Missing required fields" });
-    }
+    url = url || websiteURL;
+    if (!userId || !url) return res.status(400).json({ error: "Missing userId or URL" });
 
-    // Get sitemap
+    name = name || new URL(url).hostname;
+
     const sitemapUrl = url.endsWith("/") ? `${url}sitemap.xml` : `${url}/sitemap.xml`;
-    const response = await axios.get(sitemapUrl, { timeout: 10000 });
+
+    const response = await axios.get(sitemapUrl);
     const parsed = await xml2js.parseStringPromise(response.data);
 
     const urls =
@@ -27,24 +27,43 @@ router.post("/add-custom-website", async (req, res) => {
         lastmod: u.lastmod?.[0] || null,
       })) || [];
 
-    // Remove old data for that user and website
     await Page.deleteMany({ userId, siteName: name });
 
-    // Store in MongoDB
-    const pages = urls.map((u) => ({
-      userId,
-      siteName: name,
-      url: u.loc,
-      lastModified: u.lastmod,
-    }));
+    await Page.insertMany(
+      urls.map((u) => ({
+        userId,
+        siteName: name,
+        url: u.loc,
+        lastModified: u.lastmod,
+      }))
+    );
 
-    await Page.insertMany(pages);
+    res.json({ message: "Website added", total: urls.length, urls });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
 
-    console.log(`✅ ${urls.length} URLs saved for user ${userId}`);
-    res.status(200).json(urls);
-  } catch (error) {
-    console.error("❌ Error adding website:", error.message);
-    res.status(500).json({ error: "Failed to add website", details: error.message });
+/* REMOVE WEBSITE */
+router.delete("/remove-website", async (req, res) => {
+  try {
+    const userId = req.body.userId;
+    const name = req.body.name;
+
+    if (!userId || !name)
+      return res.status(400).json({ error: "Missing userId or siteName" });
+
+    await Page.deleteMany({ userId, siteName: name });
+
+    // ⭐ ALSO CLEAR WEBSITE FROM chatbot settings
+    await ChatbotSetting.updateOne(
+      { userId },
+      { $set: { website: null } }
+    );
+
+    res.json({ message: "Website removed" });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
   }
 });
 

@@ -2,36 +2,56 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-d
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 
-// Components
+// Auth Pages
 import Login from "./Components/Auth/Login";
 import Register from "./Components/Auth/Register";
 import UserDetails from "./Components/Auth/UserDetails";
+
+// Layout
 import Header from "./Layout/Header";
 import Home from "./Layout/Home";
 import DataDisplay from "./Layout/DataDisplay";
+import DashboardLayout from "./Layout/DashboardLayout";
+
+// Dashboard Subpages
+import AIPersona from "./Layout/dashboard-pages/AIPersona";
+import Knowledge from "./Layout/dashboard-pages/KnowledgeBase";
+// import Teach from "./Layout/dashboard-pages/TeachAgent";
+import Welcome from "./Layout/dashboard-pages/Welcome";
+import AddWebsiteForm from "./Layout/dashboard-pages/AddWebsiteForm";
+import FileUpload from "./Layout/dashboard-pages/FileUpload";
+
+// QA Pages
+import QAPage from "./Layout/dashboard-pages/QA/QAPage";
+import EditQA from "./Layout/dashboard-pages/QA/EditQA";
+
+// Chatbot Customization
 import CustomChatPage from "./Layout/CustomChatPage";
 import EmbedCodePage from "./Layout/EmbedCodePage";
-import EmbedChatbotFrame from "./Layout/EmbedChatbotFrame";
-import AddWebsiteForm from "./Layout/AddWebsiteForm";
+import ChatBotDrawerEmbed from "./Layout/ChatBotDrawerEmbed";
+
+
 
 
 import "./Layout/Home.css";
 import "./App.css";
 
+axios.defaults.withCredentials = true;
+
 function App() {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // Detect embed mode
   const isEmbedMode = window.location.pathname.startsWith("/embed/chat/");
 
-  // Protect all routes
   const ProtectedRoute = ({ children }) => {
     if (!user) return <Navigate to="/login" replace />;
     return children;
   };
 
-  // Fetch user on refresh
+  /* -----------------------------------------------------------
+     🔥 GET USER from token & localStorage
+  ------------------------------------------------------------*/
   useEffect(() => {
     const token = localStorage.getItem("accessToken");
     const savedUser = localStorage.getItem("user");
@@ -65,7 +85,7 @@ function App() {
     }
 
     axios
-      .get(`https://demo-chatbot-backend.vercel.app/api/auth/getUserDetails/${userId}`, {
+      .get(`http://localhost:4000/api/auth/getUserDetails/${userId}`, {
         headers: { Authorization: `Bearer ${token}` },
       })
       .then((res) => {
@@ -76,7 +96,7 @@ function App() {
       .catch(async (err) => {
         if (err.response?.status === 401) {
           try {
-            const refresh = await axios.get("https://demo-chatbot-backend.vercel.app/api/auth/refresh", {
+            const refresh = await axios.get("http://localhost:4000/api/auth/refresh", {
               withCredentials: true,
             });
 
@@ -84,7 +104,7 @@ function App() {
             localStorage.setItem("accessToken", newToken);
 
             const retry = await axios.get(
-              `https://demo-chatbot-backend.vercel.app/api/auth/getUserDetails/${userId}`,
+              `http://localhost:4000/api/auth/getUserDetails/${userId}`,
               { headers: { Authorization: `Bearer ${newToken}` } }
             );
 
@@ -100,6 +120,9 @@ function App() {
       });
   }, []);
 
+  /* -----------------------------------------------------------
+     🔄 LOADING SCREEN
+  ------------------------------------------------------------*/
   if (loading) {
     return (
       <div style={{ textAlign: "center", paddingTop: "50px", fontSize: "22px" }}>
@@ -108,48 +131,58 @@ function App() {
     );
   }
 
+  const hideHeaderOnHome = window.location.pathname === "/";
+  const hideHeaderOnEmbed = window.location.pathname.startsWith("/embed/chat/");
+
+  /* -----------------------------------------------------------
+     ⭐ CUSTOMIZE ACCESS LOGIC (FILE / LINK / Q&A ANY ONE)
+  ------------------------------------------------------------*/
+  const canCustomize =
+    localStorage.getItem("uploadedWebsite") ||
+    localStorage.getItem("hasPDF") ||
+    localStorage.getItem("hasQA");
+
+
+  /* -----------------------------------------------------------
+     ⭐ PUBLISH ACCESS LOGIC
+  ------------------------------------------------------------*/
+  const canPublish = localStorage.getItem("chatbotSaved");
+
   return (
     <Router>
-      {!isEmbedMode && <Header user={user} setUser={setUser} />}
+      {/* HEADER */}
+      {user && !hideHeaderOnHome && !hideHeaderOnEmbed && (
+        <Header user={user} setUser={setUser} />
+      )}
 
       <main className={isEmbedMode ? "" : "main-content"}>
         <Routes>
-
-          {/* HOME PAGE (PUBLIC) */}
+          {/* HOME */}
           <Route path="/" element={<Home user={user} />} />
-
-          {/* ADD WEBSITE PAGE (PROTECTED) */}
-          <Route
-            path="/add-website"
-            element={
-              <ProtectedRoute>
-                <AddWebsiteForm user={user} />
-              </ProtectedRoute>
-            }
-          />
 
           {/* LOGIN */}
           <Route
             path="/login"
-            element={!user ? <Login setUser={setUser} /> : <Navigate to="/add-website" replace />}
+            element={!user ? <Login setUser={setUser} /> : <Navigate to="/dashboard" replace />}
           />
 
           {/* REGISTER */}
           <Route
             path="/register"
-            element={!user ? <Register /> : <Navigate to="/add-website" replace />}
+            element={!user ? <Register /> : <Navigate to="/dashboard" replace />}
           />
 
-          {/* PROTECTED ROUTES */}
+          {/* USER DETAILS */}
           <Route
             path="/userDetails/:userId"
             element={
               <ProtectedRoute>
-                <UserDetails user={user} />
+                <UserDetails user={user} setUser={setUser} />
               </ProtectedRoute>
             }
           />
 
+          {/* CUSTOM CHAT */}
           <Route
             path="/custom-chat/:userId"
             element={
@@ -159,6 +192,7 @@ function App() {
             }
           />
 
+          {/* EMBED CODE */}
           <Route
             path="/embed-code/:userId"
             element={
@@ -168,12 +202,65 @@ function App() {
             }
           />
 
-          {/* PUBLIC EMBED MODE */}
-          <Route path="/embed/chat/:userId" element={<EmbedChatbotFrame />} />
+          {/* PUBLIC EMBED CHAT */}
+          <Route path="/embed/chat/:userId" element={<ChatBotDrawerEmbed />} />
 
+
+          {/* DASHBOARD ROUTES */}
+          <Route
+            path="/dashboard"
+            element={
+              <ProtectedRoute>
+                <DashboardLayout user={user} />
+              </ProtectedRoute>
+            }
+          >
+            {/* Default  → TRAIN */}
+            <Route index element={<Navigate to="train" replace />} />
+
+            {/* TRAIN */}
+            <Route path="train" element={<Welcome />} />
+
+            {/* CUSTOMIZE */}
+            <Route
+              path="customize"
+              element={
+                canCustomize ? (
+                  <Navigate to={`/custom-chat/${user?._id}`} replace />
+                ) : (
+                  <div style={{ padding: 30, color: "red", fontSize: 18 }}>
+                    ⚠️ Please upload FILE, LINK, or add Q&A first from Knowledge Base.
+                  </div>
+                )
+              }
+            />
+
+            {/* PUBLISH */}
+            <Route
+              path="publish"
+              element={
+                canPublish ? (
+                  <Navigate to={`/embed-code/${user?._id}`} replace />
+                ) : (
+                  <div style={{ padding: 30, color: "red", fontSize: 18 }}>
+                    ⚠️ Please customize and SAVE your chatbot before publishing.
+                  </div>
+                )
+              }
+            />
+
+            {/* SIDEBAR PAGES */}
+            <Route path="persona" element={<AIPersona />} />
+            <Route path="knowledge" element={<Knowledge />} />
+            <Route path="knowledge/file" element={<FileUpload />} />
+            <Route path="add-website" element={<AddWebsiteForm user={user} />} />
+
+            {/* Q&A */}
+            <Route path="knowledge/qa" element={<QAPage />} />
+            <Route path="knowledge/qa/new" element={<EditQA />} />
+            <Route path="knowledge/qa/edit/:id" element={<EditQA />} />
+          </Route>
         </Routes>
-
-
 
         {!isEmbedMode && <DataDisplay />}
       </main>

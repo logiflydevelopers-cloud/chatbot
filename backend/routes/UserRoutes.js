@@ -6,7 +6,9 @@ import {
   refreshAccessToken,
   registerUser,
 } from "../controllers/UserController.js";
+
 import User from "../models/User.js";
+import { authenticate } from "../middleware/authenticate.js";
 
 const router = express.Router();
 
@@ -15,12 +17,31 @@ const router = express.Router();
 ------------------------------ */
 router.post("/register", registerUser);
 router.post("/login", loginUser);
-router.get("/getUserDetails", getUserDetails);
 router.post("/logout", logout);
 router.get("/refresh", refreshAccessToken);
 
 /* ---------------------------------------------------
-   NEW: SAVE CHATBOT CUSTOMIZATION SETTINGS
+   FIXED: SINGLE VALID USER DETAILS ROUTE
+--------------------------------------------------- */
+router.get("/getUser/:userId", authenticate, async (req, res) => {
+  try {
+    const { userId } = req.params;
+
+    const user = await User.findById(userId);
+
+    if (!user) {
+      return res.status(404).json({ message: "User Not Found" });
+    }
+
+    return res.json({ success: true, user });
+  } catch (error) {
+    console.error("Get User Error:", error);
+    return res.status(500).json({ message: "Server Error" });
+  }
+});
+
+/* ---------------------------------------------------
+   SAVE CHATBOT CUSTOMIZATION SETTINGS
 --------------------------------------------------- */
 router.post("/save-chat-settings", async (req, res) => {
   try {
@@ -50,9 +71,9 @@ router.post("/save-chat-settings", async (req, res) => {
 });
 
 /* ---------------------------------------------------
-   NEW: GET USER DETAILS INCLUDING CHATBOT SETTINGS
+   GET USER CHATBOT SETTINGS
 --------------------------------------------------- */
-router.get("/get/:userId", async (req, res) => {
+router.get("/get-chatbot-settings/:userId", async (req, res) => {
   try {
     const { userId } = req.params;
 

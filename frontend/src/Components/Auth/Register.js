@@ -1,43 +1,46 @@
 import { useForm } from 'react-hook-form';
 import styles from './Auth.module.css';
 import { Link } from 'react-router-dom';
- import axios from 'axios';
+import axios from 'axios';
 
 const Register = () => {
   const {
-  register,
-  handleSubmit,
-  formState: { errors },
-} = useForm({
-  mode: 'onChange',          // Validate on first change
-  reValidateMode: 'onChange', // Revalidate on every change
-});
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm({
+    mode: 'onChange',          // Validate on first change
+    reValidateMode: 'onChange', // Revalidate on every change
+  });
 
 
 
 
-const onSubmit = async (data) => {
-  try {
-    console.log('Registration form submitted', data);
+  const onSubmit = async (data) => {
+    try {
+      console.log('Registration form submitted', data);
 
-    const response = await axios.post('https://demo-chatbot-backend.vercel.app/api/user/register', data);
-console.log('Registration response:', response);
-    if (response.status === 201) {
-      alert('Registration successful!');
-      // Optional: reset form or redirect to login
+      const response = await axios.post("http://localhost:4000/api/auth/register", data, {
+        withCredentials: true
+      });
+
+      console.log('Registration response:', response);
+      if (response.status === 201) {
+        alert('Registration successful!');
+        // Optional: reset form or redirect to login
+      }
+    } catch (error) {
+      console.error('Registration error:', error);
+
+      if (error.response) {
+        // Server responded with a non-2xx status
+        alert(error.response.data.message || 'Registration failed');
+      } else {
+        // Unexpected error (like network failure)
+        alert('An unexpected error occurred. Please try again.');
+      }
     }
-  } catch (error) {
-    console.error('Registration error:', error);
-
-    if (error.response) {
-      // Server responded with a non-2xx status
-      alert(error.response.data.message || 'Registration failed');
-    } else {
-      // Unexpected error (like network failure)
-      alert('An unexpected error occurred. Please try again.');
-    }
-  }
-};
+  };
 
 
   return (

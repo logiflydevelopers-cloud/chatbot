@@ -1,0 +1,77 @@
+.teach-wrapper {
+  padding: 25px;
+  background: #f7f7ff;
+}
+
+.teach-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.teach-header-icon {
+  font-size: 38px;
+  background: #d1b3ff;
+  padding: 10px;
+  border-radius: 12px;
+  margin-right: 12px;
+}
+
+.teach-title {
+  font-size: 22px;
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+
+.teach-subtitle {
+  color: #666;
+}
+
+.teach-tools {
+  display: flex;
+  gap: 12px;
+}
+
+.teach-btn {
+  padding: 8px 14px;
+  background: white;
+  border-radius: 8px;
+  border: 1px solid #d9d9e9;
+  cursor: pointer;
+}
+
+.teach-chatbox {
+  margin-top: 30px;
+}
+
+.custom-chatbot-frame {
+  width: 100%;
+  height: 60vh;
+  border-radius: 12px;
+  border: 1px solid #dcdcf5;
+}
+
+.teach-input-area {
+  margin-top: 20px;
+  display: flex;
+  border: 1px solid #cfcfec;
+  padding: 10px;
+  border-radius: 12px;
+  background: white;
+}
+
+.teach-input {
+  flex: 1;
+  border: none;
+  outline: none;
+  font-size: 16px;
+}
+
+.teach-send-btn {
+  border: none;
+  background: #0056ff;
+  padding: 8px 15px;
+  color: white;
+  border-radius: 8px;
+  cursor: pointer;
+}

@@ -10,8 +10,8 @@ const EmbedCodePage = ({ user }) => {
     if (!user) navigate("/login");
   }, [user, navigate]);
 
-  // ✅ Correct API base (your chatbot backend is on port 5000)
-  const embedCode = `<script src="https://demo-chatbot-backend.vercel.app/embed/${userId}.js" async></script>`;
+  // ✅ Correct API base (your chatbot backend is on port 4000)
+  const embedCode = `<script src="http://localhost:4000/embed/${userId}.js" async></script>`;
 
   const copyCode = () => {
     navigator.clipboard.writeText(embedCode);
@@ -20,31 +20,16 @@ const EmbedCodePage = ({ user }) => {
 
   return (
     <div style={{ padding: "40px", textAlign: "center", background: "#fff", height: "100vh" }}>
-      
+
       {/* Header */}
       <div
         style={{
-          display: "flex",
-          justifyContent: "space-between",
           alignItems: "center",
           background: "#111",
           color: "#fff",
           padding: "15px 30px",
         }}
       >
-        <button
-          onClick={() => navigate(`/custom-chat/${userId}`)}
-          style={{
-            background: "#2563eb",
-            color: "#fff",
-            border: "none",
-            padding: "8px 20px",
-            borderRadius: "6px",
-            cursor: "pointer",
-          }}
-        >
-          ← Back
-        </button>
         <h2>Get Your Embed Code</h2>
         <div></div>
       </div>

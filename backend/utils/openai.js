@@ -1,34 +1,38 @@
+// backend/utils/openai.js
 import OpenAI from "openai";
 import dotenv from "dotenv";
 dotenv.config();
 
-const client = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
+const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
-// Simple answer generator
-export const getAnswerFromOpenAI = async (question, context) => {
-  try {
-    const prompt = `
-You are a helpful chatbot trained on a company's website data.
-Use the context below to answer accurately.
+export const getEmbedding = async (text) => {
+  const resp = await openai.embeddings.create({
+    model: "text-embedding-3-small",
+    input: text,
+  });
+  return resp.data[0].embedding;
+};
 
-CONTEXT:
-${context}
+export const askOpenAIWithContext = async (question, contextText) => {
+  const systemPrompt = `
+You are a helpful assistant.
+Use ONLY the context below to answer the question.
 
-QUESTION:
-${question}
-`;
+If the answer is not found inside the context,
+say: "I don't have this information in the website data."
+  
+Context:
+${contextText}
+  `;
 
-    const completion = await client.chat.completions.create({
-      model: "gpt-4o-mini",
-      messages: [{ role: "user", content: prompt }],
-      temperature: 0.4,
-    });
+  const resp = await openai.chat.completions.create({
+    model: "gpt-4o-mini",
+    messages: [
+      { role: "system", content: systemPrompt },
+      { role: "user", content: question },
+    ],
+    max_tokens: 300,
+  });
 
-    return completion.choices[0].message.content.trim();
-  } catch (err) {
-    console.error("OpenAI Error:", err.message);
-    return "I'm having trouble fetching an answer right now.";
-  }
+  return resp.choices[0].message.content.trim();
 };

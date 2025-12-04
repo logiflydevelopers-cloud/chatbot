@@ -10,32 +10,42 @@ import webhookRoutes from "./routes/webhook.js";
 import chatbotRoutes from "./routes/chatbotRoutes.js";
 import embedRoutes from "./routes/embed.js";
 import proxyRoute from "./routes/proxy.js";
+import qaRoutes from "./routes/qaRoutes.js";
+
+
+
 
 dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 4000;
 
-// ⭐ UNIVERSAL CORS — ALLOW ALL WEBSITES
+/* ======================================================
+   ⭐ SINGLE PERFECT CORS (DO NOT ADD ANY OTHER CORS)
+====================================================== */
 app.use(
   cors({
-    origin: "*",
-    methods: ["GET", "POST", "PUT", "DELETE"],
+    origin: "http://localhost:3000",
+    credentials: true,
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"],
   })
 );
 
-app.use((req, res, next) => {
-  res.header("Access-Control-Allow-Origin", "*");
-  res.header("Access-Control-Allow-Headers", "*");
-  res.header("Access-Control-Allow-Methods", "GET,POST,PUT,DELETE,OPTIONS");
-  next();
-});
+// Handle OPTIONS preflight globally
+app.options("*", cors({
+  origin: "http://localhost:3000",
+  credentials: true,
+}));
+
+/* ======================================================
+              CORS FIX COMPLETED ✔
+====================================================== */
 
 app.use(express.json());
 app.use(cookieParser());
 
-// Allow iframe embedding
+// Allow iframe
 app.use((req, res, next) => {
   res.setHeader("X-Frame-Options", "ALLOWALL");
   next();
@@ -51,6 +61,8 @@ app.use("/api/webhook", webhookRoutes);
 app.use("/api/chatbot", chatbotRoutes);
 app.use("/embed", embedRoutes);
 app.use("/proxy", proxyRoute);
+app.use("/api/qa", qaRoutes);
+
 
 app.listen(PORT, () =>
   console.log(`🚀 Server running on port ${PORT}`)

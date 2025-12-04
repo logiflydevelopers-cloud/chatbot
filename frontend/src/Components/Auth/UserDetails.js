@@ -12,7 +12,7 @@ const UserDetails = ({ user, setUser }) => {
   // Fetch specific user details by ID
   const fetchUserDetails = async (token) => {
     return await axios.get(
-      `https://demo-chatbot-backend.vercel.app/api/auth/getUserDetails/${userId}`,
+      `http://localhost:4000/api/auth/getUserDetails/${userId}`,
       {
         headers: { Authorization: `Bearer ${token}` },
         withCredentials: true,
@@ -40,7 +40,7 @@ const UserDetails = ({ user, setUser }) => {
           try {
             console.log("Access token expired. Refreshing...");
             const refreshRes = await axios.get(
-              "https://demo-chatbot-backend.vercel.app/api/auth/refresh",
+              "http://localhost:4000/api/auth/refresh",
               { withCredentials: true }
             );
 
@@ -68,13 +68,17 @@ const UserDetails = ({ user, setUser }) => {
   const handleLogout = async () => {
     try {
       await axios.post(
-        "https://demo-chatbot-backend.vercel.app/api/auth/logout",
+        "http://localhost:4000/api/user/logout",
         {},
         { withCredentials: true }
       );
 
       localStorage.removeItem("accessToken");
-      setUser(null);
+      localStorage.removeItem("user");
+
+      if (setUser) setUser(null); // FIXED
+
+      alert("Logout successful");
       navigate("/login");
 
     } catch (error) {
@@ -82,6 +86,7 @@ const UserDetails = ({ user, setUser }) => {
       alert("Logout failed. Please try again.");
     }
   };
+
 
   if (loading || !user) return <p>Loading user info...</p>;
 

@@ -1,0 +1,112 @@
+/* TOP HEADER WHITE AREA */
+.jf-header {
+  width: auto;
+  height: 60px;
+  background: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 28px;
+  border-bottom: 1px solid #e5e5e5;
+
+  /* STICKY HEADER */
+  position: sticky;
+  top: 0;
+  z-index: 9999;
+}
+
+.jf-left {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+}
+
+.jf-logo {
+  width: 35px;
+}
+
+.jf-center {
+  flex: 1;
+  text-align: center;
+}
+
+.jf-title {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 600;
+  color: #222;
+}
+
+.jf-right {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+}
+
+.jf-user-icon {
+  color: #444;
+}
+
+
+/* BLUE/PURPLE TAB BAR */
+.jf-bluebar {
+  width: 100%;
+  height: 40px;
+  background: linear-gradient(to right, #7b4bff, #3d8bff);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+
+  /* SECOND STICKY BAR (Under header) */
+  position: sticky;
+  top: 60px;
+  /* white header height */
+  z-index: 9998;
+}
+
+.jf-tab {
+  padding: 10px 35px;
+  color: #e6e6e6;
+  font-size: 15px;
+  font-weight: 600;
+  text-decoration: none;
+  letter-spacing: 0.5px;
+  transition: all 0.2s ease-in-out;
+}
+
+.jf-tab:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.jf-tab.active {
+  background: rgba(255, 255, 255, 0.25);
+  color: white !important;
+}
+
+.logout-btn {
+  background: #ff4d4f;
+  color: #fff;
+  border: none;
+  padding: 10px 13px;
+  font-size: 13px;
+  font-weight: 600;
+  border-radius: 8px;
+  cursor: pointer;
+  margin-left: 15px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  box-shadow: 0 2px 6px rgba(255, 0, 0, 0.2);
+  transition: all 0.25s ease;
+}
+
+.logout-btn:hover {
+  background: #d9363e;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 10px rgba(255, 0, 0, 0.3);
+}
+
+.logout-btn:active {
+  transform: scale(0.97);
+}

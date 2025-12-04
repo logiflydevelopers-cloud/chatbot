@@ -13,7 +13,7 @@ const pinecone = new Pinecone({
  * ✅ Define the index name
  * Make sure this matches exactly what you see in your Pinecone dashboard
  */
-const indexName = process.env.PINECONE_INDEX || "logifly"; // 👈 update to your real index name
+const indexName = process.env.PINECONE_INDEX || "chatbot"; // 👈 update to your real index name
 
 /**
  * ✅ Get Pinecone index instance
@@ -83,3 +83,18 @@ export const deleteUserNamespace = async (userId) => {
     console.error("❌ Pinecone delete namespace error:", err.message);
   }
 };
+
+
+export const deleteVectorsByPage = async (userId, pageUrl) => {
+  try {
+    const index = getIndex();
+    await index.deleteMany({
+      namespace: userId,
+      filter: { page: pageUrl }  // ⚠ metadata.page match
+    });
+    console.log(`🗑 Deleted old vectors for page: ${pageUrl}`);
+  } catch (err) {
+    console.log("Delete by page error →", err.message);
+  }
+};
+
