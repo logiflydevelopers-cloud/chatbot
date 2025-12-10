@@ -11,6 +11,7 @@ import chatbotRoutes from "./routes/chatbotRoutes.js";
 import embedRoutes from "./routes/embed.js";
 import proxyRoute from "./routes/proxy.js";
 import qaRoutes from "./routes/qaRoutes.js";
+import fileRoutes from "./routes/fileRoutes.js";
 
 
 
@@ -62,6 +63,7 @@ app.use("/api/chatbot", chatbotRoutes);
 app.use("/embed", embedRoutes);
 app.use("/proxy", proxyRoute);
 app.use("/api/qa", qaRoutes);
+app.use("/file", fileRoutes);
 
 
 app.listen(PORT, () =>
