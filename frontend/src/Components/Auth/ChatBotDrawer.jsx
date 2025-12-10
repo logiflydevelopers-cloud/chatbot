@@ -102,10 +102,10 @@ export default function ChatBotDrawer({
     <div
       style={{
         position: "fixed",
-        bottom: 20,
-        [alignment]: 20,
-        width: 370,
-        height: 540,
+        bottom: 0,
+        [alignment]: 0,
+        width: 330,
+        height: 460,
         borderRadius: 16,
         background: "#fff",
         display: "flex",
