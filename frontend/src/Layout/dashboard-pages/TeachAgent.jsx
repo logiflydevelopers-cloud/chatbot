@@ -2,7 +2,6 @@ import React, { useEffect, useRef, useState } from "react";
 import axios from "axios";
 import "./TeachAgentChat.css";
 
-// ⭐ IMPORT SAME AVATARS
 import Ellipse90 from "../image/Ellipse 90.png";
 import Ellipse91 from "../image/Ellipse 91.png";
 import Ellipse92 from "../image/Ellipse 92.png";
@@ -17,7 +16,9 @@ const TeachAgentChat = ({ user }) => {
 
   const [avatar, setAvatar] = useState(Ellipse90);
   const [primaryColor, setPrimaryColor] = useState("#2563eb");
-  const [firstMessage, setFirstMessage] = useState("Hi there 👋 I'm your assistant!");
+  const [firstMessage, setFirstMessage] = useState(
+    "Hi there 👋 I'm your assistant!"
+  );
 
   const bottomRef = useRef(null);
 
@@ -30,29 +31,32 @@ const TeachAgentChat = ({ user }) => {
     }
   };
 
-  // Load saved settings
+  // Load Chatbot Drawer Settings
   useEffect(() => {
-    const loadSettings = async () => {
+    const load = async () => {
       try {
         const res = await axios.get(`${apiBase}/api/chatbot/${user?._id}`);
+
         if (res.data.success && res.data.settings) {
           const s = res.data.settings;
-          setAvatar(mapAvatar(s.avatar));
-          setPrimaryColor(s.primaryColor || "#2563eb");
-          setFirstMessage(s.firstMessage || firstMessage);
-        }
-      } catch {}
 
+          setAvatar(mapAvatar(s.avatar));
+          setPrimaryColor(s.primaryColor);
+          setFirstMessage(s.firstMessage);
+        }
+      } catch (e) {}
+
+      // LOCAL STORAGE FALLBACK
       const stored = localStorage.getItem("chatbot_settings");
       if (stored) {
         const s = JSON.parse(stored);
         setAvatar(mapAvatar(s.avatar));
-        setPrimaryColor(s.primaryColor || "#2563eb");
-        setFirstMessage(s.firstMessage || firstMessage);
+        setPrimaryColor(s.primaryColor);
+        setFirstMessage(s.firstMessage);
       }
     };
 
-    loadSettings();
+    load();
   }, [user]);
 
   // First message
@@ -67,10 +71,10 @@ const TeachAgentChat = ({ user }) => {
 
   const sendMessage = async () => {
     if (!input.trim()) return;
+    const msg = input.trim();
 
-    const msg = input;
-    setInput("");
     setMessages((prev) => [...prev, { sender: "user", text: msg }]);
+    setInput("");
     setTyping(true);
 
     try {
@@ -83,10 +87,10 @@ const TeachAgentChat = ({ user }) => {
         ...prev,
         { sender: "bot", text: res.data.answer || "Sorry, I don't know." },
       ]);
-    } catch {
+    } catch (err) {
       setMessages((prev) => [
         ...prev,
-        { sender: "bot", text: "⚠ Something went wrong!" },
+        { sender: "bot", text: "⚠ Something went wrong." },
       ]);
     } finally {
       setTyping(false);
@@ -94,42 +98,43 @@ const TeachAgentChat = ({ user }) => {
   };
 
   return (
-    <div className="teach-chat-container">
+    <div className="ta-container">
 
-      {/* HEADER */}
-      <div className="teach-header" style={{ background: primaryColor }}>
-        <img src={avatar} className="teach-header-avatar" alt="avatar" />
-        <b>Your AI Agent</b>
+      {/* HEADER SAME AS CHATBOTDRAWER */}
+      <div className="ta-header" style={{ background: primaryColor }}>
+        <img src={avatar} className="ta-header-avatar" alt="bot" />
+        <span>Your AI Agent</span>
       </div>
 
-      {/* CHAT BODY */}
-      <div className="teach-body">
-        {messages.map((msg, i) => (
+      {/* BODY */}
+      <div className="ta-body">
+
+        {messages.map((m, i) => (
           <div
             key={i}
-            className={`teach-msg-row ${msg.sender === "user" ? "right" : "left"}`}
+            className={`ta-msg-row ${m.sender === "user" ? "right" : "left"}`}
           >
-            {msg.sender === "bot" && (
-              <img src={avatar} className="teach-msg-avatar" alt="bot" />
+            {m.sender === "bot" && (
+              <img src={avatar} className="ta-msg-avatar" alt="bot" />
             )}
 
             <div
-              className={`teach-msg ${msg.sender}`}
+              className={`ta-msg ${m.sender}`}
               style={{
-                background: msg.sender === "user" ? primaryColor : "#e2e8f0",
-                color: msg.sender === "user" ? "#fff" : "#000",
+                background: m.sender === "user" ? primaryColor : "#e2e8f0",
+                color: m.sender === "user" ? "#fff" : "#000",
               }}
             >
-              {msg.text}
+              {m.text}
             </div>
           </div>
         ))}
 
         {typing && (
-          <div className="teach-typing">
-            <span className="dot"></span>
-            <span className="dot"></span>
-            <span className="dot"></span>
+          <div className="ta-typing">
+            <span className="ta-dot"></span>
+            <span className="ta-dot"></span>
+            <span className="ta-dot"></span>
           </div>
         )}
 
@@ -137,18 +142,14 @@ const TeachAgentChat = ({ user }) => {
       </div>
 
       {/* INPUT */}
-      <div className="teach-input-box">
+      <div className="ta-input-box">
         <input
-          type="text"
           value={input}
           placeholder="Type your question..."
           onChange={(e) => setInput(e.target.value)}
           onKeyDown={(e) => e.key === "Enter" && sendMessage()}
         />
-        <button
-          onClick={sendMessage}
-          style={{ background: primaryColor }}
-        >
+        <button onClick={sendMessage} style={{ background: primaryColor }}>
           Send
         </button>
       </div>

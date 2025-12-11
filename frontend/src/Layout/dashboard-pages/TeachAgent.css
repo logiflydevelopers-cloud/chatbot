@@ -1,117 +1,104 @@
-/* CONTAINER */
-.teach-chat-container {
+.ta-container {
   width: 100%;
-  max-width: 700px;
-  margin: 0 auto;
   font-family: system-ui, sans-serif;
 }
 
 /* HEADER */
-.teach-header {
-  padding: 16px;
-  color: #fff;
+.ta-header {
+  padding: 14px 18px;
+  color: white;
   display: flex;
   align-items: center;
   gap: 12px;
-  border-radius: 10px;
+  border-radius: 12px;
 }
 
-.teach-header-avatar {
-  width: 45px;
-  height: 45px;
+.ta-header-avatar {
+  width: 40px;
+  height: 40px;
   border-radius: 50%;
   border: 2px solid white;
 }
 
 /* BODY */
-.teach-body {
+.ta-body {
   background: #f8fafc;
   padding: 16px;
-  height: 500px;
-  border-radius: 10px;
+  height: 520px;
+  border-radius: 12px;
   margin-top: 12px;
   overflow-y: auto;
 }
 
 /* MESSAGE ROW */
-.teach-msg-row {
+.ta-msg-row {
   display: flex;
-  margin-bottom: 14px;
+  margin-bottom: 12px;
 }
 
-.teach-msg-row.left {
+.ta-msg-row.left {
   justify-content: flex-start;
 }
 
-.teach-msg-row.right {
+.ta-msg-row.right {
   justify-content: flex-end;
 }
 
 /* BOT AVATAR */
-.teach-msg-avatar {
+.ta-msg-avatar {
   width: 28px;
   height: 28px;
   border-radius: 50%;
   margin-right: 8px;
 }
 
-/* MESSAGE BUBBLE */
-.teach-msg {
-  padding: 10px 14px;
-  border-radius: 12px;
-  max-width: 70%;
+/* CHAT BUBBLE */
+.ta-msg {
+  padding: 10px 15px;
+  border-radius: 14px;
+  max-width: 75%;
   font-size: 14px;
 }
 
-.teach-msg.user {
-  color: #fff;
-}
-
-.teach-msg.bot {
-  background: #e2e8f0;
-  color: #000;
-}
-
-/* TYPING ANIMATION */
-.teach-typing {
+/* TYPING INDICATOR */
+.ta-typing {
   background: #e2e8f0;
   padding: 10px 14px;
-  border-radius: 12px;
+  border-radius: 14px;
   width: fit-content;
-  margin-bottom: 10px;
+  margin-bottom: 8px;
+  display: flex;
+  gap: 5px;
 }
 
-.dot {
+.ta-dot {
   width: 8px;
   height: 8px;
   background: #475569;
   border-radius: 50%;
-  display: inline-block;
-  margin-right: 4px;
-  animation: typingBounce 1s infinite;
+  animation: taBounce 1s infinite;
 }
 
-.dot:nth-child(2) {
+.ta-dot:nth-child(2) {
   animation-delay: 0.2s;
 }
-
-.dot:nth-child(3) {
+.ta-dot:nth-child(3) {
   animation-delay: 0.4s;
 }
 
-@keyframes typingBounce {
+@keyframes taBounce {
   0%, 60%, 100% { transform: translateY(0); }
-  30% { transform: translateY(-6px); }
+  30% { transform: translateY(-5px); }
 }
 
-/* INPUT BOX */
-.teach-input-box {
+/* INPUT SECTION */
+.ta-input-box {
   display: flex;
   gap: 10px;
   margin-top: 12px;
 }
 
-.teach-input-box input {
+.ta-input-box input {
   flex: 1;
   padding: 12px;
   border-radius: 10px;
@@ -119,12 +106,11 @@
   font-size: 14px;
 }
 
-.teach-input-box button {
+.ta-input-box button {
+  padding: 0px 20px;
   color: white;
-  border: none;
-  padding: 0 20px;
   border-radius: 10px;
+  border: none;
   cursor: pointer;
   font-weight: 600;
-  font-size: 14px;
 }
