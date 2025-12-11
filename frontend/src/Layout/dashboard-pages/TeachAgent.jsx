@@ -3,7 +3,7 @@ import axios from "axios";
 import "./TeachAgent.css";
 
 // FIXED IMPORTS (NO SPACES)
-import Ellipse90 from "/src/image/Ellipse 90.png"
+import Ellipse90 from "/src/image/Ellipse 90.png";
 // import Ellipse91 from "../image/Ellipse91.png";
 // import Ellipse92 from "../image/Ellipse92.png";
 // import Ellipse93 from "../image/Ellipse93.png";
