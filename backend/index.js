@@ -13,16 +13,18 @@ import proxyRoute from "./routes/proxy.js";
 import qaRoutes from "./routes/qaRoutes.js";
 import fileRoutes from "./routes/fileRoutes.js";
 
-
-
-
 dotenv.config();
 
 const app = express();
-const PORT = process.env.PORT || 4000;
+
+/* -----------------------------------------------
+   ⭐ PORT CONDITION — LOCAL (4000) / PRODUCTION
+------------------------------------------------- */
+const isProduction = process.env.NODE_ENV === "production";
+const PORT = isProduction ? process.env.PORT : 4000;
 
 /* ======================================================
-   ⭐ SINGLE PERFECT CORS (DO NOT ADD ANY OTHER CORS)
+   ⭐ PERFECT CORS
 ====================================================== */
 app.use(
   cors({
@@ -33,15 +35,10 @@ app.use(
   })
 );
 
-// Handle OPTIONS preflight globally
 app.options("*", cors({
   origin: "https://frontend-demo-chatbot.vercel.app",
   credentials: true,
 }));
-
-/* ======================================================
-              CORS FIX COMPLETED ✔
-====================================================== */
 
 app.use(express.json());
 app.use(cookieParser());
@@ -64,7 +61,6 @@ app.use("/embed", embedRoutes);
 app.use("/proxy", proxyRoute);
 app.use("/api/qa", qaRoutes);
 app.use("/file", fileRoutes);
-
 
 app.listen(PORT, () =>
   console.log(`🚀 Server running on port ${PORT}`)
