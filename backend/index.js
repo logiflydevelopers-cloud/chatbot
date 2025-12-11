@@ -17,15 +17,15 @@ dotenv.config();
 
 const app = express();
 
-/* -----------------------------------------------
-   ⭐ PORT CONDITION — LOCAL (4000) / PRODUCTION
-------------------------------------------------- */
-const isProduction = process.env.NODE_ENV === "production";
-const PORT = isProduction ? process.env.PORT : 4000;
+/* ----------------------------
+   ⭐ Detect Local vs Vercel
+----------------------------- */
+const isVercel = Boolean(process.env.VERCEL);  // <-- Vercel auto sets this
+const PORT = process.env.PORT || 4000;
 
-/* ======================================================
-   ⭐ PERFECT CORS
-====================================================== */
+/* ----------------------------
+      CORS SETTINGS
+----------------------------- */
 app.use(
   cors({
     origin: "https://frontend-demo-chatbot.vercel.app",
@@ -51,6 +51,9 @@ app.use((req, res, next) => {
 
 connectDB();
 
+/* ----------------------------
+         ROUTES
+----------------------------- */
 app.get("/", (req, res) => res.send("Chatbot Backend running"));
 
 app.use("/api/auth", authRoutes);
@@ -62,6 +65,14 @@ app.use("/proxy", proxyRoute);
 app.use("/api/qa", qaRoutes);
 app.use("/file", fileRoutes);
 
-app.listen(PORT, () =>
-  console.log(`🚀 Server running on port ${PORT}`)
-);
+/* ----------------------------
+ ⭐ LOCAL ONLY → Start Server
+ ⭐ VERCEL → Do NOT Start Server
+----------------------------- */
+if (!isVercel) {
+  app.listen(PORT, () =>
+    console.log(`🚀 Local Server running on port ${PORT}`)
+  );
+}
+
+export default app;
