@@ -1,47 +1,44 @@
 import { useForm } from 'react-hook-form';
 import styles from './Auth.module.css';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
 const Register = () => {
+  const navigate = useNavigate();
+
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm({
-    mode: 'onChange',          // Validate on first change
-    reValidateMode: 'onChange', // Revalidate on every change
+    mode: 'onChange',
+    reValidateMode: 'onChange',
   });
-
-
-
 
   const onSubmit = async (data) => {
     try {
-      console.log('Registration form submitted', data);
+      const response = await axios.post(
+        "https://backend-demo-chatbot.vercel.app/api/auth/register",
+        data,
+        { withCredentials: true }
+      );
 
-      const response = await axios.post("https://backend-demo-chatbot.vercel.app/api/auth/register", data, {
-        withCredentials: true
-      });
-
-      console.log('Registration response:', response);
       if (response.status === 201) {
-        alert('Registration successful!');
-        // Optional: reset form or redirect to login
+        alert("🎉 Registration successful!");
+
+        // ⭐ Direct Redirect to Login Page
+        navigate("/login");
       }
     } catch (error) {
-      console.error('Registration error:', error);
+      console.error("Registration error:", error);
 
       if (error.response) {
-        // Server responded with a non-2xx status
-        alert(error.response.data.message || 'Registration failed');
+        alert(error.response.data.message || "Registration failed");
       } else {
-        // Unexpected error (like network failure)
-        alert('An unexpected error occurred. Please try again.');
+        alert("An unexpected error occurred. Please try again.");
       }
     }
   };
-
 
   return (
     <div className={styles.authContainer}>
@@ -56,10 +53,7 @@ const Register = () => {
             className={styles.input}
             {...register('name', {
               required: 'Name is required',
-              minLength: {
-                value: 3,
-                message: 'Name must be at least 3 characters',
-              },
+              minLength: { value: 3, message: 'Name must be at least 3 characters' },
             })}
           />
           {errors.name && <div className={styles.error}>{errors.name.message}</div>}
@@ -107,18 +101,13 @@ const Register = () => {
             className={styles.input}
             {...register('password', {
               required: 'Password is required',
-              minLength: {
-                value: 6,
-                message: 'Password must be at least 6 characters',
-              },
+              minLength: { value: 6, message: 'Password must be at least 6 characters' },
             })}
           />
           {errors.password && <div className={styles.error}>{errors.password.message}</div>}
         </div>
 
-        <button type="submit" className={styles.submitButton}>
-          Register
-        </button>
+        <button type="submit" className={styles.submitButton}>Register</button>
 
         <p className={styles.toggleText}>
           Already have an account?{' '}
