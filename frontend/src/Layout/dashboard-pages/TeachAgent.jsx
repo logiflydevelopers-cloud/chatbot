@@ -2,12 +2,6 @@ import React, { useEffect, useRef, useState } from "react";
 import axios from "axios";
 import "./TeachAgent.css";
 
-// FIXED IMPORTS (NO SPACES)
-import Ellipse90 from "/src/image/Ellipse 90.png";
-// import Ellipse91 from "../image/Ellipse91.png";
-// import Ellipse92 from "../image/Ellipse92.png";
-// import Ellipse93 from "../image/Ellipse93.png";
-
 const TeachAgentChat = ({ user }) => {
   const apiBase = "https://backend-demo-chatbot.vercel.app";
 
@@ -15,7 +9,7 @@ const TeachAgentChat = ({ user }) => {
   const [typing, setTyping] = useState(false);
   const [input, setInput] = useState("");
 
-  const [avatar, setAvatar] = useState(Ellipse90);
+  // Removed avatar completely
   const [primaryColor, setPrimaryColor] = useState("#2563eb");
   const [firstMessage, setFirstMessage] = useState(
     "Hi there 👋 I'm your assistant!"
@@ -23,15 +17,7 @@ const TeachAgentChat = ({ user }) => {
 
   const bottomRef = useRef(null);
 
-  const mapAvatar = (name) => {
-    switch (name) {
-      case "Ellipse91": return Ellipse91;
-      case "Ellipse92": return Ellipse92;
-      case "Ellipse93": return Ellipse93;
-      default: return Ellipse90;
-    }
-  };
-
+  // Load chatbot settings (color + firstMessage only)
   useEffect(() => {
     const load = async () => {
       try {
@@ -39,16 +25,16 @@ const TeachAgentChat = ({ user }) => {
 
         if (res.data.success && res.data.settings) {
           const s = res.data.settings;
-          setAvatar(mapAvatar(s.avatar));
+
           setPrimaryColor(s.primaryColor);
           setFirstMessage(s.firstMessage);
         }
       } catch {}
 
+      // LOCAL STORAGE fallback
       const stored = localStorage.getItem("chatbot_settings");
       if (stored) {
         const s = JSON.parse(stored);
-        setAvatar(mapAvatar(s.avatar));
         setPrimaryColor(s.primaryColor);
         setFirstMessage(s.firstMessage);
       }
@@ -57,10 +43,12 @@ const TeachAgentChat = ({ user }) => {
     load();
   }, [user]);
 
+  // First message show
   useEffect(() => {
     setMessages([{ sender: "bot", text: firstMessage }]);
   }, [firstMessage]);
 
+  // Auto scroll
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
@@ -96,22 +84,18 @@ const TeachAgentChat = ({ user }) => {
   return (
     <div className="ta-container">
 
+      {/* HEADER WITHOUT AVATAR */}
       <div className="ta-header" style={{ background: primaryColor }}>
-        <img src={avatar} className="ta-header-avatar" alt="bot" />
         <span>Your AI Agent</span>
       </div>
 
       <div className="ta-body">
-
         {messages.map((m, i) => (
           <div
             key={i}
             className={`ta-msg-row ${m.sender === "user" ? "right" : "left"}`}
           >
-            {m.sender === "bot" && (
-              <img src={avatar} className="ta-msg-avatar" alt="bot" />
-            )}
-
+            {/* NO AVATAR IMAGES */}
             <div
               className={`ta-msg ${m.sender}`}
               style={{
