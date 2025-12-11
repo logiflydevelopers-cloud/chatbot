@@ -2,10 +2,10 @@ import React, { useEffect, useRef, useState } from "react";
 import axios from "axios";
 import "./TeachAgent.css";
 
-import Ellipse90 from "../image/Ellipse 90.png";
-import Ellipse91 from "../image/Ellipse 91.png";
-import Ellipse92 from "../image/Ellipse 92.png";
-import Ellipse93 from "../image/Ellipse 93.png";
+import Ellipse90 from "../image/Ellipse90.png";
+import Ellipse91 from "../image/Ellipse91.png";
+import Ellipse92 from "../image/Ellipse92.png";
+import Ellipse93 from "../image/Ellipse93.png";
 
 const TeachAgentChat = ({ user }) => {
   const apiBase = "https://backend-demo-chatbot.vercel.app";
