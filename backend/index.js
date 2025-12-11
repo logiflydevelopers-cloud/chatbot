@@ -69,10 +69,11 @@ app.use("/file", fileRoutes);
  ⭐ LOCAL ONLY → Start Server
  ⭐ VERCEL → Do NOT Start Server
 ----------------------------- */
-if (!isVercel) {
+if (!process.env.VERCEL) {
   app.listen(PORT, () =>
     console.log(`🚀 Local Server running on port ${PORT}`)
   );
 }
 
 export default app;
+
