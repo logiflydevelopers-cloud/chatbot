@@ -1,11 +1,17 @@
 import React, { useState, useEffect, useRef } from "react";
 import axios from "axios";
 
+// ⭐ IMPORT AVATARS (from src/image)
+import Ellipse90 from "../../image/Ellipse 90.png";
+import Ellipse91 from "../../image/Ellipse 91.png";
+import Ellipse92 from "../../image/Ellipse 92.png";
+import Ellipse93 from "../../image/Ellipse 93.png";
+
 export default function ChatBotDrawer({
   userId,
   apiBase = "https://backend-demo-chatbot.vercel.app",
   primaryColor: defaultColor = "#2563eb",
-  avatar: defaultAvatar = "/avatars/avatar1.png",
+  avatar: defaultAvatar = Ellipse90,        // ⭐ FIXED
   firstMessage: defaultMsg = "Hi there 👋 How can I help you?",
   alignment: defaultAlign = "right",
   onClose = () => {},
@@ -19,8 +25,19 @@ export default function ChatBotDrawer({
   const [input, setInput] = useState("");
   const [messages, setMessages] = useState([]);
   const [suggestions, setSuggestions] = useState([]);
-  const [isTyping, setIsTyping] = useState(false); // ⭐ NEW
+  const [isTyping, setIsTyping] = useState(false);
+
   const chatRef = useRef(null);
+
+  // ⭐ MAP DB avatar string to actual image
+  const mapAvatar = (key) => {
+    switch (key) {
+      case "Ellipse91": return Ellipse91;
+      case "Ellipse92": return Ellipse92;
+      case "Ellipse93": return Ellipse93;
+      default: return Ellipse90;
+    }
+  };
 
   /* LOAD SETTINGS */
   useEffect(() => {
@@ -30,8 +47,9 @@ export default function ChatBotDrawer({
 
         if (res.data.success && res.data.settings) {
           const s = res.data.settings;
+
           setPrimaryColor(s.primaryColor || defaultColor);
-          setAvatar(s.avatar || defaultAvatar);
+          setAvatar(mapAvatar(s.avatar));                // ⭐ FIXED
           setFirstMessage(s.firstMessage || defaultMsg);
           setAlignment(s.alignment || defaultAlign);
         }
@@ -39,18 +57,19 @@ export default function ChatBotDrawer({
         console.log("Settings load failed");
       }
 
+      // Load LocalStorage overrides
       const stored = localStorage.getItem("chatbot_settings");
       if (stored) {
         const s = JSON.parse(stored);
         setPrimaryColor(s.primaryColor || defaultColor);
-        setAvatar(s.avatar || defaultAvatar);
+        setAvatar(mapAvatar(s.avatar));                  // ⭐ FIXED
         setFirstMessage(s.firstMessage || defaultMsg);
         setAlignment(s.alignment || defaultAlign);
       }
     };
 
     loadSettings();
-  }, [apiBase, userId, defaultColor, defaultAvatar, defaultMsg, defaultAlign]);
+  }, [apiBase, userId]);
 
   /* FIRST MESSAGE */
   useEffect(() => {
@@ -78,10 +97,8 @@ export default function ChatBotDrawer({
 
     const text = input;
     setInput("");
-
     setMessages((prev) => [...prev, { from: "user", text }]);
 
-    // ⭐ START TYPING ANIMATION
     setIsTyping(true);
 
     try {
@@ -90,7 +107,6 @@ export default function ChatBotDrawer({
         question: text,
       });
 
-      // ⭐ STOP TYPING WHEN ANSWER ARRIVES
       setIsTyping(false);
 
       setMessages((prev) => [
@@ -165,7 +181,7 @@ export default function ChatBotDrawer({
       >
         <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
           <img
-            src={avatar}
+            src={avatar}           // ⭐ NOW ALWAYS CORRECT
             alt="chatbot avatar"
             style={{
               width: 38,
@@ -280,7 +296,6 @@ export default function ChatBotDrawer({
           </div>
         ))}
 
-        {/* ⭐ TYPING ANIMATION HERE */}
         {isTyping && (
           <div style={typingStyle}>
             <span className="typing-dot"></span>
