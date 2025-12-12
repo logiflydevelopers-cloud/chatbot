@@ -9,8 +9,8 @@ router.get("/:userId.js", async (req, res) => {
   const setting = await ChatbotSetting.findOne({ userId });
   const alignment = setting?.alignment === "left" ? "left" : "right";
 
-  const FRONTEND_URL = process.env.FRONTEND_URL || "https://frontend-demo-chatbot.vercel.app";
-  const BACKEND_URL = process.env.BACKEND_URL || "https://backend-demo-chatbot.vercel.app";
+  const FRONTEND_URL = process.env.FRONTEND_URL || "http://localhost:3000";
+  const BACKEND_URL = process.env.BACKEND_URL || "http://localhost:4000";
 
   const script = `
 (function () {

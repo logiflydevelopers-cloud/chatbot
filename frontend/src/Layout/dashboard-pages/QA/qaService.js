@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API_BASE = process.env.REACT_APP_API_URL || "https://backend-demo-chatbot.vercel.app/api/qa";
+const API_BASE = process.env.REACT_APP_API_URL || "http://localhost:4000/api/qa";
 
 export const getUserQAs = async (userId) => {
   const res = await axios.get(`${API_BASE}/user/${userId}`);

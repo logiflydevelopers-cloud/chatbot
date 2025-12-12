@@ -6,6 +6,10 @@ import axios from "axios";
 import Login from "./Components/Auth/Login";
 import Register from "./Components/Auth/Register";
 import UserDetails from "./Components/Auth/UserDetails";
+import ForgotPassword from "./Components/Auth/ForgotPassword";
+import VerifyOTP from "./Components/Auth/VerifyOTP";
+import ResetPassword from "./Components/Auth/ResetPassword";
+import GoogleSuccess from "./Components/Auth/GoogleSuccess";   // ⭐ NEW IMPORT
 
 // Layout
 import Header from "./Layout/Header";
@@ -16,7 +20,7 @@ import DashboardLayout from "./Layout/DashboardLayout";
 // Dashboard Subpages
 import AIPersona from "./Layout/dashboard-pages/AIPersona";
 import Knowledge from "./Layout/dashboard-pages/KnowledgeBase";
-import TeachAgent from "./Layout/dashboard-pages/TeachAgent";
+import TeachAgent from "./Layout/dashboard-pages/TeachAgent/TeachAgent";
 import Welcome from "./Layout/dashboard-pages/Welcome";
 import AddWebsiteForm from "./Layout/dashboard-pages/AddWebsiteForm";
 import FileUpload from "./Layout/dashboard-pages/FileUpload";
@@ -29,9 +33,6 @@ import EditQA from "./Layout/dashboard-pages/QA/EditQA";
 import CustomChatPage from "./Layout/CustomChatPage";
 import EmbedCodePage from "./Layout/EmbedCodePage";
 import ChatBotDrawerEmbed from "./Layout/ChatBotDrawerEmbed";
-
-
-
 
 import "./Layout/Home.css";
 import "./App.css";
@@ -59,7 +60,7 @@ function App() {
     if (savedUser) {
       try {
         setUser(JSON.parse(savedUser));
-      } catch { }
+      } catch {}
     }
 
     if (!token) {
@@ -85,7 +86,7 @@ function App() {
     }
 
     axios
-      .get(`https://backend-demo-chatbot.vercel.app/api/auth/getUserDetails/${userId}`, {
+      .get(`http://localhost:4000/api/auth/getUserDetails/${userId}`, {
         headers: { Authorization: `Bearer ${token}` },
       })
       .then((res) => {
@@ -96,7 +97,7 @@ function App() {
       .catch(async (err) => {
         if (err.response?.status === 401) {
           try {
-            const refresh = await axios.get("https://backend-demo-chatbot.vercel.app/api/auth/refresh", {
+            const refresh = await axios.get("http://localhost:4000/api/auth/refresh", {
               withCredentials: true,
             });
 
@@ -104,7 +105,7 @@ function App() {
             localStorage.setItem("accessToken", newToken);
 
             const retry = await axios.get(
-              `https://backend-demo-chatbot.vercel.app/api/auth/getUserDetails/${userId}`,
+              `http://localhost:4000/api/auth/getUserDetails/${userId}`,
               { headers: { Authorization: `Bearer ${newToken}` } }
             );
 
@@ -135,13 +136,12 @@ function App() {
   const hideHeaderOnEmbed = window.location.pathname.startsWith("/embed/chat/");
 
   /* -----------------------------------------------------------
-     ⭐ CUSTOMIZE ACCESS LOGIC (FILE / LINK / Q&A ANY ONE)
+     ⭐ CUSTOMIZE ACCESS LOGIC
   ------------------------------------------------------------*/
   const canCustomize =
     localStorage.getItem("uploadedWebsite") ||
     localStorage.getItem("hasPDF") ||
     localStorage.getItem("hasQA");
-
 
   /* -----------------------------------------------------------
      ⭐ PUBLISH ACCESS LOGIC
@@ -165,6 +165,9 @@ function App() {
             path="/login"
             element={!user ? <Login setUser={setUser} /> : <Navigate to="/dashboard" replace />}
           />
+
+          {/* ⭐ GOOGLE LOGIN SUCCESS ROUTE */}
+          <Route path="/google-success" element={<GoogleSuccess />} />
 
           {/* REGISTER */}
           <Route
@@ -192,6 +195,10 @@ function App() {
             }
           />
 
+          <Route path="/forgot-password" element={<ForgotPassword />} />
+          <Route path="/verify-otp" element={<VerifyOTP />} />
+          <Route path="/reset-password" element={<ResetPassword />} />
+
           {/* EMBED CODE */}
           <Route
             path="/embed-code/:userId"
@@ -205,7 +212,6 @@ function App() {
           {/* PUBLIC EMBED CHAT */}
           <Route path="/embed/chat/:userId" element={<ChatBotDrawerEmbed />} />
 
-
           {/* DASHBOARD ROUTES */}
           <Route
             path="/dashboard"
@@ -215,7 +221,7 @@ function App() {
               </ProtectedRoute>
             }
           >
-            {/* Default  → TRAIN */}
+            {/* Default → TRAIN */}
             <Route index element={<Navigate to="train" replace />} />
 
             {/* TRAIN */}
@@ -255,7 +261,7 @@ function App() {
             <Route path="knowledge/file" element={<FileUpload />} />
             <Route path="add-website" element={<AddWebsiteForm user={user} />} />
 
-            {/* FIXED TEACH ROUTE */}
+            {/* TEACH */}
             <Route path="teach" element={<TeachAgent user={user} />} />
 
             {/* Q&A */}

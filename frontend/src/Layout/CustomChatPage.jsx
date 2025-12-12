@@ -12,7 +12,7 @@ import Ellipse93 from "../image/Ellipse 93.png";
 const CustomChatPage = ({ user }) => {
   const { userId } = useParams();
   const navigate = useNavigate();
-  const apiBase = "https://backend-demo-chatbot.vercel.app";
+  const apiBase = "http://localhost:4000";
 
   // ⭐ DEFAULT AVATAR = Ellipse90
   const [avatar, setAvatar] = useState(Ellipse90);

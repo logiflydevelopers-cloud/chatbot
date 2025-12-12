@@ -11,6 +11,7 @@ import chatbotRoutes from "./routes/chatbotRoutes.js";
 import embedRoutes from "./routes/embed.js";
 import proxyRoute from "./routes/proxy.js";
 import qaRoutes from "./routes/qaRoutes.js";
+import teachAgentRoutes from "./routes/teachAgentRoutes.js";
 
 
 
@@ -25,7 +26,7 @@ const PORT = process.env.PORT || 4000;
 ====================================================== */
 app.use(
   cors({
-    origin: "https://frontend-demo-chatbot.vercel.app",
+    origin: "http://localhost:3000",
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"],
@@ -34,7 +35,7 @@ app.use(
 
 // Handle OPTIONS preflight globally
 app.options("*", cors({
-  origin: "https://frontend-demo-chatbot.vercel.app",
+  origin: "http://localhost:3000",
   credentials: true,
 }));
 
@@ -62,6 +63,7 @@ app.use("/api/chatbot", chatbotRoutes);
 app.use("/embed", embedRoutes);
 app.use("/proxy", proxyRoute);
 app.use("/api/qa", qaRoutes);
+app.use("/teach-agent", teachAgentRoutes);
 
 
 app.listen(PORT, () =>

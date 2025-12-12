@@ -54,7 +54,7 @@ const AddWebsite = ({ user }) => {
       const domainName = new URL(websiteURL).hostname;
 
       /* 1️⃣ — SAVE WEBSITE PAGES IN BACKEND */
-      await axios.post("https://backend-demo-chatbot.vercel.app/api/webhook/add-custom-website", {
+      await axios.post("http://localhost:4000/api/webhook/add-custom-website", {
         userId,
         url: websiteURL,
         name: domainName,
@@ -71,7 +71,7 @@ const AddWebsite = ({ user }) => {
       );
 
       /* 3️⃣ — UPDATE Chatbot Settings (website field only) */
-      await axios.post("https://backend-demo-chatbot.vercel.app/api/chatbot/save", {
+      await axios.post("http://localhost:4000/api/chatbot/save", {
         userId,
         website: websiteURL,
       });
@@ -110,7 +110,7 @@ const AddWebsite = ({ user }) => {
 
     try {
       /* 1️⃣ — DELETE WEBSITE PAGES FROM BACKEND */
-      await axios.delete("https://backend-demo-chatbot.vercel.app/api/webhook/remove-website", {
+      await axios.delete("http://localhost:4000/api/webhook/remove-website", {
         data: {
           userId,
           name: storedDomain,
@@ -118,7 +118,7 @@ const AddWebsite = ({ user }) => {
       });
 
       /* 2️⃣ — REMOVE FROM Chatbot Setting DB */
-      await axios.post("https://backend-demo-chatbot.vercel.app/api/chatbot/save", {
+      await axios.post("http://localhost:4000/api/chatbot/save", {
         userId,
         website: null,
       });
