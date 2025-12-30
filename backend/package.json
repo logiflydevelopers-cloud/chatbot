@@ -21,6 +21,7 @@
     "dotenv": "^16.6.1",
     "express": "^4.21.2",
     "glob": "^11.0.3",
+    "google-auth-library": "^10.5.0",
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.19.3",
     "multer": "^2.0.2",
