@@ -156,7 +156,7 @@ router.get("/google/callback", async (req, res) => {
     );
 
     return res.redirect(
-      `http://localhost:3000/google-success?token=${accessToken}`
+      `https://chatbot-frontend-mocha-six.vercel.app/google-success?token=${accessToken}`
     );
 
   } catch (err) {
