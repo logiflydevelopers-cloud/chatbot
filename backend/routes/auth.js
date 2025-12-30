@@ -11,7 +11,9 @@ import { registerUser, loginUser } from "../controllers/UserController.js";
 const router = express.Router();
 const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
-// Temporary storage for OTPs
+// ==============================
+// TEMP OTP STORE
+// ==============================
 let otpStore = {};
 
 /* ============================================================
@@ -21,7 +23,7 @@ router.post("/register", registerUser);
 router.post("/login", loginUser);
 
 /* ============================================================
-   ⭐ SEND OTP - Forgot Password
+   FORGOT PASSWORD - SEND OTP
 ============================================================ */
 router.post("/forgot-password", async (req, res) => {
   try {
@@ -33,7 +35,7 @@ router.post("/forgot-password", async (req, res) => {
     const otp = Math.floor(100000 + Math.random() * 900000);
     otpStore[email] = otp;
 
-    let transporter = nodemailer.createTransport({
+    const transporter = nodemailer.createTransport({
       service: "gmail",
       auth: {
         user: process.env.MAIL_USER,
@@ -50,12 +52,12 @@ router.post("/forgot-password", async (req, res) => {
 
     res.json({ message: "OTP sent to email" });
   } catch (err) {
-    res.status(500).json({ message: "Failed to send OTP", error: err.message });
+    res.status(500).json({ message: "Failed to send OTP" });
   }
 });
 
 /* ============================================================
-   ⭐ VERIFY OTP
+   VERIFY OTP
 ============================================================ */
 router.post("/verify-otp", (req, res) => {
   const { email, otp } = req.body;
@@ -68,18 +70,16 @@ router.post("/verify-otp", (req, res) => {
 });
 
 /* ============================================================
-   ⭐ RESET PASSWORD
+   RESET PASSWORD
 ============================================================ */
 router.post("/reset-password", async (req, res) => {
   try {
     const { email, password } = req.body;
 
-    const hashed = await bcrypt.hash(password, 10);
-
-    await User.updateOne({ email }, { password: hashed });
+    const hashedPassword = await bcrypt.hash(password, 10);
+    await User.updateOne({ email }, { password: hashedPassword });
 
     delete otpStore[email];
-
     res.json({ message: "Password reset successful" });
   } catch (err) {
     res.status(500).json({ message: "Error resetting password" });
@@ -87,7 +87,7 @@ router.post("/reset-password", async (req, res) => {
 });
 
 /* ============================================================
-   ⭐ STEP 1 — GENERATE GOOGLE LOGIN URL
+   GOOGLE LOGIN - STEP 1 (Generate URL)
 ============================================================ */
 router.get("/google", (req, res) => {
   try {
@@ -103,20 +103,19 @@ router.get("/google", (req, res) => {
 
     res.json({ url });
   } catch (err) {
-    res.status(500).json({ message: "Failed to create Google Login URL" });
+    res.status(500).json({ message: "Failed to create Google login URL" });
   }
 });
 
 /* ============================================================
-   ⭐ STEP 2 — GOOGLE CALLBACK
+   GOOGLE LOGIN - STEP 2 (Callback)
 ============================================================ */
 router.get("/google/callback", async (req, res) => {
   try {
-    console.log("🔔 Google Callback HIT");
-
     const { code } = req.query;
     if (!code) return res.status(400).json({ message: "No code provided" });
 
+    // 🔹 Exchange code for token
     const tokenResponse = await axios.post(
       "https://oauth2.googleapis.com/token",
       {
@@ -131,6 +130,7 @@ router.get("/google/callback", async (req, res) => {
 
     const { id_token } = tokenResponse.data;
 
+    // 🔹 Verify Google token
     const ticket = await client.verifyIdToken({
       idToken: id_token,
       audience: process.env.GOOGLE_CLIENT_ID,
@@ -138,6 +138,7 @@ router.get("/google/callback", async (req, res) => {
 
     const googleUser = ticket.getPayload();
 
+    // 🔹 Find or create user
     let user = await User.findOne({ email: googleUser.email });
 
     if (!user) {
@@ -149,18 +150,28 @@ router.get("/google/callback", async (req, res) => {
       });
     }
 
+    // 🔹 Generate JWT (same as normal login)
     const accessToken = jwt.sign(
       { id: user._id },
       process.env.JWT_SECRET,
       { expiresIn: "7d" }
     );
 
-    return res.redirect(
-      `https://chatbot-frontend-mocha-six.vercel.app/google-success?token=${accessToken}`
-    );
+    // 🔹 Safe user object (frontend needs this)
+    const safeUser = {
+      id: user._id,
+      name: user.name,
+      email: user.email,
+    };
 
+    // 🔹 Redirect to frontend with token + user
+    return res.redirect(
+      `${process.env.FRONTEND_URL}/google-success?token=${accessToken}&user=${encodeURIComponent(
+        JSON.stringify(safeUser)
+      )}`
+    );
   } catch (err) {
-    console.log("❌ GOOGLE CALLBACK ERROR:", err.response?.data || err);
+    console.error("❌ Google Login Error:", err.response?.data || err);
     res.status(500).json({ message: "Google login failed" });
   }
 });
