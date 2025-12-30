@@ -1,46 +1,33 @@
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
+import jwtDecode from "jwt-decode";
 
 const GoogleSuccess = ({ setUser }) => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    const token = params.get("token");
+    const token = new URLSearchParams(window.location.search).get("token");
 
     if (!token) {
       navigate("/login");
       return;
     }
 
-    // ✅ Save token
     localStorage.setItem("accessToken", token);
 
-    // ✅ FETCH USER & SET STATE (MOST IMPORTANT)
-    axios
-      .get("https://chatbot-backend-project.vercel.app/api/auth/me", {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      })
-      .then((res) => {
-        localStorage.setItem("user", JSON.stringify(res.data));
-        setUser(res.data);
+    const decoded = jwtDecode(token);
 
-        // ✅ NOW SAFE TO GO DASHBOARD
-        navigate("/dashboard/train", { replace: true });
-      })
-      .catch(() => {
-        navigate("/login");
-      });
+    const user = {
+      id: decoded.userId,
+    };
+
+    localStorage.setItem("user", JSON.stringify(user));
+    setUser(user);
+
+    navigate("/dashboard/train", { replace: true });
   }, [navigate, setUser]);
 
-  return (
-    <h2 style={{ textAlign: "center", marginTop: "50px" }}>
-      Logging in with Google... please wait...
-    </h2>
-  );
+  return <h3 style={{ textAlign: "center" }}>Logging in with Google...</h3>;
 };
 
 export default GoogleSuccess;
