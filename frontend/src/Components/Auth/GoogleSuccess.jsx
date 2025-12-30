@@ -1,33 +1,26 @@
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import jwtDecode from "jwt-decode";
 
-const GoogleSuccess = ({ setUser }) => {
+const GoogleSuccess = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const token = new URLSearchParams(window.location.search).get("token");
+    const params = new URLSearchParams(window.location.search);
+    const token = params.get("token");
 
-    if (!token) {
-      navigate("/login");
-      return;
+    if (token) {
+      localStorage.setItem("accessToken", token);
+
+      // Redirect to dashboard
+      navigate("/dashboard", { replace: true });
     }
+  }, [navigate]); // ⭐ ADD navigate to remove warning
 
-    localStorage.setItem("accessToken", token);
-
-    const decoded = jwtDecode(token);
-
-    const user = {
-      id: decoded.userId,
-    };
-
-    localStorage.setItem("user", JSON.stringify(user));
-    setUser(user);
-
-    navigate("/dashboard/train", { replace: true });
-  }, [navigate, setUser]);
-
-  return <h3 style={{ textAlign: "center" }}>Logging in with Google...</h3>;
+  return (
+    <h2 style={{ textAlign: "center", marginTop: "50px" }}>
+      Logging in with Google... please wait...
+    </h2>
+  );
 };
 
 export default GoogleSuccess;

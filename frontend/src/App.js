@@ -78,10 +78,7 @@ function App() {
             path="/register"
             element={!user ? <Register /> : <Navigate to="/dashboard" replace />}
           />
-          <Route
-            path="/google-success"
-            element={<GoogleSuccess setUser={setUser} />}
-          />
+          <Route path="/google-success" element={<GoogleSuccess />} />
           <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/verify-otp" element={<VerifyOTP />} />
           <Route path="/reset-password" element={<ResetPassword />} />
