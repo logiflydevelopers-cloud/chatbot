@@ -16,7 +16,7 @@ const Login = ({ setUser }) => {
   const onSubmit = async (data) => {
     try {
       const response = await axios.post(
-        "http://localhost:4000/api/auth/login",
+        "https://chatbot-backend-project.vercel.app/api/auth/login",
         data,
         { withCredentials: true }
       );
@@ -40,7 +40,7 @@ const Login = ({ setUser }) => {
   };
 
   const googleLogin = async () => {
-    const res = await axios.get("http://localhost:4000/api/auth/google");
+    const res = await axios.get("https://chatbot-backend-project.vercel.app/api/auth/google");
     window.location.href = res.data.url;
   };
 
