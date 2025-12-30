@@ -24,7 +24,7 @@ const GoogleSuccess = ({ setUser }) => {
     setUser(user);
 
     // ✅ SAME dashboard route as normal login
-    navigate("/dashboard/train", { replace: true });
+    navigate("/dashboard/knowledge", { replace: true });
   }, [navigate, setUser]);
 
   return (
