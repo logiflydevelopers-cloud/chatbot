@@ -12,7 +12,7 @@ const GoogleSuccess = () => {
       localStorage.setItem("accessToken", token);
 
       // Redirect to dashboard
-      navigate("/dashboard", { replace: true });
+      navigate("/dashboard/train", { replace: true });
     }
   }, [navigate]); // ⭐ ADD navigate to remove warning
 
