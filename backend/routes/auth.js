@@ -167,9 +167,14 @@ router.get("/google/callback", async (req, res) => {
     // 🔹 Redirect to frontend with token + user
     return res.redirect(
       `${process.env.FRONTEND_URL}/google-success?token=${accessToken}&user=${encodeURIComponent(
-        JSON.stringify(safeUser)
+        JSON.stringify({
+          id: user._id,
+          name: user.name,
+          email: user.email,
+        })
       )}`
     );
+
   } catch (err) {
     console.error("❌ Google Login Error:", err.response?.data || err);
     res.status(500).json({ message: "Google login failed" });
