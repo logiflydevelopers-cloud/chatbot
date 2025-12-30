@@ -6,17 +6,23 @@ import ChatbotSetting from "../models/ChatbotSetting.js";
 
 const router = express.Router();
 
-/* ADD WEBSITE */
+/* ======================================================
+   ⭐ ADD WEBSITE (CRAWL + SAVE PAGES)
+====================================================== */
 router.post("/add-custom-website", async (req, res) => {
   try {
     let { userId, name, url, websiteURL } = req.body;
 
     url = url || websiteURL;
-    if (!userId || !url) return res.status(400).json({ error: "Missing userId or URL" });
+    if (!userId || !url) {
+      return res.status(400).json({ error: "Missing userId or URL" });
+    }
 
     name = name || new URL(url).hostname;
 
-    const sitemapUrl = url.endsWith("/") ? `${url}sitemap.xml` : `${url}/sitemap.xml`;
+    const sitemapUrl = url.endsWith("/")
+      ? `${url}sitemap.xml`
+      : `${url}/sitemap.xml`;
 
     const response = await axios.get(sitemapUrl);
     const parsed = await xml2js.parseStringPromise(response.data);
@@ -27,6 +33,7 @@ router.post("/add-custom-website", async (req, res) => {
         lastmod: u.lastmod?.[0] || null,
       })) || [];
 
+    // 🔁 Replace old pages
     await Page.deleteMany({ userId, siteName: name });
 
     await Page.insertMany(
@@ -38,20 +45,27 @@ router.post("/add-custom-website", async (req, res) => {
       }))
     );
 
-    res.json({ message: "Website added", total: urls.length, urls });
+    res.json({
+      success: true,
+      message: "Website added",
+      total: urls.length,
+    });
   } catch (err) {
+    console.error("Add website error →", err.message);
     res.status(500).json({ error: err.message });
   }
 });
 
-/* REMOVE WEBSITE */
+/* ======================================================
+   ⭐ REMOVE WEBSITE
+====================================================== */
 router.delete("/remove-website", async (req, res) => {
   try {
-    const userId = req.body.userId;
-    const name = req.body.name;
+    const { userId, name } = req.body;
 
-    if (!userId || !name)
+    if (!userId || !name) {
       return res.status(400).json({ error: "Missing userId or siteName" });
+    }
 
     await Page.deleteMany({ userId, siteName: name });
 
@@ -61,9 +75,23 @@ router.delete("/remove-website", async (req, res) => {
       { $set: { website: null } }
     );
 
-    res.json({ message: "Website removed" });
+    res.json({ success: true, message: "Website removed" });
   } catch (err) {
+    console.error("Remove website error →", err.message);
     res.status(500).json({ error: err.message });
+  }
+});
+
+/* ======================================================
+   ⭐ GET WEBSITE PAGES (FOR TRAINING VERIFICATION)
+   👉 THIS FIXES YOUR ERROR
+====================================================== */
+router.get("/website/:userId", async (req, res) => {
+  try {
+    const pages = await Page.find({ userId: req.params.userId });
+    res.json(pages);
+  } catch (err) {
+    res.status(500).json([]);
   }
 });
 

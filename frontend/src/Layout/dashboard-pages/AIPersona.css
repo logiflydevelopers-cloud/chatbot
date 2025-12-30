@@ -1,133 +1,179 @@
 .persona-container {
-  padding: 30px;
-  background: #f5f7ff;
+  max-width: 660px;
 }
 
-.persona-title {
-  font-size: 24px;
-  font-weight: 700;
-  color: #2b2b2b;
-  text-align: left;
-  line-height: 11px;
-}
-
-.persona-subtitle {
-  margin-top: -5px;
-  color: #666;
+/* HEADER */
+.persona-header {
+  display: flex;
+  align-items: center;
+  gap: 14px;
   margin-bottom: 20px;
 }
 
+.persona-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 0.25rem;
+  background: #8b5cf6;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.persona-icon img {
+  width: 22px;
+  height: 22px;
+}
+
+.persona-header h2 {
+  font-size: 1rem;
+  font-weight: 500;
+}
+
+.persona-header p {
+  color: #6b7280;
+  font-size: 0.875rem;
+}
+
+/* Mobile back button */
+.back-btn {
+  display: none;
+  background: none;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+}
+
+/* CARD */
 .persona-card {
-  background: white;
-  padding: 25px;
+  background: #fff;
   border-radius: 12px;
-  box-shadow: 0 2px 10px #e7e8f0;
+  padding: 24px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
 }
 
+/* SECTIONS */
 .persona-section {
-  margin-bottom: 25px;
+  margin-bottom: 24px;
 }
 
-.persona-label {
+.persona-section label {
   font-weight: 600;
-  font-size: 16px;
+  display: block;
 }
 
-.persona-text {
-  color: #666;
-  margin: 4px 0 10px 0;
+.persona-section span {
+  font-size: 13px;
+  color: #6b7280;
+  display: block;
+  margin-bottom: 8px;
 }
 
-.persona-input {
+.persona-section input,
+.persona-section select {
   width: 100%;
   padding: 12px;
-  border: 1.5px solid #d7d7f0;
   border-radius: 8px;
+  border: 1.5px solid #e5e7eb;
+}
+
+.persona-section input:focus,
+.persona-section select:focus {
+  border-color: #6366f1;
   outline: none;
 }
 
-.persona-input:focus {
-  border-color: #7367f0;
-}
-
-/* Role Buttons */
-.role-buttons {
-  margin-top: 12px;
-}
-
-.role-btn {
-  padding: 10px 18px;
+/* ROLE BUTTONS */
+.role-buttons button {
+  background: #eef2ff;
+  border: none;
+  padding: 8px 14px;
   border-radius: 20px;
-  background: #eef5ff;
-  border: none;
-  margin-right: 10px;
-  cursor: pointer;
-}
-
-/* Tabs */
-.tab-box {
-  display: flex;
+  margin-right: 8px;
   margin-top: 10px;
-}
-
-.tab-btn {
-  padding: 10px 20px;
-  border: none;
   cursor: pointer;
-  background: #eef1ff;
-  margin-right: 10px;
-  border-radius: 6px;
 }
 
-.tab-btn.active {
-  background: #dfe4ff;
-  border-bottom: 3px solid #7367f0;
+/* TABS */
+.tabs {
+  display: flex;
+  background: #f1f5f9;
+  border-radius: 10px;
+  padding: 4px;
 }
 
-/* Range Slider */
-.range-slider {
-  width: 100%;
-  height: 4px;
-  background: #dcdcf7;
-  border-radius: 5px;
+.tabs button {
+  flex: 1;
+  border: none;
+  background: transparent;
+  padding: 10px;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  gap: 6px;
+  align-items: center;
 }
 
+.tabs button.active {
+  background: #fff;
+  border-radius: 8px;
+  color: #4f46e5;
+  font-weight: 600;
+}
+
+/* RANGE */
 .range-labels {
   display: flex;
   justify-content: space-between;
-  margin-top: 8px;
-  font-size: 14px;
+  font-size: 13px;
+  color: #6b7280;
 }
 
-/* Guidelines */
+/* GUIDELINES */
 .guideline-row {
   display: flex;
-  align-items: center;
+  gap: 10px;
   margin-bottom: 10px;
 }
 
-.guideline-input {
+.guideline-row input {
   flex: 1;
-  padding: 12px;
-  border-radius: 8px;
-  border: 1.5px solid #dcdcf7;
 }
 
-.delete-btn {
-  margin-left: 10px;
+.guideline-row button {
   border: none;
   background: transparent;
+  color: #ef4444;
   cursor: pointer;
-  font-size: 20px;
+  font-size: 18px;
 }
 
 .add-btn {
   width: 100%;
   padding: 12px;
-  background: #006bff;
-  color: white;
+  background: #2563eb;
+  color: #fff;
   border-radius: 8px;
   border: none;
   cursor: pointer;
-  margin-top: 10px;
+  display: flex;
+  gap: 6px;
+  justify-content: center;
+  align-items: center;
+}
+
+/* MOBILE ONLY */
+@media (max-width: 768px) {
+  .back-btn {
+    display: block;
+  }
+
+  .persona-icon {
+    display: none;
+  }
+
+  .persona-header p {
+    color: #6b7280;
+    font-size: 0.755rem;
+  }
 }

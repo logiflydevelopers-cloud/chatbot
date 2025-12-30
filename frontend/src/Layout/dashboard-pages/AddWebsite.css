@@ -10,7 +10,6 @@
   border: none;
   font-size: 26px;
   cursor: pointer;
-  margin-right: 12px;
   padding: 4px 10px;
   border-radius: 8px;
   border: 1px solid #dcdcef;
@@ -34,11 +33,10 @@
 
 /* Card */
 .link-card {
-  width: 650px;
   background: #ffffff;
   padding: 30px;
   border-radius: 14px;
-  box-shadow: 0 3px 14px rgba(0,0,0,0.08);
+  box-shadow: 0 3px 14px rgba(0, 0, 0, 0.08);
 }
 
 .label-text {
@@ -50,6 +48,11 @@
   color: #6c6b80;
   margin-top: 4px;
   margin-bottom: 10px;
+  font-size: .875rem;
+}
+
+.hrhr {
+  margin: 20px 0;
 }
 
 .link-input {
@@ -59,7 +62,6 @@
   border: 1.5px solid #dcdcf5;
   font-size: 15px;
   outline: none;
-      margin-bottom: 20px;
 }
 
 .link-input:focus {
@@ -78,7 +80,7 @@
 .crawl-btn {
   margin-top: 10px;
   padding: 12px 30px;
-  background: #2563eb;
+  background: linear-gradient(to right, #7b4bff, #3d8bff);
   color: white;
   border: none;
   border-radius: 8px;
@@ -100,4 +102,23 @@
   margin-top: 15px;
   color: #1b8500;
   font-weight: 600;
+}
+
+
+
+@media screen and (max-width: 768px) {
+  .back-btn {
+    background: #fff;
+    border: none;
+    font-size: 20px;
+    cursor: pointer;
+    padding: 10px;
+    display: flex;
+    border-radius: 8px;
+    border: 1px solid #dcdcef;
+  }
+
+  .link-card {
+    padding: 20px;
+  }
 }

@@ -2,6 +2,7 @@ import React, { useEffect, useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import "./QAPage.css";
 import { getUserQAs, deleteQA } from "./qaService";
+import "../AIPersona.css";
 
 const QAPage = () => {
   const navigate = useNavigate();
@@ -77,15 +78,20 @@ const QAPage = () => {
   };
 
   return (
-    <div className="qa-wrapper">
 
-      <button className="qa-back-btn" onClick={() => navigate("/dashboard/knowledge")}>
-        ←
-      </button>
 
-      <div className="qa-header">
-        <h2>QUESTIONS & ANSWER</h2>
-        <p>Provide question-answer pairs your agent can use</p>
+
+    <div className="persona-container">
+
+      <div className="fu-header persona-header">
+        <button className="fu-back-btn" onClick={() => navigate("/dashboard/knowledge")}>
+          ←
+        </button>
+
+        <div>
+          <h2>QUESTIONS & ANSWER</h2>
+          <p>Provide question-answer pairs your agent can use</p>
+        </div>
       </div>
 
       <div className="qa-actions">

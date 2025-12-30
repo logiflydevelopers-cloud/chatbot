@@ -1,10 +1,12 @@
 import { useForm } from "react-hook-form";
 import styles from "./Auth.module.css";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import GoogleButton from "react-google-button";
 
 const Login = ({ setUser }) => {
+  const navigate = useNavigate();
+
   const {
     register,
     handleSubmit,
@@ -22,11 +24,15 @@ const Login = ({ setUser }) => {
       if (response.status === 200) {
         const { accessToken, user } = response.data;
 
+        // ✅ Save auth
         localStorage.setItem("accessToken", accessToken);
         localStorage.setItem("user", JSON.stringify(user));
 
+        // ✅ Update state
         setUser(user);
-        window.location.href = "/dashboard/train";
+
+        // ✅ React-router navigation (NO reload)
+        navigate("/dashboard/train", { replace: true });
       }
     } catch (error) {
       alert(error.response?.data?.message || "Login failed");
@@ -41,7 +47,6 @@ const Login = ({ setUser }) => {
   return (
     <div className={styles.authContainer}>
       <form className={styles.authForm} onSubmit={handleSubmit(onSubmit)}>
-        
         <h2 className={styles.authTitle}>Login to your account</h2>
 
         {/* EMAIL */}
@@ -70,35 +75,27 @@ const Login = ({ setUser }) => {
           )}
         </div>
 
-        {/* ⭐ Forgot Password link */}
         <p style={{ textAlign: "right", marginTop: "-10px" }}>
-          <Link
-            to="/forgot-password"
-            style={{ fontSize: "14px", color: "#4a5fff" }}
-          >
+          <Link to="/forgot-password" style={{ fontSize: 14 }}>
             Forgot Password?
           </Link>
         </p>
 
-        {/* LOGIN BUTTON */}
         <button type="submit" className={styles.submitButton}>
           Login
         </button>
 
-        {/* ⭐ GOOGLE LOGIN BUTTON */}
         <GoogleButton
           onClick={googleLogin}
-          style={{ width: "100%", marginTop: "15px" }}
+          style={{ width: "100%", marginTop: 15 }}
         />
 
-        {/* REGISTER LINK */}
         <p className={styles.toggleText}>
           Don't have an account?{" "}
-          <Link to="/register" style={{ fontWeight: "600" }}>
+          <Link to="/register" style={{ fontWeight: 600 }}>
             Register
           </Link>
         </p>
-
       </form>
     </div>
   );

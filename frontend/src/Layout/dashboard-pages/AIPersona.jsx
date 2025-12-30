@@ -1,130 +1,176 @@
 import React, { useState } from "react";
+import {
+  FiMessageSquare,
+  FiMic,
+  FiMail,
+  FiTrash2,
+  FiPlus,
+  FiArrowLeft,
+} from "react-icons/fi";
+import { useOutletContext } from "react-router-dom";
+
+import aiIcon from "../../image/ai.svg"; // correct path
 import "./AIPersona.css";
 
 const AIPersona = () => {
+  // 👉 get sidebar controller from DashboardLayout
+  const { setSidebarOpen } = useOutletContext();
+
+  const [activeTab, setActiveTab] = useState("chat");
+  const [range, setRange] = useState(25);
 
   const [guidelines, setGuidelines] = useState([
     "Your main goal is to promptly answer questions and resolve issues.",
     "Always provide helpful and clear solutions.",
     "Be polite and empathetic in all interactions.",
-    "Maintain professionalism while being approachable and friendly."
+    "Maintain professionalism while being approachable and friendly.",
   ]);
 
-  const addGuideline = () => {
-    setGuidelines([...guidelines, ""]);
-  };
-
-  const updateGuideline = (index, value) => {
-    const copy = [...guidelines];
-    copy[index] = value;
-    setGuidelines(copy);
-  };
-
-  const deleteGuideline = (index) => {
-    const copy = guidelines.filter((_, i) => i !== index);
-    setGuidelines(copy);
-  };
+  const addGuideline = () => setGuidelines([...guidelines, ""]);
+  const updateGuideline = (i, v) =>
+    setGuidelines(guidelines.map((g, idx) => (idx === i ? v : g)));
+  const deleteGuideline = (i) =>
+    setGuidelines(guidelines.filter((_, idx) => idx !== i));
 
   return (
     <div className="persona-container">
+      {/* HEADER */}
+      <div className="persona-header">
+        {/* Mobile back button */}
+        <button
+          className="back-btn"
+          onClick={() => setSidebarOpen(true)}
+        >
+          <FiArrowLeft />
+        </button>
 
-      {/* Title */}
-      <h2 className="persona-title">AI PERSONA</h2>
-      <p className="persona-subtitle">Write and customize how the AI talks and acts</p>
+        <div className="persona-icon">
+          <img src={aiIcon} alt="AI Persona" />
+        </div>
+
+        <div>
+          <h2>AI PERSONA</h2>
+          <p>Write and customize how the AI talks and acts</p>
+        </div>
+      </div>
 
       <div className="persona-card">
-
         {/* Agent Name */}
-        <div className="persona-section">
-          <label className="persona-label">Agent Name</label>
-          <p className="persona-text">Give a name to your Agent that will be displayed in the conversation</p>
-          <input className="persona-input" defaultValue="Ella" />
-        </div>
+        <section className="persona-section">
+          <label>Agent Name</label>
+          <span>Give a name to your Agent that will be displayed</span>
+          <input defaultValue="Ella" />
+        </section>
 
         {/* Agent Role */}
-        <div className="persona-section">
-          <label className="persona-label">Agent Role</label>
-          <p className="persona-text">Describe your Agent's job title</p>
-          <input className="persona-input" defaultValue="Customer Support Agent" />
+        <section className="persona-section">
+          <label>Agent Role</label>
+          <span>Describe your Agent's job title</span>
+          <input defaultValue="Customer Support Agent" />
 
           <div className="role-buttons">
-            <button className="role-btn">Help Desk Specialist</button>
-            <button className="role-btn">Client Service Representative</button>
-            <button className="role-btn">Technical Support Agent</button>
+            <button>Help Desk Specialist</button>
+            <button>Client Service Representative</button>
+            <button>Technical Support Agent</button>
           </div>
-        </div>
+        </section>
 
-        {/* Default Language */}
-        <div className="persona-section">
-          <label className="persona-label">Default Language</label>
-          <p className="persona-text">Select the language your Agents greet users</p>
-          <select className="persona-input">
+        {/* Language */}
+        <section className="persona-section">
+          <label>Default Language</label>
+          <span>Select the language your Agents greet users</span>
+          <select>
             <option>English</option>
             <option>Hindi</option>
             <option>Gujarati</option>
           </select>
-        </div>
+        </section>
 
-        {/* Tone of Voice */}
-        <div className="persona-section">
-          <label className="persona-label">Tone of Voice</label>
-          <p className="persona-text">Select how you would like the AI to communicate</p>
-
-          <select className="persona-input">
+        {/* Tone */}
+        <section className="persona-section">
+          <label>Tone of Voice</label>
+          <span>Select how you would like the AI to communicate</span>
+          <select>
             <option>Friendly</option>
             <option>Professional</option>
             <option>Casual</option>
           </select>
-        </div>
+        </section>
 
-        {/* Conversation Style Tabs */}
-        <div className="persona-section">
-          <label className="persona-label">Conversation Style</label>
-          <p className="persona-text">Describe how your Agent will talk</p>
+        {/* Conversation Style */}
+        <section className="persona-section">
+          <label>Conversation Style</label>
+          <span>Describe how your Agent will talk</span>
 
-          <div className="tab-box">
-            <button className="tab-btn active">Chat</button>
-            <button className="tab-btn">Voice</button>
-            <button className="tab-btn">Email</button>
+          <div className="tabs">
+            <button
+              className={activeTab === "chat" ? "active" : ""}
+              onClick={() => setActiveTab("chat")}
+            >
+              <FiMessageSquare /> Chat
+            </button>
+
+            <button
+              className={activeTab === "voice" ? "active" : ""}
+              onClick={() => setActiveTab("voice")}
+            >
+              <FiMic /> Voice
+            </button>
+
+            <button
+              className={activeTab === "email" ? "active" : ""}
+              onClick={() => setActiveTab("email")}
+            >
+              <FiMail /> Email
+            </button>
           </div>
-        </div>
+        </section>
 
-        {/* Chat Response Length */}
-        <div className="persona-section">
-          <label className="persona-label">Chat Response Length</label>
-          <input type="range" min="1" max="100" className="range-slider" />
-
-          <div className="range-labels">
-            <span>Minimal</span>
-            <span>Short</span>
-            <span>Long</span>
-            <span>Chatty</span>
-          </div>
-        </div>
-
-        {/* Guidelines */}
-        <div className="persona-section">
-          <label className="persona-label">Chat Guidelines</label>
-          <p className="persona-text">Set clear rules for how your agent responds</p>
-
-          {guidelines.map((g, i) => (
-            <div className="guideline-row" key={i}>
+        {/* Chat Settings */}
+        {activeTab === "chat" && (
+          <>
+            <section className="persona-section">
+              <label>Chat Response Length</label>
               <input
-                className="guideline-input"
-                value={g}
-                onChange={(e) => updateGuideline(i, e.target.value)}
+                type="range"
+                min="0"
+                max="100"
+                value={range}
+                onChange={(e) => setRange(e.target.value)}
               />
-              <button className="delete-btn" onClick={() => deleteGuideline(i)}>🗑</button>
-            </div>
-          ))}
+              <div className="range-labels">
+                <span>Minimal</span>
+                <span>Short</span>
+                <span>Long</span>
+                <span>Chatty</span>
+              </div>
+            </section>
 
-          <button className="add-btn" onClick={addGuideline}>+ Add new</button>
-        </div>
+            <section className="persona-section">
+              <label>Chat Guidelines</label>
+              <span>Set clear rules for how your agent responds</span>
 
+              {guidelines.map((g, i) => (
+                <div className="guideline-row" key={i}>
+                  <input
+                    value={g}
+                    onChange={(e) => updateGuideline(i, e.target.value)}
+                  />
+                  <button onClick={() => deleteGuideline(i)}>
+                    <FiTrash2 />
+                  </button>
+                </div>
+              ))}
+
+              <button className="add-btn" onClick={addGuideline}>
+                <FiPlus /> Add new
+              </button>
+            </section>
+          </>
+        )}
       </div>
     </div>
   );
 };
 
 export default AIPersona;
-    

@@ -3,6 +3,7 @@ import "./FileUpload.css";
 import { AiOutlineCloudUpload } from "react-icons/ai";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import "./AIPersona.css";
 
 const FileUpload = () => {
     const navigate = useNavigate();
@@ -102,19 +103,21 @@ const FileUpload = () => {
     };
 
     return (
-        <div className="fu-wrapper">
-            <div className="fu-header">
+        <div className="persona-container">
+            <div className="fu-header persona-header">
                 <button className="fu-back-btn" onClick={() => navigate("/dashboard/knowledge")}>
                     ←
                 </button>
-                <div>
-                    <h2 className="fu-title">FILE</h2>
-                    <p className="fu-subtitle">Upload files to train your Agent</p>
+
+                 <div>
+                    <h2>FILE</h2>
+                    <p>Upload files to train your Agent</p>
                 </div>
             </div>
 
+
+
             <div className="fu-card">
-                <label className="fu-label">Upload Files</label>
 
                 <div className="fu-upload-box">
                     <AiOutlineCloudUpload className="fu-upload-icon" />

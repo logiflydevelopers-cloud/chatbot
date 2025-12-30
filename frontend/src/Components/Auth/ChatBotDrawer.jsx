@@ -14,7 +14,7 @@ export default function ChatBotDrawer({
   avatar: defaultAvatar = Ellipse90,        // ⭐ FIXED
   firstMessage: defaultMsg = "Hi there 👋 How can I help you?",
   alignment: defaultAlign = "right",
-  onClose = () => {},
+  onClose = () => { },
   isCustomizerMode = false,
 }) {
   const [primaryColor, setPrimaryColor] = useState(defaultColor);
@@ -81,7 +81,7 @@ export default function ChatBotDrawer({
     axios
       .get(`${apiBase}/api/qa/user/${userId}`)
       .then((res) => setSuggestions(res.data || []))
-      .catch(() => {});
+      .catch(() => { });
   }, [apiBase, userId]);
 
   /* AUTO SCROLL */
@@ -207,23 +207,21 @@ export default function ChatBotDrawer({
         </button>
       </div>
 
-      {/* SUGGESTIONS */}
-      <div
-        style={{
-          padding: 10,
-          display: "flex",
-          flexWrap: "wrap",
-          gap: "8px",
-          background: "#fff",
-          borderBottom: "1px solid #eee",
-          maxHeight: 90,
-          overflowY: "auto",
-        }}
-      >
-        {suggestions.length === 0 ? (
-          <p style={{ fontSize: 12, color: "#777" }}>No suggestions</p>
-        ) : (
-          suggestions.map((qa, idx) => (
+      {/* SUGGESTIONS (ONLY IF Q&A EXISTS) */}
+      {suggestions.length > 0 && (
+        <div
+          style={{
+            padding: 10,
+            display: "flex",
+            flexWrap: "wrap",
+            gap: "8px",
+            background: "#fff",
+            borderBottom: "1px solid #eee",
+            maxHeight: 90,
+            overflowY: "auto",
+          }}
+        >
+          {suggestions.map((qa, idx) => (
             <button
               key={idx}
               onClick={() =>
@@ -245,9 +243,9 @@ export default function ChatBotDrawer({
             >
               {qa.question}
             </button>
-          ))
-        )}
-      </div>
+          ))}
+        </div>
+      )}
 
       {/* MESSAGES */}
       <div

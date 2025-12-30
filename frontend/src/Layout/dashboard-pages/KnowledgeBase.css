@@ -28,7 +28,6 @@
 .kb-title {
   font-size: 22px;
   font-weight: 700;
-  line-height: 11px;
   text-align: left;
 }
 
@@ -80,7 +79,7 @@
 /* Cards */
 .kb-card {
   background: white;
-  border-radius: 12px;
+  border-radius: .35rem;
   padding: 14px;
   display: flex;
   align-items: center;
@@ -96,9 +95,8 @@
 }
 
 .kb-icon {
-  width: 52px;
-  height: 52px;
-  border-radius: 12px;
+  padding: 12px;
+  border-radius: 0.25rem;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -115,6 +113,7 @@
 
 .kb-info p {
   margin: 2px 0 0;
+  font-size: 13px;
   color: #666;
 }
 
@@ -135,4 +134,34 @@
   border: none;
   cursor: pointer;
   font-weight: 600;
+}
+
+
+@media screen and (max-width: 768px) {
+  .kb-icon {
+    padding: 10px;
+    border-radius: .25rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    color: white;
+    margin-right: 10px;
+  }
+
+  .kb-info h3 {
+    font-size: 16px;
+  }
+
+  .kb-info p {
+    margin: 2px 0 0;
+    font-size: 13px;
+    color: #666;
+  }
+
+  .kb-arrow {
+    margin-left: auto;
+    font-size: 30px;
+    color: #bcc0d1;
+  }
 }

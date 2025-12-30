@@ -1,26 +1,40 @@
 import React from "react";
 import "./KnowledgeBase.css";
-import { FiFileText } from "react-icons/fi";
+import "./AIPersona.css";
+// import { FiFileText } from "react-icons/fi";
 import { FaLink, FaQuestionCircle } from "react-icons/fa";
 import { AiOutlineFolderOpen } from "react-icons/ai";
 import { useNavigate } from "react-router-dom";
+import aiIcon from "../../image/ai.svg";
+import {
+  FiArrowLeft,
+} from "react-icons/fi";
+import { useOutletContext } from "react-router-dom";
 
 const KnowledgeBase = () => {
   const navigate = useNavigate();
+  const { setSidebarOpen } = useOutletContext();
 
   return (
-    <div className="kb-wrapper">
+    <div className="persona-container">
 
       {/* Title */}
-      <div className="kb-header">
-        <div className="kb-icon-box purple">
-          <AiOutlineFolderOpen className="kb-header-icon" />
+      <div className="persona-header">
+        {/* Mobile back button */}
+        <button
+          className="back-btn"
+          onClick={() => setSidebarOpen(true)}
+        >
+          <FiArrowLeft />
+        </button>
+
+        <div className="persona-icon">
+          <img src={aiIcon} alt="AI Persona" />
         </div>
+
         <div>
-          <h2 className="kb-title">KNOWLEDGE BASE</h2>
-          <p className="kb-subtitle">
-            Train your Agent for context-aware responses to ensure accurate replies
-          </p>
+          <h2>KNOWLEDGE BASE</h2>
+          <p>Train your Agent for context-aware responses to ensure accurate replies</p>
         </div>
       </div>
 

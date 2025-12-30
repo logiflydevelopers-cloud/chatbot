@@ -1,7 +1,7 @@
 /* TOP HEADER WHITE AREA */
 .jf-header {
   width: auto;
-  height: 60px;
+  height: 70px;
   background: #ffffff;
   display: flex;
   align-items: center;
@@ -60,7 +60,7 @@
 
   /* SECOND STICKY BAR (Under header) */
   position: sticky;
-  top: 60px;
+  top: 70px;
   /* white header height */
   z-index: 9998;
 }
@@ -71,7 +71,6 @@
   font-size: 15px;
   font-weight: 600;
   text-decoration: none;
-  letter-spacing: 0.5px;
   transition: all 0.2s ease-in-out;
 }
 
@@ -109,4 +108,73 @@
 
 .logout-btn:active {
   transform: scale(0.97);
+}
+
+
+
+/* =========================
+   MOBILE HEADER (ONLY)
+   ========================= */
+@media (max-width: 768px) {
+
+  /* TOP WHITE HEADER */
+  .jf-header {
+    height: 70px;
+    padding: 0 14px;
+  }
+
+  .jf-logo {
+    width: 35px;
+  }
+
+  /* TITLE CENTER */
+  .jf-title {
+    font-size: 15px;
+    font-weight: 600;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 160px;
+    margin: 0 auto;
+  }
+
+  /* RIGHT ICONS */
+  .jf-user-icon {
+    font-size: 26px;
+  }
+
+  /* HIDE LOGOUT BUTTON ON MOBILE */
+  .logout-btn {
+    display: none;
+  }
+
+  /* =========================
+     BLUE TAB BAR
+     ========================= */
+  /* BLUE BAR */
+  .jf-bluebar {
+    padding: 0;
+    gap: 10px;
+    display: flex;
+    background: linear-gradient(90deg, #7b4bff, #4f7cff);
+  }
+
+  /* TAB */
+  .jf-tab {
+    width: 25%;
+    text-align: center;
+    font-size: 13px;
+    font-weight: 500;
+    color: #eaeaff;
+    padding: 13px 0;
+    border-radius: 0;
+    background: transparent;
+    transition: background 0.2s ease;
+  }
+
+  /* ACTIVE TAB (LIGHT PURPLE) */
+  .jf-tab.active {
+    background: rgba(255, 255, 255, 0.22);
+    color: #ffffff;
+  }
 }

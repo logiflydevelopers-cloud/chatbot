@@ -18,7 +18,7 @@
 }
 
 .qa-add-btn {
-  background: #0b78e3;
+  background: linear-gradient(to right, #7b4bff, #3d8bff);
   color: #fff;
   border: none;
   padding: 10px 16px;
@@ -83,7 +83,7 @@
 }
 
 .qa-edit {
-  background: #3fb64f;
+  background: linear-gradient(to right, #7b4bff, #3d8bff);
   color: #fff;
   padding: 8px 12px;
   border-radius: 6px;

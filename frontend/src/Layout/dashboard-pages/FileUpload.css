@@ -121,7 +121,7 @@
 
 /* SAVE BUTTON */
 .fu-save-btn {
-  background: #4CAF50;
+  background: linear-gradient(to right, #7b4bff, #3d8bff);
   color: white;
   font-size: 18px;
   border: none;

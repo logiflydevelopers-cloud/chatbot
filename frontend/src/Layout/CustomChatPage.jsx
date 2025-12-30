@@ -1,137 +1,165 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import ChatBotDrawer from "../Components/Auth/ChatBotDrawer";
-import { useParams, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
-// ⭐ IMPORT IMAGES FROM src/image
+// ⭐ IMPORT IMAGES
 import Ellipse90 from "../image/Ellipse 90.png";
 import Ellipse91 from "../image/Ellipse 91.png";
 import Ellipse92 from "../image/Ellipse 92.png";
 import Ellipse93 from "../image/Ellipse 93.png";
 
-const CustomChatPage = ({ user }) => {
-  const { userId } = useParams();
+const CustomChatPage = () => {
   const navigate = useNavigate();
   const apiBase = "http://localhost:4000";
 
-  // ⭐ DEFAULT AVATAR = Ellipse90
+  /* ===============================
+     🔐 GET USER FROM STORAGE (SOURCE OF TRUTH)
+  =============================== */
+  const storedUser = JSON.parse(localStorage.getItem("user"));
+  const userId =
+    storedUser?._id || storedUser?.id || storedUser?.userId || null;
+
+  /* ===============================
+     STATE
+  =============================== */
   const [avatar, setAvatar] = useState(Ellipse90);
-  const [firstMessage, setFirstMessage] = useState("Hi there 👋 I'm your assistant!");
+  const [firstMessage, setFirstMessage] = useState(
+    "Hi there 👋 I'm your assistant!"
+  );
   const [primaryColor, setPrimaryColor] = useState("#2563eb");
   const [alignment, setAlignment] = useState("right");
-
   const [selectedWebsite, setSelectedWebsite] = useState(null);
 
   const [showChat, setShowChat] = useState(true);
   const [showBubble, setShowBubble] = useState(false);
   const [isCustomizerMode] = useState(true);
 
-  /* REDIRECT IF NOT LOGGED IN */
+  /* ===============================
+     🔴 REDIRECT IF NOT LOGGED IN
+  =============================== */
   useEffect(() => {
-    if (!user) navigate("/login");
-  }, [user, navigate]);
+    if (!userId) {
+      navigate("/login");
+    }
+  }, [userId, navigate]);
 
-  /* LOAD CHATBOT SETTINGS FROM DATABASE */
+  /* ===============================
+     ⭐ CHECK KNOWLEDGE (DB BASED)
+     👉 THIS FIXES YOUR ISSUE
+  =============================== */
   useEffect(() => {
+    if (!userId) return;
+
+    const checkKnowledge = async () => {
+      try {
+        const res = await axios.get(
+          `${apiBase}/api/chatbot/knowledge-status/${userId}`
+        );
+
+        if (!res.data?.hasKnowledge) {
+          alert("⚠️ Please upload FILE, LINK or add Q&A first.");
+          navigate("/dashboard/knowledge");
+        }
+      } catch (err) {
+        console.error("Knowledge check failed:", err);
+      }
+    };
+
+    checkKnowledge();
+  }, [userId, navigate]);
+
+  /* ===============================
+     ⭐ LOAD CHATBOT SETTINGS FROM DB
+  =============================== */
+  useEffect(() => {
+    if (!userId) return;
+
     const fetchSettings = async () => {
       try {
-        const res = await axios.get(`${apiBase}/api/chatbot/${userId}`);
+        const res = await axios.get(
+          `${apiBase}/api/chatbot/${userId}`
+        );
 
-        if (res.data.success && res.data.settings) {
+        if (res.data?.settings) {
           const s = res.data.settings;
 
-          // ⭐ Map DB avatar string to imported images
           setAvatar(
-            s.avatar === "Ellipse91" ? Ellipse91 :
-            s.avatar === "Ellipse92" ? Ellipse92 :
-            s.avatar === "Ellipse93" ? Ellipse93 :
-            Ellipse90
+            s.avatar === "Ellipse91"
+              ? Ellipse91
+              : s.avatar === "Ellipse92"
+                ? Ellipse92
+                : s.avatar === "Ellipse93"
+                  ? Ellipse93
+                  : Ellipse90
           );
 
-          setFirstMessage(s.firstMessage || "Hi there 👋 I'm your assistant!");
+          setFirstMessage(
+            s.firstMessage || "Hi there 👋 I'm your assistant!"
+          );
           setPrimaryColor(s.primaryColor || "#2563eb");
           setAlignment(s.alignment || "right");
-
-          if (s.website) setSelectedWebsite(s.website);
+          setSelectedWebsite(s.website || null);
         }
-      } catch (error) {
-        console.warn("DB load error →", error.message);
+      } catch (err) {
+        console.warn("Settings load failed:", err.message);
       }
     };
 
     fetchSettings();
   }, [userId]);
 
-  /* CHECK TRAINING DATA */
-  useEffect(() => {
-    const checkTrainingData = async () => {
-      try {
-        const [pdfRes, linkRes, qaRes] = await Promise.all([
-          axios.get(`${apiBase}/api/page/pdf/${userId}`),
-          axios.get(`${apiBase}/api/page/link/${userId}`),
-          axios.get(`${apiBase}/api/qa/user/${userId}`),
-        ]);
-
-        const hasPDF = pdfRes.data?.length > 0;
-        const hasLinks = linkRes.data?.length > 0;
-        const hasQA = qaRes.data?.length > 0;
-
-        if (!hasPDF && !hasLinks && !hasQA) {
-          alert("⚠ Please upload FILE, LINK or add Q&A first.");
-          navigate("/dashboard/train");
-        }
-      } catch (err) {
-        console.log("Training data check failed →", err.message);
-      }
-    };
-
-    checkTrainingData();
-  }, [userId, navigate]);
-
-  /* SAVE CUSTOMIZATION TO DB */
+  /* ===============================
+     💾 SAVE CUSTOMIZATION
+  =============================== */
   const saveCustomization = async () => {
     try {
       const payload = {
         userId,
-
-        // ⭐ convert imported image → DB string
         avatar:
-          avatar === Ellipse91 ? "Ellipse91" :
-          avatar === Ellipse92 ? "Ellipse92" :
-          avatar === Ellipse93 ? "Ellipse93" :
-          "Ellipse90",
-
+          avatar === Ellipse91
+            ? "Ellipse91"
+            : avatar === Ellipse92
+              ? "Ellipse92"
+              : avatar === Ellipse93
+                ? "Ellipse93"
+                : "Ellipse90",
         firstMessage,
         primaryColor,
         alignment,
         website: selectedWebsite || null,
       };
 
-      const res = await axios.post(`${apiBase}/api/chatbot/save`, payload);
+      const res = await axios.post(
+        `${apiBase}/api/chatbot/save`,
+        payload
+      );
 
-      if (res.data.success) {
-        alert("Customization Saved Successfully!");
-        localStorage.setItem("chatbot_settings", JSON.stringify(payload));
+      if (res.data?.success) {
+        alert("✅ Customization Saved Successfully!");
+        localStorage.setItem(
+          "chatbot_settings",
+          JSON.stringify(payload)
+        );
         localStorage.setItem("chatbotSaved", "true");
       } else {
-        alert("Save failed");
+        alert("❌ Save failed");
       }
-    } catch (error) {
-      alert("Save Failed");
+    } catch (err) {
+      alert("❌ Save Failed");
     }
   };
 
-  /* ⭐ AVATAR OPTIONS */
   const avatarOptions = [Ellipse90, Ellipse91, Ellipse92, Ellipse93];
 
   return (
-    <div style={{ display: "flex", height: "100vh", width: "100%", overflow: "hidden" }}>
+    <div style={{ display: "flex", height: "100vh", width: "100%" }}>
 
       {/* SAVE BUTTON */}
       <div
         style={{
           position: "fixed",
-          top: "100px",
+          top: "90px",
           width: "100%",
           padding: "10px 20px",
           zIndex: 1000,
@@ -160,16 +188,14 @@ const CustomChatPage = ({ user }) => {
           background: "#f3f4f6",
           padding: "20px",
           borderRight: "1px solid #d1d5db",
-          height: "100vh",
+          marginTop: "60px",
           overflowY: "auto",
-          marginTop: "50px",
         }}
       >
         <h3>Customize</h3>
 
-        {/* ⭐ AVATAR SELECT */}
         <label>Choose Avatar</label>
-        <div style={{ display: "flex", gap: 10, flexWrap: "wrap", marginBottom: 20 }}>
+        <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
           {avatarOptions.map((img) => (
             <img
               key={img}
@@ -180,50 +206,37 @@ const CustomChatPage = ({ user }) => {
                 width: 55,
                 height: 55,
                 borderRadius: "50%",
-                border: avatar === img ? "3px solid #2563eb" : "2px solid #ccc",
-                padding: "3px",
+                border:
+                  avatar === img
+                    ? "3px solid #2563eb"
+                    : "2px solid #ccc",
                 cursor: "pointer",
-                objectFit: "cover",
               }}
             />
           ))}
         </div>
 
-        {/* ⭐ THEME COLOR */}
         <label>Chat Theme Color</label>
         <input
           type="color"
           value={primaryColor}
           onChange={(e) => setPrimaryColor(e.target.value)}
-          style={{ width: "100%", height: "40px", marginBottom: 15 }}
+          style={{ width: "100%", height: "40px" }}
         />
 
-        {/* ⭐ WELCOME MESSAGE */}
         <label>Welcome Message</label>
         <textarea
           value={firstMessage}
           onChange={(e) => setFirstMessage(e.target.value)}
           rows={3}
-          style={{
-            width: "100%",
-            borderRadius: 6,
-            padding: 10,
-            border: "1px solid #ccc",
-            marginBottom: 15,
-          }}
+          style={{ width: "100%", padding: 10 }}
         />
 
-        {/* ⭐ CHAT POSITION */}
         <label>Chat Position</label>
         <select
           value={alignment}
           onChange={(e) => setAlignment(e.target.value)}
-          style={{
-            width: "100%",
-            padding: 10,
-            borderRadius: 6,
-            border: "1px solid #ccc",
-          }}
+          style={{ width: "100%", padding: 10 }}
         >
           <option value="right">Right</option>
           <option value="left">Left</option>
@@ -231,36 +244,32 @@ const CustomChatPage = ({ user }) => {
       </div>
 
       {/* CHAT PREVIEW */}
-      <div style={{ flex: 1, position: "relative", marginTop: "50px" }}>
-        {showBubble && (
-          <div
-            onClick={() => {
-              setShowBubble(false);
-              setShowChat(true);
-            }}
+      {/* CHAT + WEBSITE PREVIEW */}
+      <div
+        style={{
+          flex: 1,
+          marginTop: "60px",
+          position: "relative",
+          overflow: "hidden",
+        }}
+      >
+        {/*  WEBSITE BACKGROUND PREVIEW */}
+        {selectedWebsite && (
+          <iframe
+            src={selectedWebsite}
+            title="Website Preview"
             style={{
-              position: "fixed",
-              bottom: "30px",
-              right: alignment === "right" ? "30px" : "unset",
-              left: alignment === "left" ? "30px" : "unset",
-              width: "70px",
-              height: "70px",
-              borderRadius: "50%",
-              background: primaryColor,
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-              color: "#fff",
-              fontSize: "35px",
-              cursor: "pointer",
-              boxShadow: "0 4px 12px rgba(0,0,0,0.25)",
-              zIndex: 99999,
+              position: "absolute",
+              inset: 0,
+              width: "100%",
+              height: "100%",
+              border: "none",
+              zIndex: 1,
             }}
-          >
-            💬
-          </div>
+          />
         )}
 
+        {/* 🤖 CHATBOT OVERLAY */}
         {showChat && (
           <ChatBotDrawer
             key={primaryColor + avatar + firstMessage + alignment}
@@ -275,9 +284,11 @@ const CustomChatPage = ({ user }) => {
               setShowChat(false);
               setShowBubble(true);
             }}
+            style={{ zIndex: 9999 }}
           />
         )}
       </div>
+
     </div>
   );
 };

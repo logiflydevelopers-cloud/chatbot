@@ -1,60 +1,60 @@
-import { Link, useNavigate, useLocation } from "react-router-dom";
+import { NavLink, useNavigate, useLocation } from "react-router-dom";
 import "./Header.css";
 import { FaUserCircle } from "react-icons/fa";
 import logo from "../image/logo.png";
+import axios from "axios";
+
 
 function Header({ user, setUser }) {
   const navigate = useNavigate();
   const location = useLocation();
+  const apiBase = "http://localhost:4000";
 
-  const userId = user?.id || user?._id || user?.userId;
+  const userId = user?._id || user?.id || user?.userId;
 
-  const goDashboard = () => {
-    navigate("/dashboard/train");
-  };
-
+  /* ================= LOGOUT ================= */
   const handleLogout = () => {
-    localStorage.removeItem("accessToken");
-    localStorage.removeItem("uploadedWebsite");
-    localStorage.removeItem("hasPDF");
-    localStorage.removeItem("hasQA");
-    localStorage.removeItem("chatbotSaved");
-
+    localStorage.clear();
     setUser(null);
-    navigate("/login");
+    window.location.href = "/login";
   };
 
   const goProfile = () => {
-    if (!userId) {
-      alert("User ID missing");
-      return;
-    }
+    if (!userId) return;
     navigate(`/userDetails/${userId}`);
   };
 
-  /* ---------------------------------------------------
-     ⭐ CUSTOMIZE PROTECTION (FILE / LINK / Q&A ANY ONE)
-  ----------------------------------------------------*/
-  const handleCustomizeClick = () => {
-    const hasPDF = localStorage.getItem("hasPDF");
-    const hasQA = localStorage.getItem("hasQA");
-    const hasWebsite = localStorage.getItem("uploadedWebsite");
+  /* ================= TRAIN ACTIVE ================= */
+  const isTrainActive =
+    location.pathname.startsWith("/dashboard") &&
+    !location.pathname.startsWith("/custom-chat") &&
+    !location.pathname.startsWith("/embed-code");
 
-    if (!hasPDF && !hasQA && !hasWebsite) {
-      alert("⚠️ Please upload FILE, LINK or add Q&A first.");
-      return;
+  /* ================= CUSTOMIZE ================= */
+  const handleCustomizeClick = async () => {
+    if (!userId) return navigate("/login");
+
+    try {
+      const res = await axios.get(
+        `${apiBase}/api/chatbot/knowledge-status/${userId}`
+      );
+
+      if (!res.data.hasKnowledge) {
+        alert("⚠️ Please upload FILE, LINK or add Q&A first.");
+        navigate("/dashboard/knowledge");
+        return;
+      }
+
+      navigate("/custom-chat");
+    } catch (err) {
+      alert("Something went wrong");
     }
-
-    navigate(`/custom-chat/${userId}`);
   };
 
-
-  /* ---------------------------------------------------
-     ⭐ PUBLISH PROTECTION
-  ----------------------------------------------------*/
+  /* ================= PUBLISH ================= */
   const handlePublishClick = () => {
     if (!localStorage.getItem("chatbotSaved")) {
-      alert("⚠️ Please customize and SAVE your chatbot before publishing.");
+      alert("⚠️ Please customize and SAVE chatbot first.");
       return;
     }
     navigate(`/embed-code/${userId}`);
@@ -64,7 +64,7 @@ function Header({ user, setUser }) {
     <>
       {/* HEADER */}
       <header className="jf-header">
-        <div className="jf-left" onClick={goDashboard}>
+        <div className="jf-left" onClick={() => navigate("/dashboard/knowledge")}>
           <img src={logo} className="jf-logo" alt="logo" />
         </div>
 
@@ -81,23 +81,22 @@ function Header({ user, setUser }) {
         </button>
       </header>
 
-      {/* TOP BLUE TABS */}
+      {/* TOP BAR */}
       <div className="jf-bluebar">
-
         {/* TRAIN */}
-        <Link
-          to="/dashboard/train"
-          className={`jf-tab ${location.pathname.includes("/train") ? "active" : ""
-            }`}
+        <NavLink
+          to="/dashboard/knowledge"
+          className={`jf-tab ${isTrainActive ? "active" : ""}`}
         >
           TRAIN
-        </Link>
+        </NavLink>
 
         {/* CUSTOMIZE */}
         <div
           onClick={handleCustomizeClick}
-          className={`jf-tab ${location.pathname.includes("/custom-chat") ? "active" : ""
-            }`}
+          className={`jf-tab ${
+            location.pathname.startsWith("/custom-chat") ? "active" : ""
+          }`}
         >
           CUSTOMIZE
         </div>
@@ -105,8 +104,9 @@ function Header({ user, setUser }) {
         {/* PUBLISH */}
         <div
           onClick={handlePublishClick}
-          className={`jf-tab ${location.pathname.includes("/embed-code") ? "active" : ""
-            }`}
+          className={`jf-tab ${
+            location.pathname.startsWith("/embed-code") ? "active" : ""
+          }`}
         >
           PUBLISH
         </div>

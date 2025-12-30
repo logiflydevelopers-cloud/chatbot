@@ -2,26 +2,41 @@ import React, { useState, useEffect } from "react";
 import "./AddWebsite.css";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import "./AIPersona.css";
 
 const AddWebsite = ({ user }) => {
   const navigate = useNavigate();
 
   const [url, setUrl] = useState("");
+  const [storedDomain, setStoredDomain] = useState("");
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [loading, setLoading] = useState(false);
-  const [storedDomain, setStoredDomain] = useState("");
 
   /* =====================================================
-        ⭐ LOAD STORED WEBSITE ON REFRESH
+        ⭐ LOAD WEBSITE FROM DATABASE (SOURCE OF TRUTH)
   ===================================================== */
   useEffect(() => {
-    const saved = localStorage.getItem("uploadedWebsite");
-    if (saved) {
-      setUrl(saved);
-      setStoredDomain(new URL(saved).hostname);
-    }
-  }, []);
+    const loadWebsite = async () => {
+      try {
+        const userId = user?._id || user?.id || user?.userId;
+        if (!userId) return;
+
+        const res = await axios.get(
+          `http://localhost:4000/api/chatbot/${userId}`
+        );
+
+        if (res.data?.settings?.website) {
+          setUrl(res.data.settings.website);
+          setStoredDomain(new URL(res.data.settings.website).hostname);
+        }
+      } catch (err) {
+        console.error("Failed to fetch website from DB", err);
+      }
+    };
+
+    loadWebsite();
+  }, [user]);
 
   /* =====================================================
         ⭐ CRAWL + SAVE WEBSITE
@@ -53,37 +68,25 @@ const AddWebsite = ({ user }) => {
       const websiteURL = url.trim();
       const domainName = new URL(websiteURL).hostname;
 
-      /* 1️⃣ — SAVE WEBSITE PAGES IN BACKEND */
+      /* 1️⃣ SAVE WEBSITE PAGES */
       await axios.post("http://localhost:4000/api/webhook/add-custom-website", {
         userId,
         url: websiteURL,
         name: domainName,
       });
 
-      /* 2️⃣ — SEND WEBSITE TO N8N WORKFLOW */
+      /* 2️⃣ SEND TO N8N */
       await axios.post(
         "http://localhost:5678/webhook-test/add-custom-website",
-        {
-          userId,
-          websiteURL,
-        },
+        { userId, websiteURL },
         { withCredentials: false }
       );
 
-      /* 3️⃣ — UPDATE Chatbot Settings (website field only) */
+      /* 3️⃣ SAVE WEBSITE IN CHATBOT SETTINGS */
       await axios.post("http://localhost:4000/api/chatbot/save", {
         userId,
         website: websiteURL,
       });
-
-      /* 4️⃣ — SAVE IN LOCAL STORAGE */
-      localStorage.setItem("uploadedWebsite", websiteURL);
-
-      const ls = localStorage.getItem("chatbot_settings");
-      if (ls) {
-        const updated = { ...JSON.parse(ls), website: websiteURL };
-        localStorage.setItem("chatbot_settings", JSON.stringify(updated));
-      }
 
       setStoredDomain(domainName);
       setSuccess("✅ Website uploaded successfully!");
@@ -96,20 +99,17 @@ const AddWebsite = ({ user }) => {
   };
 
   /* =====================================================
-        ⭐ REMOVE WEBSITE (DB + LOCAL)
+        ⭐ REMOVE WEBSITE (DB ONLY)
   ===================================================== */
   const removeWebsite = async () => {
-    if (!storedDomain) {
-      alert("No website found to remove.");
-      return;
-    }
-
-    const userId = user?._id || user?.id || user?.userId;
+    if (!storedDomain) return;
 
     if (!window.confirm("Are you sure you want to remove this website?")) return;
 
     try {
-      /* 1️⃣ — DELETE WEBSITE PAGES FROM BACKEND */
+      const userId = user?._id || user?.id || user?.userId;
+
+      /* 1️⃣ REMOVE WEBSITE PAGES */
       await axios.delete("http://localhost:4000/api/webhook/remove-website", {
         data: {
           userId,
@@ -117,40 +117,31 @@ const AddWebsite = ({ user }) => {
         },
       });
 
-      /* 2️⃣ — REMOVE FROM Chatbot Setting DB */
+      /* 2️⃣ CLEAR WEBSITE FROM SETTINGS */
       await axios.post("http://localhost:4000/api/chatbot/save", {
         userId,
         website: null,
       });
 
-      /* 3️⃣ — CLEAR LOCAL STORAGE */
-      localStorage.removeItem("uploadedWebsite");
-
-      const ls = localStorage.getItem("chatbot_settings");
-      if (ls) {
-        const updated = { ...JSON.parse(ls), website: null };
-        localStorage.setItem("chatbot_settings", JSON.stringify(updated));
-      }
-
       setUrl("");
       setStoredDomain("");
-      setSuccess("✅ Website removed!");
+      setSuccess("✅ Website removed successfully!");
     } catch (err) {
-      console.log(err);
+      console.error(err);
       setError("❌ Failed to remove website.");
     }
   };
 
   return (
-    <div className="link-page-wrapper">
-      <div className="link-header-row">
-        <button className="back-btn" onClick={() => navigate("/dashboard/knowledge")}>
-          ←
-        </button>
+    <div className="persona-container">
+      <div className="link-header-row persona-header">
+        <button className="fu-back-btn" onClick={() => navigate("/dashboard/knowledge")}>
+                    ←
+                </button>
 
         <div>
-          <h2 className="link-title">LINK</h2>
-          <p className="link-subtitle">
+          <h2>LINK</h2>
+          <p>
             Add website URLs to train your Agent with dynamic information
           </p>
         </div>
@@ -174,7 +165,7 @@ const AddWebsite = ({ user }) => {
           </button>
         )}
 
-        <hr />
+        <hr className="hrhr"/>
 
         <label className="label-text">Enable Periodic Recrawling</label>
         <p className="help-text">Agent will automatically recrawl.</p>

@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import "./EditQA.css";
 import { createQA, getQAById, updateQA } from "./qaService";
+import "../AIPersona.css";
 
 const EditQA = () => {
   const { id } = useParams(); // id is optional (for edit)
@@ -65,9 +66,9 @@ const EditQA = () => {
   };
 
   return (
-    <div className="editqa-wrapper">
+    <div className="persona-container">
       <div className="editqa-header">
-        <button className="editqa-back" onClick={() => navigate(-1)}>←</button>
+        <button className="fu-back-btn" onClick={() => navigate(-1)}>←</button>
         <h2>{id ? "Edit Q&A" : "Add Q&A"}</h2>
       </div>
 

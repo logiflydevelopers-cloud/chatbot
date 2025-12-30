@@ -1,0 +1,128 @@
+/* =========================
+   ROOT VARIABLES (Theme)
+========================= */
+:root {
+  --primary: #6d5dfc;
+  --primary-light: #8b7bff;
+  --bg-main: #f8f9fc;
+  --card-bg: #ffffff;
+  --border: #e6e8f0;
+  --text-main: #111827;
+  --text-muted: #6b7280;
+}
+
+/* =========================
+   PAGE CONTAINER
+========================= */
+.persona-container {
+  background: var(--bg-main);
+}
+
+/* =========================
+   HEADER (AI PERSONA)
+========================= */
+
+/* =========================
+   VOICE AGENT CARD
+========================= */
+.voice-card {
+  width: 360px;
+  padding: 24px;
+  background: var(--card-bg);
+  border-radius: 14px;
+  border: 1px solid var(--border);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.04);
+  text-align: center;
+}
+
+/* =========================
+   PULSE INDICATOR
+========================= */
+.pulse {
+  width: 64px;
+  height: 64px;
+  background: var(--primary);
+  border-radius: 50%;
+  margin: 0 auto 16px;
+  opacity: 0.12;
+}
+
+.pulse.active {
+  animation: softPulse 1.6s infinite;
+}
+
+@keyframes softPulse {
+  0% {
+    transform: scale(0.95);
+    opacity: 0.2;
+  }
+  70% {
+    transform: scale(1.15);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(0.95);
+    opacity: 0;
+  }
+}
+
+/* =========================
+   TEXT
+========================= */
+.title {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--text-main);
+  margin-bottom: 4px;
+}
+
+.status {
+  font-size: 14px;
+  color: var(--text-muted);
+  margin-bottom: 20px;
+  text-transform: capitalize;
+}
+
+/* =========================
+   ACTION BUTTON
+========================= */
+.action-btn {
+  width: 100%;
+  padding: 14px;
+  font-size: 15px;
+  font-weight: 600;
+  border-radius: 10px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+/* START */
+.action-btn.start {
+  background: linear-gradient(90deg, var(--primary), var(--primary-light));
+  color: #ffffff;
+}
+
+.action-btn.start:hover {
+  opacity: 0.95;
+}
+
+/* STOP */
+.action-btn.stop {
+  background: #f3f4f6;
+  color: var(--text-main);
+  border: 1px solid var(--border);
+}
+
+.action-btn.stop:hover {
+  background: #e5e7eb;
+}
+
+/* =========================
+   RESPONSIVE (Mobile)
+========================= */
+@media (max-width: 480px) {
+  .voice-card {
+    width: 100%;
+  }
+}
