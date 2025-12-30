@@ -16,6 +16,19 @@ const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 // ==============================
 let otpStore = {};
 
+// ==============================
+// HELPERS
+// ==============================
+const BACKEND_CALLBACK =
+  process.env.NODE_ENV === "production"
+    ? "https://chatbot-backend-project.vercel.app/api/auth/google/callback"
+    : "http://localhost:4000/api/auth/google/callback";
+
+const FRONTEND_URL =
+  process.env.NODE_ENV === "production"
+    ? "https://chatbot-frontend-mocha-six.vercel.app"
+    : "http://localhost:3000";
+
 /* ============================================================
    NORMAL LOGIN & REGISTER
 ============================================================ */
@@ -98,7 +111,7 @@ router.get("/google", (req, res) => {
         "https://www.googleapis.com/auth/userinfo.email",
         "https://www.googleapis.com/auth/userinfo.profile",
       ],
-      redirect_uri: process.env.GOOGLE_REDIRECT,
+      redirect_uri: BACKEND_CALLBACK, // ✅ FIXED
     });
 
     res.json({ url });
@@ -115,14 +128,13 @@ router.get("/google/callback", async (req, res) => {
     const { code } = req.query;
     if (!code) return res.status(400).json({ message: "No code provided" });
 
-    // 🔹 Exchange code for token
     const tokenResponse = await axios.post(
       "https://oauth2.googleapis.com/token",
       {
         code,
         client_id: process.env.GOOGLE_CLIENT_ID,
         client_secret: process.env.GOOGLE_CLIENT_SECRET,
-        redirect_uri: process.env.GOOGLE_REDIRECT,
+        redirect_uri: BACKEND_CALLBACK, // ✅ FIXED
         grant_type: "authorization_code",
       },
       { headers: { "Content-Type": "application/json" } }
@@ -130,7 +142,6 @@ router.get("/google/callback", async (req, res) => {
 
     const { id_token } = tokenResponse.data;
 
-    // 🔹 Verify Google token
     const ticket = await client.verifyIdToken({
       idToken: id_token,
       audience: process.env.GOOGLE_CLIENT_ID,
@@ -138,9 +149,7 @@ router.get("/google/callback", async (req, res) => {
 
     const googleUser = ticket.getPayload();
 
-    // 🔹 Find or create user
     let user = await User.findOne({ email: googleUser.email });
-
     if (!user) {
       user = await User.create({
         name: googleUser.name,
@@ -150,33 +159,25 @@ router.get("/google/callback", async (req, res) => {
       });
     }
 
-    // 🔹 Generate JWT (same as normal login)
     const accessToken = jwt.sign(
       { id: user._id },
       process.env.JWT_SECRET,
       { expiresIn: "7d" }
     );
 
-    // 🔹 Safe user object (frontend needs this)
     const safeUser = {
       id: user._id,
       name: user.name,
       email: user.email,
     };
 
-    // 🔹 Redirect to frontend with token + user
     return res.redirect(
-      `${process.env.FRONTEND_URL}/google-success?token=${accessToken}&user=${encodeURIComponent(
-        JSON.stringify({
-          id: user._id,
-          name: user.name,
-          email: user.email,
-        })
+      `${FRONTEND_URL}/google-success?token=${accessToken}&user=${encodeURIComponent(
+        JSON.stringify(safeUser)
       )}`
     );
-
   } catch (err) {
-    console.error("❌ Google Login Error:", err.response?.data || err);
+    console.error("❌ Google Login Error:", err);
     res.status(500).json({ message: "Google login failed" });
   }
 });
