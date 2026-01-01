@@ -153,11 +153,13 @@
 
     .pageWrapper {
         background: linear-gradient(180deg, #5550FF, #3C4984);
+        align-items: flex-start;
     }
 
     .loginCard {
         flex-direction: column;
-        height: 100vh;
+        height: auto;
+        min-height: 100vh;
     }
 
     .leftSide,
@@ -167,7 +169,8 @@
     }
 
     .leftSide {
-        padding-top: 40px;
+        padding-top: 30px;
+        padding-bottom: 10px;
         justify-content: center;
     }
 
@@ -177,11 +180,12 @@
     }
 
     .rightSide {
-        justify-content: flex-start;
+        justify-content: center;
+        padding-bottom: 40px;
     }
 
     .authForm {
-        margin: 0 auto;
+        margin-top: -20px; /* robot + box joint */
     }
 
     .robotDesktop {
