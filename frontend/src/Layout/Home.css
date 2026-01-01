@@ -1676,8 +1676,9 @@ body {
 
     .bot-connector {
         position: absolute;
-        top: -4%;
-        rotate: 10deg;
+        top: -7%;
+        rotate: 90deg;
+        z-index: -999;
         transform: translateY(-50%);
     }
 
