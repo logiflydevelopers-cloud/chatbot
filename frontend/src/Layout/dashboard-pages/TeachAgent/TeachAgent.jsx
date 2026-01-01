@@ -8,7 +8,7 @@ import { useOutletContext } from "react-router-dom";
 import "../train-page.css";
 
 const TeachAgent = ({ user }) => {
-  const apiBase = "http://localhost:4000/teach-agent";
+  const apiBase = "https://chatbot-backend-project.vercel.app/teach-agent";
 
   // 🔹 Freeze username (NO warning, NO rerender)
   const userNameRef = useRef(
