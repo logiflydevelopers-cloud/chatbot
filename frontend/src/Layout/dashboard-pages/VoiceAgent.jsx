@@ -1,6 +1,6 @@
 import { useRef, useState } from "react";
 import "./VoiceAgent.css";
-import "./AIPersona.css";
+import "./train-page.css";
 import {
   FiArrowLeft,
 } from "react-icons/fi";

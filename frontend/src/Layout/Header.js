@@ -8,7 +8,7 @@ import axios from "axios";
 function Header({ user, setUser }) {
   const navigate = useNavigate();
   const location = useLocation();
-  const apiBase = "https://chatbot-backend-project.vercel.app";
+  const apiBase = "http://localhost:4000";
 
   const userId = user?._id || user?.id || user?.userId;
 

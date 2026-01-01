@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import "./EditQA.css";
 import { createQA, getQAById, updateQA } from "./qaService";
-import "../AIPersona.css";
+import "../train-page.css";
 
 const EditQA = () => {
   const { id } = useParams(); // id is optional (for edit)

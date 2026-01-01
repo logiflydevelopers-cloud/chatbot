@@ -1,6 +1,6 @@
 import React from "react";
 import "./KnowledgeBase.css";
-import "./AIPersona.css";
+import "./train-page.css";
 // import { FiFileText } from "react-icons/fi";
 import { FaLink, FaQuestionCircle } from "react-icons/fa";
 import { AiOutlineFolderOpen } from "react-icons/ai";

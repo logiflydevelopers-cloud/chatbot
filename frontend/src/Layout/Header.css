@@ -52,7 +52,7 @@
 .jf-bluebar {
   width: 100%;
   height: 40px;
-  background: linear-gradient(to right, #7b4bff, #3d8bff);
+  background: #39393B;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -79,7 +79,7 @@
 }
 
 .jf-tab.active {
-  background: rgba(255, 255, 255, 0.25);
+  background: #5550FF;
   color: white !important;
 }
 

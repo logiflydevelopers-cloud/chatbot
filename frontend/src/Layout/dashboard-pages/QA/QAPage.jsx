@@ -2,7 +2,7 @@ import React, { useEffect, useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import "./QAPage.css";
 import { getUserQAs, deleteQA } from "./qaService";
-import "../AIPersona.css";
+import "../train-page.css";
 
 const QAPage = () => {
   const navigate = useNavigate();

@@ -11,6 +11,7 @@ import { useOutletContext } from "react-router-dom";
 
 import aiIcon from "../../image/ai.svg"; // correct path
 import "./AIPersona.css";
+import "./train-page.css";
 
 const AIPersona = () => {
   // 👉 get sidebar controller from DashboardLayout

@@ -11,7 +11,7 @@ import Ellipse93 from "../image/Ellipse 93.png";
 
 const CustomChatPage = () => {
   const navigate = useNavigate();
-  const apiBase = "https://chatbot-backend-project.vercel.app";
+  const apiBase = "http://localhost:4000";
 
   /* ===============================
      🔐 GET USER FROM STORAGE (SOURCE OF TRUTH)

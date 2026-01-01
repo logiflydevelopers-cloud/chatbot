@@ -5,10 +5,10 @@ import BotAvatar from "../../../image/Ellipse 90.png";
 import aiIcon from "../../../image/ai.svg";
 import { FiArrowLeft } from "react-icons/fi";
 import { useOutletContext } from "react-router-dom";
-import "../AIPersona.css";
+import "../train-page.css";
 
 const TeachAgent = ({ user }) => {
-  const apiBase = "https://chatbot-backend-project.vercel.app/teach-agent";
+  const apiBase = "http://localhost:4000/teach-agent";
 
   // 🔹 Freeze username (NO warning, NO rerender)
   const userNameRef = useRef(

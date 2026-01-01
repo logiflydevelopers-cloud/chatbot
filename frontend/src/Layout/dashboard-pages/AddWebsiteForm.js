@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import "./AddWebsite.css";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import "./AIPersona.css";
+import "./train-page.css";
 
 const AddWebsite = ({ user }) => {
   const navigate = useNavigate();
@@ -23,7 +23,7 @@ const AddWebsite = ({ user }) => {
         if (!userId) return;
 
         const res = await axios.get(
-          `https://chatbot-backend-project.vercel.app/api/chatbot/${userId}`
+          `http://localhost:4000/api/chatbot/${userId}`
         );
 
         if (res.data?.settings?.website) {
@@ -69,7 +69,7 @@ const AddWebsite = ({ user }) => {
       const domainName = new URL(websiteURL).hostname;
 
       /* 1️⃣ SAVE WEBSITE PAGES */
-      await axios.post("https://chatbot-backend-project.vercel.app/api/webhook/add-custom-website", {
+      await axios.post("http://localhost:4000/api/webhook/add-custom-website", {
         userId,
         url: websiteURL,
         name: domainName,
@@ -83,7 +83,7 @@ const AddWebsite = ({ user }) => {
       );
 
       /* 3️⃣ SAVE WEBSITE IN CHATBOT SETTINGS */
-      await axios.post("https://chatbot-backend-project.vercel.app/api/chatbot/save", {
+      await axios.post("http://localhost:4000/api/chatbot/save", {
         userId,
         website: websiteURL,
       });
@@ -110,7 +110,7 @@ const AddWebsite = ({ user }) => {
       const userId = user?._id || user?.id || user?.userId;
 
       /* 1️⃣ REMOVE WEBSITE PAGES */
-      await axios.delete("https://chatbot-backend-project.vercel.app/api/webhook/remove-website", {
+      await axios.delete("http://localhost:4000/api/webhook/remove-website", {
         data: {
           userId,
           name: storedDomain,
@@ -118,7 +118,7 @@ const AddWebsite = ({ user }) => {
       });
 
       /* 2️⃣ CLEAR WEBSITE FROM SETTINGS */
-      await axios.post("https://chatbot-backend-project.vercel.app/api/chatbot/save", {
+      await axios.post("http://localhost:4000/api/chatbot/save", {
         userId,
         website: null,
       });

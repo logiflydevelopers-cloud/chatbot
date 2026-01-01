@@ -1,0 +1,192 @@
+:root {
+    --background: #f9fafb;
+    --text-primary: #111827;
+    --text-secondary: #6b7280;
+    --border-color: #e5e7eb;
+    --primary-color: linear-gradient(180deg, #5550FF, #3C4984);
+    --secondary-color: linear-gradient(80deg, #5550FF, #3C4984);
+    --success-color: #10b981;
+    --error-color: #ef4444;
+}
+
+
+
+.persona-container {
+    max-width: 660px;
+}
+
+/* HEADER */
+.persona-header {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 20px;
+}
+
+.persona-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 0.25rem;
+    background: var(--primary-color);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.persona-icon img {
+    width: 22px;
+    height: 22px;
+}
+
+.persona-header h2 {
+    font-size: 1rem;
+    font-weight: 500;
+}
+
+.persona-header p {
+    color: #6b7280;
+    font-size: 0.875rem;
+}
+
+/* Mobile back button */
+.back-btn {
+    display: none;
+    background: none;
+    border: none;
+    font-size: 20px;
+    cursor: pointer;
+}
+
+/* CARD */
+.persona-card {
+    background: #fff;
+    border-radius: 12px;
+    padding: 24px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+}
+
+/* SECTIONS */
+.persona-section {
+    margin-bottom: 24px;
+}
+
+.persona-section label {
+    font-weight: 600;
+    display: block;
+}
+
+.persona-section span {
+    font-size: 13px;
+    color: #6b7280;
+    display: block;
+    margin-bottom: 8px;
+}
+
+.persona-section input,
+.persona-section select {
+    width: 100%;
+    padding: 12px;
+    border-radius: 8px;
+    border: 1.5px solid #e5e7eb;
+}
+
+.persona-section input:focus,
+.persona-section select:focus {
+    border-color: #6366f1;
+    outline: none;
+}
+
+/* ROLE BUTTONS */
+.role-buttons button {
+    background: #eef2ff;
+    border: none;
+    padding: 8px 14px;
+    border-radius: 20px;
+    margin-right: 8px;
+    margin-top: 10px;
+    cursor: pointer;
+}
+
+/* TABS */
+.tabs {
+    display: flex;
+    background: #f1f5f9;
+    border-radius: 10px;
+    padding: 4px;
+}
+
+.tabs button {
+    flex: 1;
+    border: none;
+    background: transparent;
+    padding: 10px;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    gap: 6px;
+    align-items: center;
+}
+
+.tabs button.active {
+    background: #fff;
+    border-radius: 8px;
+    color: #4f46e5;
+    font-weight: 600;
+}
+
+/* RANGE */
+.range-labels {
+    display: flex;
+    justify-content: space-between;
+    font-size: 13px;
+    color: #6b7280;
+}
+
+/* GUIDELINES */
+.guideline-row {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.guideline-row input {
+    flex: 1;
+}
+
+.guideline-row button {
+    border: none;
+    background: transparent;
+    color: #ef4444;
+    cursor: pointer;
+    font-size: 18px;
+}
+
+.add-btn {
+    width: 100%;
+    padding: 12px;
+    background: #2563eb;
+    color: #fff;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    gap: 6px;
+    justify-content: center;
+    align-items: center;
+}
+
+/* MOBILE ONLY */
+@media (max-width: 768px) {
+    .back-btn {
+        display: block;
+    }
+
+    .persona-icon {
+        display: none;
+    }
+
+    .persona-header p {
+        color: #6b7280;
+        font-size: 0.755rem;
+    }
+}

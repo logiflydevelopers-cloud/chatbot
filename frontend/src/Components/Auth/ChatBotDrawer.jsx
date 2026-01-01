@@ -9,7 +9,7 @@ import Ellipse93 from "../../image/Ellipse 93.png";
 
 export default function ChatBotDrawer({
   userId,
-  apiBase = "https://chatbot-backend-project.vercel.app",
+  apiBase = "http://localhost:4000",
   primaryColor: defaultColor = "#2563eb",
   avatar: defaultAvatar = Ellipse90,        // ⭐ FIXED
   firstMessage: defaultMsg = "Hi there 👋 How can I help you?",

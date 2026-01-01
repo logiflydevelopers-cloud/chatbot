@@ -1,7 +1,12 @@
 import { useState } from "react";
 import axios from "axios";
-import styles from "./Auth.module.css";
 import { useNavigate } from "react-router-dom";
+import "./Login.css";
+
+/* Images (Login page same) */
+import desktopImg from "../../image/robot-desktop.png";
+import mobileImg from "../../image/robot-mobile.png";
+import emailIcon from "../../image/mail.svg";
 
 const ForgotPassword = () => {
   const [email, setEmail] = useState("");
@@ -9,7 +14,7 @@ const ForgotPassword = () => {
 
   const sendOTP = async () => {
     try {
-      await axios.post("https://chatbot-backend-project.vercel.app/api/auth/forgot-password", {
+      await axios.post("http://localhost:4000/api/auth/forgot-password", {
         email,
       });
 
@@ -21,20 +26,43 @@ const ForgotPassword = () => {
   };
 
   return (
-    <div className={styles.authContainer}>
-      <div className={styles.authForm}>
-        <h2 className={styles.authTitle}>Forgot Password</h2>
+    <div className="pageWrapper">
+      <div className="loginCard">
 
-        <label>Email</label>
-        <input
-          className={styles.input}
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-        />
+        {/* LEFT SIDE */}
+        <div className="leftSide">
+          <img src={desktopImg} className="robotDesktop" alt="Robot" />
+          <img src={mobileImg} className="robotMobile" alt="Robot" />
+        </div>
 
-        <button className={styles.submitButton} onClick={sendOTP}>
-          Send OTP
-        </button>
+        {/* RIGHT SIDE */}
+        <div className="rightSide">
+          <div className="authForm">
+
+            <h2 className="authTitle">Forgot Password</h2>
+
+            {/* EMAIL */}
+            <div className="inputGroup iconInput">
+              <img src={emailIcon} className="inputIcon" alt="email" />
+              <input
+                type="email"
+                placeholder="Enter your email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+              />
+            </div>
+
+            <button
+              className="submitButton"
+              type="button"
+              onClick={sendOTP}
+            >
+              Send OTP
+            </button>
+
+          </div>
+        </div>
+
       </div>
     </div>
   );

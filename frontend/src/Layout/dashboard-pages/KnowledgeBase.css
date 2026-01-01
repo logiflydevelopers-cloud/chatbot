@@ -128,7 +128,7 @@
   width: 100%;
   padding: 14px;
   margin-top: 10px;
-  background: #007bff;
+  background: var(--secondary-color);
   color: white;
   border-radius: 8px;
   border: none;

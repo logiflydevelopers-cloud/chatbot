@@ -3,7 +3,7 @@ import "./FileUpload.css";
 import { AiOutlineCloudUpload } from "react-icons/ai";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import "./AIPersona.css";
+import "./train-page.css";
 
 const FileUpload = () => {
     const navigate = useNavigate();

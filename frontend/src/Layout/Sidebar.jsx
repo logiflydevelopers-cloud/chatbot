@@ -64,7 +64,7 @@ const Sidebar = ({ open, setOpen }) => {
       >
         <FiMic className="icon" />
         <div>
-          <p>VOICE AGENT</p>
+          <p className="sidebar-title">VOICE AGENT</p>
           <span className="sidebar-subtitle">Voice-based AI agent</span>
         </div>
       </NavLink>

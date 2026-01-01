@@ -3,7 +3,7 @@
 ========================= */
 :root {
   --primary: #6d5dfc;
-  --primary-light: #8b7bff;
+  --secondary-color: linear-gradient(80deg, #5550FF, #3C4984);
   --bg-main: #f8f9fc;
   --card-bg: #ffffff;
   --border: #e6e8f0;
@@ -99,7 +99,7 @@
 
 /* START */
 .action-btn.start {
-  background: linear-gradient(90deg, var(--primary), var(--primary-light));
+  background: var(--secondary-color);
   color: #ffffff;
 }
 

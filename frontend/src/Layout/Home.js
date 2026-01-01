@@ -1,13 +1,12 @@
 import { useState } from "react";
-import { useEffect, useRef } from "react";
-import { useNavigate } from "react-router-dom";
+import { useEffect } from "react";
+// import { useNavigate } from "react-router-dom";
 
 import axios from "axios";
 import "./Home.css";
 import { Link } from "react-router-dom";
 import chatUI from "../image/yiguyh 1.png";
 import googleIcon from "../image/google.png";
-import gmailIcon from "../image/gmail.png";
 import companiesDesktop from "../image/companies-desktop.png";
 import companiesMobile from "../image/companies-mobile.png";
 import integrationsCard from "../image/integrations-card.png";
@@ -28,16 +27,6 @@ import badge20k from "../image/badge-20k.png";
 import guaranteeBadge from "../image/money-back.png";
 import starIcon from "../image/Vector.png";
 import arrowDownIcon from "../image/arrow-down-sign-to-navigate.png";
-
-// import calendarIcon from "../image/calendar.png";
-// import chatIcon from "../image/chat.png";
-// import headsetIcon from "../image/headset.png";
-// import shopIcon from "../image/shop.png";
-// import botIcon from "../image/bot.png";
-import liveChatIcon from "../image/Group 41.png";
-import helpDeskIcon from "../image/Group 42.png";
-import knowledgeBaseIcon from "../image/Group 43.png";
-import openWidgetIcon from "../image/Group 44.png";
 import shopIcon from "../image/Group.png";
 import calendarIcon from "../image/Group (1).png";
 import chatIcon from "../image/LiveChat-Logo-Orange-White-Stacked 1.png";
@@ -45,6 +34,7 @@ import headsetIcon from "../image/Stacked_RGB_Green 1.png";
 import headsetIcon1 from "../image/zendesk_logo_icon_147198 1.png";
 import botIcon from "../image/image 65.png";
 import checkIcon from "../image/right-arrow.png";
+import { FaGlobe } from "react-icons/fa";
 
 
 
@@ -91,7 +81,7 @@ const reviews = [
 
 const googleLogin = async () => {
   try {
-    const res = await axios.get("https://chatbot-backend-project.vercel.app/api/auth/google");
+    const res = await axios.get("http://localhost:4000/api/auth/google");
     window.location.href = res.data.url; // 🔥 direct Google login
   } catch (err) {
     console.error("Google login failed", err);
@@ -207,7 +197,7 @@ function FAQItem({ item, isOpen, onClick }) {
 
 export default function Home() {
   const [menuOpen, setMenuOpen] = useState(false);
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
 
   useEffect(() => {
     const elements = document.querySelectorAll(".animate");
@@ -343,15 +333,6 @@ export default function Home() {
               </button>
 
 
-              <button
-                className="btn-email"
-                onClick={() => navigate("/register")}
-              >
-                <img src={gmailIcon} alt="Email" className="btn-icon" />
-                Sign Up with an Email →
-              </button>
-
-
             </div>
 
             <div className="btn-buttom"><small>It’s free. No credit card required.</small></div>
@@ -398,7 +379,7 @@ export default function Home() {
 
 
       {/* KEY FEATURES SECTION */}
-      {/* ALL FEATURES SECTION */}
+
       <section className="features">
         <div className="container">
 
@@ -496,7 +477,6 @@ export default function Home() {
               </p>
             </div>
           </div>
-
         </div>
       </section>
 
@@ -522,11 +502,11 @@ export default function Home() {
               <div className="why-icon">
                 <img src={iconLaunch} alt="Launch fast" />
               </div>
-              <span>Launches in minutes — no code, no training</span>
+              <span className="why-icon-text">Launches in minutes — no code, no training</span>
             </div>
 
             <div className="why-pill animate fade-right right">
-              <span>Works in every language, on any website</span>
+              <span className="why-icon-text">Works in every language, on any website</span>
               <div className="why-icon">
                 <img src={iconLanguage} alt="Languages" />
               </div>
@@ -536,11 +516,11 @@ export default function Home() {
               <div className="why-icon">
                 <img src={iconInbox} alt="Inbox" />
               </div>
-              <span>Sends conversations directly to your inbox</span>
+              <span className="why-icon-text">Sends conversations directly to your inbox</span>
             </div>
 
             <div className="why-pill animate fade-right right">
-              <span>100% free until 2026</span>
+              <span className="why-icon-text">100% free until 2026</span>
               <div className="why-icon">
                 <img src={iconFree} alt="Free" />
               </div>
@@ -674,6 +654,16 @@ export default function Home() {
       </section>
 
 
+      {/* ========        FAQ SECTION  ========== */}
+      <section className="faq-section">
+        <div className="container">
+          <h2 className="faq-title animate fade-up">
+            Frequently Asked Questions
+          </h2>
+
+          <FAQAccordion />
+        </div>
+      </section>
 
 
       <section className="tools-section">
@@ -737,71 +727,49 @@ export default function Home() {
 
 
 
-      {/* =========================
-        FAQ SECTION
-========================= */}
-      <section className="faq-section">
-        <div className="container">
-          <h2 className="faq-title animate fade-up">
-            Frequently Asked Questions
-          </h2>
+      <footer className="noupe-footer">
+        {/* Top Row */}
+        <div className="noupe-footer-top">
+          <ul className="noupe-links">
+            <li>Terms & Conditions</li>
+            <span>|</span>
+            <li>Privacy Policy</li>
+            <span>|</span>
+            <li>About Us</li>
+            <span>|</span>
+            <li>Contact Us</li>
+            <span>|</span>
+            <li>Pricing</li>
+            <span>|</span>
+            <li>Embed Guide</li>
+            <span>|</span>
+            <li>Noupe Magazine</li>
+            <span>|</span>
+            <li>Noupe Blog</li>
+          </ul>
 
-          <FAQAccordion />
-        </div>
-      </section>
-
-
-
-      {/* =========================
-    PRODUCTS SECTION
-========================= */}
-      <section className="products-section">
-        <div className="container">
-
-          <h2 className="products-title">
-            Discover our <span>text|</span> products
-          </h2>
-
-          <div className="products-grid">
-
-            <div className="product-card">
-              <img src={liveChatIcon} alt="LiveChat" />
-              <div>
-                <h4>LiveChat</h4>
-                <p>Connect with customers</p>
-              </div>
-            </div>
-
-            <div className="product-card">
-              <img src={helpDeskIcon} alt="HelpDesk" />
-              <div>
-                <h4>HelpDesk</h4>
-                <p>Support customers<br />with tickets</p>
-              </div>
-            </div>
-
-            <div className="product-card">
-              <img src={knowledgeBaseIcon} alt="KnowledgeBase" />
-              <div>
-                <h4>KnowledgeBase</h4>
-                <p>Guide and educate<br />customers</p>
-              </div>
-            </div>
-
-            <div className="product-card">
-              <img src={openWidgetIcon} alt="OpenWidget" />
-              <div>
-                <h4>OpenWidget</h4>
-                <p>Enhance websites<br />with widgets</p>
-              </div>
-            </div>
-
+          <div className="noupe-lang">
+            <FaGlobe />
+            <span>English</span>
           </div>
         </div>
-      </section>
 
+        {/* Description */}
+        <p className="noupe-desc">
+          Noupe is a <strong>free AI chatbot builder</strong> that creates AI
+          chatbots in minutes, trusted by businesses and websites worldwide for
+          automated website customer support, featuring automatic website
+          learning, multi-language support, and instant setup that streamlines
+          visitor engagement and question answering, engineered for organizations
+          requiring intelligent chatbots without coding or training.
+        </p>
 
-
+        {/* Bottom Bar */}
+        <div className="noupe-footer-bottom">
+          Noupe (Jotform Inc.) 4 Embarcadero Center, Suite 780, San Francisco CA
+          94111
+        </div>
+      </footer>
     </>
   );
 }
