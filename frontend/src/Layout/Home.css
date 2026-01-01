@@ -756,6 +756,7 @@ body {
 .why-love {
     background: var(--green-lime);
     padding: 50px 0;
+    overflow: hidden;
 }
 
 /* HEADER */
@@ -1350,6 +1351,12 @@ body {
     .cta-points {
         flex-direction: column;
         gap: 10px;
+        font-size: 13px;
+        font-weight: 500;
+    }
+
+    .cta-point {
+        gap: 5px;
     }
 }
 
@@ -1451,7 +1458,7 @@ body {
 
 .tools-btn {
     background: transparent;
-    border: 2px solid #000;
+    border: 2px solid var(--black);
     padding: 12px 26px;
     border-radius: 999px;
     font-weight: 600;
@@ -1475,7 +1482,7 @@ body {
     left: 61px;
     top: 50%;
     width: 74px;
-    border-top: 4px dotted #000;
+    border-top: 4px dotted var(--black);
     transform: translateY(-50%);
     z-index: 1;
 }
@@ -1627,7 +1634,7 @@ body {
 .tool-box.active .tool-text {
     font-size: 16px;
     font-weight: 700;
-    color: #000;
+    color: var(--black);
 }
 
 .tool-icon {
@@ -1650,7 +1657,7 @@ body {
     .tools-inner {
         flex-direction: column;
         text-align: center;
-        gap: 20px;
+        gap: 70px;
     }
 
     .tools-right {
@@ -1663,7 +1670,7 @@ body {
 
     .bot-icon {
         left: 50%;
-        top: -40px;
+        top: -100px;
         transform: translateX(-50%);
     }
 
@@ -1761,7 +1768,7 @@ body {
 
 /* ARROW */
 .faq-arrow {
-    color: #2563eb;
+    color: var(--black);
     font-size: 14px;
     transition: transform 0.35s ease;
 }
@@ -1801,7 +1808,7 @@ body {
 
 
 .noupe-footer {
-    background: #000;
+    background: var(--black);
     color: #bdbdbd;
     padding: 22px 40px 0;
     font-family: Inter, sans-serif;
