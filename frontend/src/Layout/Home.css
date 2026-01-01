@@ -1674,6 +1674,13 @@ body {
         transform: translateX(-50%);
     }
 
+    .bot-connector {
+        position: absolute;
+        top: -4%;
+        rotate: 10deg;
+        transform: translateY(-50%);
+    }
+
     .tools-left h2 {
         font-size: 30px;
     }
