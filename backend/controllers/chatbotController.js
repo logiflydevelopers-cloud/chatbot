@@ -74,49 +74,35 @@ export const getChatbotSettings = async (req, res) => {
 /* ============================================================
     ⭐ MAIN CHAT FUNCTION — PYTHON API FORWARD
 ============================================================ */
-/* ============================================================
-   ⭐ MAIN CHAT FUNCTION — FORWARD TO PYTHON API
-============================================================ */
 export const chatWithBot = async (req, res) => {
   try {
     const { question, userId } = req.body;
 
-    console.log("🟢 [NODE] Question:", question);
-    console.log("👤 [NODE] UserId:", userId);
+    const response = await fetch(
+      "https://ai-persona-api.onrender.com/v1/chat",
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ userId, question }),
+      }
+    );
 
-    if (!question || !userId) {
-      return res.status(400).json({
-        error: "question and userId both required",
-      });
-    }
+    const rawText = await response.text();
+    console.log("🐍 Python raw:", rawText);
 
-    // ✅ REAL PYTHON API
-    const PYTHON_API_URL =
-      "https://ai-persona-api.onrender.com/v1/chat";
+    const data = JSON.parse(rawText);
 
-    console.log("🟡 [NODE] Sending to Python API...");
+    const answer =
+      data.answer ||
+      data.response ||
+      data.message ||
+      "AI did not return a reply";
 
-    const response = await fetch(PYTHON_API_URL, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        userId,
-        question,
-      }),
-    });
-
-    const data = await response.json();
-
-    console.log("🟣 [NODE] Python response:", data);
-
-    return res.json({
-      success: true,
-      answer: data.answer || "No response from AI",
-    });
-
+    return res.json({ success: true, answer });
   } catch (err) {
-    console.error("❌ [NODE] Chat error:", err);
-    res.status(500).json({ error: "Chat failed" });
+    console.error("❌ Chat error:", err);
+    res.status(500).json({ success: false, answer: "Server error" });
   }
 };
+
 
