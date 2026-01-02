@@ -12,25 +12,43 @@ export const savePersona = async (req, res) => {
       return res.status(400).json({ success: false });
     }
 
+    /* =========================
+       1️⃣ SAVE FULL PERSONA TO DB
+    ========================= */
     const savedPersona = await AIPersona.findOneAndUpdate(
       { userId },
       { userId, ...persona },
       { upsert: true, new: true }
     );
 
-    // Forward to Python
-    const PYTHON_API_URL = "http://192.168.1.50:8000/persona";
+    /* =========================
+       2️⃣ SEND ONLY REQUIRED DATA TO PYTHON
+    ========================= */
+    const PYTHON_API_URL = "https://chatbot-backend-project.vercel.app/persona";
+
+    const pythonPayload = {
+      userId: savedPersona.userId,
+      agentRole: savedPersona.agentRole,
+      tone: savedPersona.tone,
+      responseLength: savedPersona.responseLength,
+    };
+
+    console.log("🐍 Sending to Python:", pythonPayload);
 
     await fetch(PYTHON_API_URL, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ userId, persona: savedPersona }),
+      body: JSON.stringify(pythonPayload),
     });
 
+    /* =========================
+       3️⃣ RETURN RESPONSE TO FRONTEND
+    ========================= */
     return res.json({
       success: true,
       persona: savedPersona,
     });
+
   } catch (err) {
     console.error("❌ Save persona error:", err);
     res.status(500).json({ success: false });
