@@ -49,7 +49,7 @@ const AIPersona = () => {
 
       try {
         const res = await fetch(
-          `http://localhost:4000/api/persona/${userId}`
+          `https://chatbot-backend-project.vercel.app/api/persona/${userId}`
         );
         const data = await res.json();
 
@@ -107,7 +107,7 @@ const AIPersona = () => {
   ========================= */
   const savePersona = async () => {
     try {
-      const res = await fetch("http://localhost:4000/api/persona/save", {
+      const res = await fetch("https://chatbot-backend-project.vercel.app/api/persona/save", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ userId, persona }),

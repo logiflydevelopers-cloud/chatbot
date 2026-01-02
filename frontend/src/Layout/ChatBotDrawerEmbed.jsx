@@ -9,7 +9,7 @@ export default function ChatBotDrawerEmbed() {
   return (
     <ChatBotDrawer
       userId={userId}
-      apiBase={window.CHATBOT_API_BASE || "http://localhost:4000"}
+      apiBase={window.CHATBOT_API_BASE || "https://chatbot-backend-project.vercel.app"}
       alignment={window.CHATBOT_ALIGNMENT || "right"}
       onClose={() => {
         // 🔥 Send message to parent website to close chatbot iframe
