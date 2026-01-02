@@ -1,11 +1,10 @@
-// backend/controllers/chatbotController.js
-
-import { getEmbedding, askOpenAIWithContext } from "../utils/openai.js";
-import { queryVectors } from "../utils/pinecone.js";
+import fetch from "node-fetch";
 import ChatbotSetting from "../models/ChatbotSetting.js";
 
+console.log("🔥🔥🔥 NEW PYTHON FORWARD CONTROLLER LOADED 🔥🔥🔥");
+
 /* ============================================================
-    ⭐ SAVE / UPDATE CHATBOT SETTINGS (WEBSITE OPTIONAL)
+    ⭐ SAVE / UPDATE CHATBOT SETTINGS
 ============================================================ */
 export const saveChatbotSettings = async (req, res) => {
   try {
@@ -22,13 +21,11 @@ export const saveChatbotSettings = async (req, res) => {
       return res.status(400).json({ error: "Missing userId" });
     }
 
-    // ⭐ Website is OPTIONAL
     const safeWebsite = website || null;
 
     let setting = await ChatbotSetting.findOne({ userId });
 
     if (!setting) {
-      // CREATE NEW SETTINGS
       setting = new ChatbotSetting({
         userId,
         avatar,
@@ -38,7 +35,6 @@ export const saveChatbotSettings = async (req, res) => {
         website: safeWebsite
       });
     } else {
-      // UPDATE EXISTING SETTINGS
       setting.avatar = avatar;
       setting.firstMessage = firstMessage;
       setting.primaryColor = primaryColor;
@@ -48,11 +44,7 @@ export const saveChatbotSettings = async (req, res) => {
 
     await setting.save();
 
-    return res.json({
-      success: true,
-      message: "Settings saved successfully",
-      settings: setting
-    });
+    return res.json({ success: true, settings: setting });
 
   } catch (err) {
     console.error("❌ Save settings error →", err);
@@ -70,10 +62,7 @@ export const getChatbotSettings = async (req, res) => {
 
     const settings = await ChatbotSetting.findOne({ userId });
 
-    return res.json({
-      success: true,
-      settings: settings || null
-    });
+    return res.json({ success: true, settings });
 
   } catch (err) {
     console.error("❌ Get settings error →", err);
@@ -83,34 +72,42 @@ export const getChatbotSettings = async (req, res) => {
 
 
 /* ============================================================
-    ⭐ MAIN CHAT FUNCTION — Pinecone + OpenAI
+    ⭐ MAIN CHAT FUNCTION — PYTHON API FORWARD
 ============================================================ */
 export const chatWithBot = async (req, res) => {
   try {
-    const { userId, question } = req.body;
+    const { question, userId } = req.body;
 
-    if (!userId || !question) {
-      return res.status(400).json({ error: "Missing userId/question" });
+    console.log("🟢 [NODE] Question:", question);
+    console.log("👤 [NODE] UserId:", userId);
+
+    if (!question || !userId) {
+      return res.status(400).json({
+        error: "question and userId both required"
+      });
     }
 
-    const qEmbedding = await getEmbedding(question);
-    const matches = await queryVectors(qEmbedding, userId, 5);
+    const PYTHON_API_URL = "http://localhost:4000/api/chatbot/chat";
 
-    const context = matches
-      .map(m => m.metadata?.text || "")
-      .join("\n\n---\n\n");
+    console.log("🟡 [NODE] Sending to Python API...");
 
-    const answer = await askOpenAIWithContext(question, context);
+    const response = await fetch(PYTHON_API_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ question, userId }),
+    });
+
+    const data = await response.json();
+
+    console.log("🟣 [NODE] Python API response:", data);
 
     return res.json({
       success: true,
-      answer,
-      contextPreview: context.slice(0, 300),
-      pineconeMatches: matches.length,
+      answer: data.answer,
     });
 
   } catch (err) {
-    console.error("❌ Chat error →", err);
+    console.error("❌ [NODE] Error:", err);
     res.status(500).json({ error: "Chat failed" });
   }
 };

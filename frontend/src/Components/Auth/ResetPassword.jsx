@@ -15,7 +15,7 @@ const ResetPassword = () => {
 
   const reset = async () => {
     try {
-      await axios.post("https://chatbot-backend-project.vercel.app/api/auth/reset-password", {
+      await axios.post("http://localhost:4000/api/auth/reset-password", {
         email,
         password,
       });

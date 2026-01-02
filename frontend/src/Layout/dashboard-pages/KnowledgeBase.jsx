@@ -5,7 +5,7 @@ import "./train-page.css";
 import { FaLink, FaQuestionCircle } from "react-icons/fa";
 import { AiOutlineFolderOpen } from "react-icons/ai";
 import { useNavigate } from "react-router-dom";
-import aiIcon from "../../image/ai.svg";
+import aiIcon from "../../image/KNOWLEDGE BASE.svg";
 import {
   FiArrowLeft,
 } from "react-icons/fi";

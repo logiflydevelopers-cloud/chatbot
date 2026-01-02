@@ -2,13 +2,13 @@ import React, { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import "./TeachAgent.css";
 import BotAvatar from "../../../image/Ellipse 90.png";
-import aiIcon from "../../../image/ai.svg";
+import aiIcon from "../../../image/TEACH YOUR AGENT.svg";
 import { FiArrowLeft } from "react-icons/fi";
 import { useOutletContext } from "react-router-dom";
 import "../train-page.css";
 
 const TeachAgent = ({ user }) => {
-  const apiBase = "https://chatbot-backend-project.vercel.app/teach-agent";
+  const apiBase = "http://localhost:4000/teach-agent";
 
   // 🔹 Freeze username (NO warning, NO rerender)
   const userNameRef = useRef(

@@ -5,7 +5,7 @@ import { useEffect } from "react";
 import axios from "axios";
 import "./Home.css";
 import { Link } from "react-router-dom";
-import chatUI from "../image/yiguyh 1.png";
+import chatUI from "../image/home-main-image.png";
 import googleIcon from "../image/google.png";
 import companiesDesktop from "../image/companies-desktop.png";
 import companiesMobile from "../image/companies-mobile.png";
@@ -81,7 +81,7 @@ const reviews = [
 
 const googleLogin = async () => {
   try {
-    const res = await axios.get("https://chatbot-backend-project.vercel.app/api/auth/google");
+    const res = await axios.get("http://localhost:4000/api/auth/google");
     window.location.href = res.data.url; // 🔥 direct Google login
   } catch (err) {
     console.error("Google login failed", err);

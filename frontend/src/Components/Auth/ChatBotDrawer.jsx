@@ -9,7 +9,7 @@ import Ellipse93 from "../../image/Ellipse 93.png";
 
 export default function ChatBotDrawer({
   userId,
-  apiBase = "https://chatbot-backend-project.vercel.app",
+  apiBase = "http://localhost:4000",
   primaryColor: defaultColor = "#2563eb",
   avatar: defaultAvatar = Ellipse90,        // ⭐ FIXED
   firstMessage: defaultMsg = "Hi there 👋 How can I help you?",
@@ -96,24 +96,36 @@ export default function ChatBotDrawer({
     if (!input.trim()) return;
 
     const text = input;
+
+    console.log("🟢 [FRONTEND] User typed:", text);
+
     setInput("");
     setMessages((prev) => [...prev, { from: "user", text }]);
-
     setIsTyping(true);
 
     try {
+      console.log("🟡 [FRONTEND] Sending to backend API...");
+
       const res = await axios.post(`${apiBase}/api/chatbot/chat`, {
         userId,
         question: text,
       });
 
+      console.log("🟣 [FRONTEND] Backend raw response:", res.data);
+
       setIsTyping(false);
+
+      const answer = res.data.answer || "No response";
+
+      console.log("✅ [FRONTEND] Bot answer:", answer);
 
       setMessages((prev) => [
         ...prev,
-        { from: "bot", text: res.data.answer || "Sorry, I don't know." },
+        { from: "bot", text: answer },
       ]);
-    } catch {
+    } catch (error) {
+      console.error("❌ [FRONTEND] API Error:", error);
+
       setIsTyping(false);
       setMessages((prev) => [
         ...prev,
@@ -121,6 +133,7 @@ export default function ChatBotDrawer({
       ]);
     }
   };
+
 
   /* TYPING DOT STYLE */
   const typingStyle = {

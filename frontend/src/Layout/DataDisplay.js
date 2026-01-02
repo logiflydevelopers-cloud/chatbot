@@ -16,7 +16,7 @@ const DataDisplay = ({ user, triggerRefresh }) => {
       setError(null);
 
       try {
-        const n8nWebhookUrl = "http://localhost:5678/webhook-test/add-custom-website";
+        const n8nWebhookUrl = "http://localhost:5678/webhook/add-custom-website";
 
         const response = await fetch(n8nWebhookUrl, {
           method: "GET",

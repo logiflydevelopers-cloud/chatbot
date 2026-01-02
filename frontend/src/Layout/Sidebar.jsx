@@ -3,7 +3,7 @@ import {
   FiUser,
   FiBookOpen,
   FiMessageSquare,
-  FiMic,
+  // FiMic,
 } from "react-icons/fi";
 import "./dashboard.css";
 
@@ -57,7 +57,7 @@ const Sidebar = ({ open, setOpen }) => {
         </div>
       </NavLink>
 
-      <NavLink
+      {/* <NavLink
         to="/dashboard/voice-agent"
         onClick={handleItemClick}
         className={`side-item ${isActive("/dashboard/voice-agent") ? "active" : ""}`}
@@ -67,7 +67,7 @@ const Sidebar = ({ open, setOpen }) => {
           <p className="sidebar-title">VOICE AGENT</p>
           <span className="sidebar-subtitle">Voice-based AI agent</span>
         </div>
-      </NavLink>
+      </NavLink> */}
     </aside>
   );
 };

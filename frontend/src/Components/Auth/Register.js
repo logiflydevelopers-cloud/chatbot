@@ -5,7 +5,7 @@ import "./Login.css";
 import desktopImg from "../../image/robot-desktop.png";
 import mobileImg from "../../image/robot-mobile.png";
 import userIcon from "../../image/user.svg";
-import emailIcon from "../../image/mail.svg";
+import emailIcon from "../../image/email.svg";
 import passwordIcon from "../../image/locked-computer.svg";
 
 const Register = () => {
@@ -23,7 +23,7 @@ const Register = () => {
   const onSubmit = async (data) => {
     try {
       const response = await axios.post(
-        "https://chatbot-backend-project.vercel.app/api/auth/register",
+        "http://localhost:4000/api/auth/register",
         data,
         { withCredentials: true }
       );

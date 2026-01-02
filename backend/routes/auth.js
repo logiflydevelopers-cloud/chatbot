@@ -21,13 +21,13 @@ let otpStore = {};
 // ==============================
 const BACKEND_CALLBACK =
   process.env.NODE_ENV === "production"
-    ? "https://chatbot-backend-project.vercel.app/api/auth/google/callback"
-    : "https://chatbot-backend-project.vercel.app/api/auth/google/callback";
+    ? "http://localhost:4000/api/auth/google/callback"
+    : "http://localhost:4000/api/auth/google/callback";
 
 const FRONTEND_URL =
   process.env.NODE_ENV === "production"
-    ? "https://chatbot-frontend-mocha-six.vercel.app"
-    : "https://chatbot-frontend-mocha-six.vercel.app";
+    ? "http://localhost:3000"
+    : "http://localhost:3000";
 
 /* ============================================================
    NORMAL LOGIN & REGISTER

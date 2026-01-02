@@ -2,6 +2,9 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import ChatBotDrawer from "../Components/Auth/ChatBotDrawer";
 import { useNavigate } from "react-router-dom";
+import "./CustomChatPage.css";
+import { SketchPicker } from "react-color";
+
 
 // ⭐ IMPORT IMAGES
 import Ellipse90 from "../image/Ellipse 90.png";
@@ -11,7 +14,7 @@ import Ellipse93 from "../image/Ellipse 93.png";
 
 const CustomChatPage = () => {
   const navigate = useNavigate();
-  const apiBase = "https://chatbot-backend-project.vercel.app";
+  const apiBase = "http://localhost:4000";
 
   /* ===============================
      🔐 GET USER FROM STORAGE (SOURCE OF TRUTH)
@@ -34,6 +37,13 @@ const CustomChatPage = () => {
   const [showChat, setShowChat] = useState(true);
   const [showBubble, setShowBubble] = useState(false);
   const [isCustomizerMode] = useState(true);
+
+  <SketchPicker
+    color={primaryColor}
+    onChange={(color) => {
+      setPrimaryColor(color.hex);
+    }}
+  />
 
   /* ===============================
      🔴 REDIRECT IF NOT LOGGED IN
@@ -153,123 +163,75 @@ const CustomChatPage = () => {
   const avatarOptions = [Ellipse90, Ellipse91, Ellipse92, Ellipse93];
 
   return (
-    <div style={{ display: "flex", height: "100vh", width: "100%" }}>
-
-      {/* SAVE BUTTON */}
-      <div
-        style={{
-          position: "fixed",
-          top: "90px",
-          width: "100%",
-          padding: "10px 20px",
-          zIndex: 1000,
-        }}
-      >
-        <button
-          onClick={saveCustomization}
-          style={{
-            background: "#facc15",
-            color: "#000",
-            border: "none",
-            borderRadius: 6,
-            padding: "6px 16px",
-            cursor: "pointer",
-            fontWeight: "600",
-          }}
-        >
-          💾 Save
-        </button>
-      </div>
+    <div className="custom-chat-page">
 
       {/* LEFT PANEL */}
-      <div
-        style={{
-          width: "300px",
-          background: "#f3f4f6",
-          padding: "20px",
-          borderRight: "1px solid #d1d5db",
-          marginTop: "60px",
-          overflowY: "auto",
-        }}
-      >
-        <h3>Customize</h3>
+      <div className="customizer-panel">
+        <h3 className="customize-btn">Customize</h3>
 
-        <label>Choose Avatar</label>
-        <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
-          {avatarOptions.map((img) => (
-            <img
-              key={img}
-              src={img}
-              alt="avatar"
-              onClick={() => setAvatar(img)}
-              style={{
-                width: 55,
-                height: 55,
-                borderRadius: "50%",
-                border:
-                  avatar === img
-                    ? "3px solid #2563eb"
-                    : "2px solid #ccc",
-                cursor: "pointer",
-              }}
-            />
-          ))}
+        <div className="choose-avatar">
+          <label className="customize-title">Choose Avatar</label>
+          <div className="avatar-list">
+            {avatarOptions.map((img) => (
+              <img
+                key={img}
+                src={img}
+                alt="avatar"
+                onClick={() => setAvatar(img)}
+                className={`avatar-item ${avatar === img ? "active" : ""}`}
+              />
+            ))}
+          </div>
         </div>
 
-        <label>Chat Theme Color</label>
-        <input
-          type="color"
-          value={primaryColor}
-          onChange={(e) => setPrimaryColor(e.target.value)}
-          style={{ width: "100%", height: "40px" }}
-        />
+        <div className="color">
+          <label className="customize-title">Chat Theme Color</label>
+          <SketchPicker
+            color={primaryColor}
+            onChange={(color) => setPrimaryColor(color.hex)}
+          />
+        </div>
 
-        <label>Welcome Message</label>
-        <textarea
-          value={firstMessage}
-          onChange={(e) => setFirstMessage(e.target.value)}
-          rows={3}
-          style={{ width: "100%", padding: 10 }}
-        />
 
-        <label>Chat Position</label>
-        <select
-          value={alignment}
-          onChange={(e) => setAlignment(e.target.value)}
-          style={{ width: "100%", padding: 10 }}
-        >
-          <option value="right">Right</option>
-          <option value="left">Left</option>
-        </select>
+        <div className="welcome-message">
+          <label className="customize-title">Welcome Message</label>
+          <textarea
+            rows={3}
+            value={firstMessage}
+            onChange={(e) => setFirstMessage(e.target.value)}
+          />
+        </div>
+
+        <div className="chat-position">
+          <label className="customize-title">Chat Position</label>
+          <select
+            value={alignment}
+            onChange={(e) => setAlignment(e.target.value)}
+          >
+            <option value="right">Right</option>
+            <option value="left">Left</option>
+          </select>
+        </div>
+
+        {/* SAVE BUTTON */}
+        <div className="save-bar">
+          <button className="save-btn" onClick={saveCustomization}>
+            Save
+          </button>
+        </div>
       </div>
 
       {/* CHAT PREVIEW */}
-      {/* CHAT + WEBSITE PREVIEW */}
-      <div
-        style={{
-          flex: 1,
-          marginTop: "60px",
-          position: "relative",
-          overflow: "hidden",
-        }}
-      >
-        {/*  WEBSITE BACKGROUND PREVIEW */}
+      <div className="chat-preview">
+
         {selectedWebsite && (
           <iframe
             src={selectedWebsite}
             title="Website Preview"
-            style={{
-              position: "absolute",
-              inset: 0,
-              width: "100%",
-              height: "100%",
-              border: "none",
-              zIndex: 1,
-            }}
+            className="website-preview"
           />
         )}
 
-        {/* 🤖 CHATBOT OVERLAY */}
         {showChat && (
           <ChatBotDrawer
             key={primaryColor + avatar + firstMessage + alignment}
@@ -284,7 +246,6 @@ const CustomChatPage = () => {
               setShowChat(false);
               setShowBubble(true);
             }}
-            style={{ zIndex: 9999 }}
           />
         )}
       </div>

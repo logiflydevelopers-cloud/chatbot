@@ -7,7 +7,7 @@ import GoogleButton from "react-google-button";
 /* Images */
 import desktopImg from "../../image/robot-desktop.png";
 import mobileImg from "../../image/robot-mobile.png";
-import emailIcon from "../../image/mail.svg";
+import emailIcon from "../../image/email.svg";
 import passwordIcon from "../../image/locked-computer.svg";
 
 const Login = ({ setUser }) => {
@@ -22,7 +22,7 @@ const Login = ({ setUser }) => {
   const onSubmit = async (data) => {
     try {
       const response = await axios.post(
-        "https://chatbot-backend-project.vercel.app/api/auth/login",
+        "http://localhost:4000/api/auth/login",
         data,
         { withCredentials: true }
       );
@@ -40,7 +40,7 @@ const Login = ({ setUser }) => {
   };
 
   const googleLogin = async () => {
-    const res = await axios.get("https://chatbot-backend-project.vercel.app/api/auth/google");
+    const res = await axios.get("http://localhost:4000/api/auth/google");
     window.location.href = res.data.url;
   };
 

@@ -3,6 +3,7 @@
   --sidebar-width: 19.875rem;
   --white: #ffff;
   --black: #000;
+  --grey-light: #00000012;
 }
 
 /* ================= LAYOUT ================= */
@@ -19,7 +20,7 @@
   position: fixed;
   top: var(--header-height);
   left: 0;
-  background: var(--white);
+  background: var(--grey-light);
   padding: 1.5rem 1rem;
   z-index: 1000;
   transition: transform 0.3s ease;
