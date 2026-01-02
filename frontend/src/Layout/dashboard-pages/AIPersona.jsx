@@ -16,7 +16,7 @@ import "./train-page.css";
 const AIPersona = () => {
   const { setSidebarOpen } = useOutletContext();
 
-  // 🔐 USER ID
+  // USER ID
   const storedUser = JSON.parse(localStorage.getItem("user"));
   const userId =
     storedUser?._id || storedUser?.id || storedUser?.userId || null;

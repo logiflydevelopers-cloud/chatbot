@@ -87,7 +87,7 @@ export const chatWithBot = async (req, res) => {
       });
     }
 
-    const PYTHON_API_URL = "https://chatbot-backend-project.vercel.app/api/chatbot/chat";
+    const PYTHON_API_URL = "https://ai-persona-api.onrender.com/v1/chat";
 
     console.log("🟡 [NODE] Sending to Python API...");
 

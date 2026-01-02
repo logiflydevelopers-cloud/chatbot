@@ -24,7 +24,7 @@ export const savePersona = async (req, res) => {
     /* =========================
        2️⃣ SEND ONLY REQUIRED DATA TO PYTHON
     ========================= */
-    const PYTHON_API_URL = "https://chatbot-backend-project.vercel.app/persona";
+    const PYTHON_API_URL = "https://ai-persona-api.onrender.com/v1/chat";
 
     const pythonPayload = {
       userId: savedPersona.userId,
