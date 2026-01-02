@@ -74,6 +74,9 @@ export const getChatbotSettings = async (req, res) => {
 /* ============================================================
     ⭐ MAIN CHAT FUNCTION — PYTHON API FORWARD
 ============================================================ */
+/* ============================================================
+   ⭐ MAIN CHAT FUNCTION — FORWARD TO PYTHON API
+============================================================ */
 export const chatWithBot = async (req, res) => {
   try {
     const { question, userId } = req.body;
@@ -83,31 +86,37 @@ export const chatWithBot = async (req, res) => {
 
     if (!question || !userId) {
       return res.status(400).json({
-        error: "question and userId both required"
+        error: "question and userId both required",
       });
     }
 
-    const PYTHON_API_URL = "https://ai-persona-api.onrender.com/v1/chat";
+    // ✅ REAL PYTHON API
+    const PYTHON_API_URL =
+      "https://ai-persona-api.onrender.com/v1/chat";
 
     console.log("🟡 [NODE] Sending to Python API...");
 
     const response = await fetch(PYTHON_API_URL, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ question, userId }),
+      body: JSON.stringify({
+        userId,
+        question,
+      }),
     });
 
     const data = await response.json();
 
-    console.log("🟣 [NODE] Python API response:", data);
+    console.log("🟣 [NODE] Python response:", data);
 
     return res.json({
       success: true,
-      answer: data.answer,
+      answer: data.answer || "No response from AI",
     });
 
   } catch (err) {
-    console.error("❌ [NODE] Error:", err);
+    console.error("❌ [NODE] Chat error:", err);
     res.status(500).json({ error: "Chat failed" });
   }
 };
+

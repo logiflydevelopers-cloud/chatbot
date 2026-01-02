@@ -106,10 +106,14 @@ export default function ChatBotDrawer({
     try {
       console.log("🟡 [FRONTEND] Sending to backend API...");
 
-      const res = await axios.post(`${apiBase}/v1/chat`, {
-        userId,
-        question: text,
-      });
+      const res = await axios.post(
+        `${apiBase}/api/chatbot/chat`,
+        {
+          userId,
+          question: text,
+        }
+      );
+
 
       console.log("🟣 [FRONTEND] Backend raw response:", res.data);
 
