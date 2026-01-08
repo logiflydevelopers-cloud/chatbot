@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import { SketchPicker } from "react-color";
+import { ChromePicker } from "react-color";
 import ChatBotDrawer from "../Components/Auth/ChatBotDrawer";
 import "./CustomChatPage.css";
 
@@ -64,6 +64,8 @@ const CustomChatPage = () => {
   // Desktop open | Mobile closed
   const [showChat, setShowChat] = useState(isEmbed ? true : !isMobile);
   const [showBubble, setShowBubble] = useState(isEmbed ? false : isMobile);
+  const [showColorPicker, setShowColorPicker] = useState(false);
+
 
 
   /* =========================
@@ -239,11 +241,49 @@ const CustomChatPage = () => {
         {/* COLOR PICKER */}
         <div className="color">
           <div className="customize-title">Chat Theme Color</div>
-          <SketchPicker
-            color={primaryColor}
-            onChange={(c) => setPrimaryColor(c.hex)}
-          />
+
+          <div className="color-picker-wrapper">
+            {/* Preview Button */}
+            <div
+              className="color-preview"
+              style={{ backgroundColor: primaryColor }}
+              onClick={() => setShowColorPicker(!showColorPicker)}
+            />
+
+            {/* Popup */}
+            {showColorPicker && (
+              <div className="color-popover">
+                {/* Preset Colors */}
+                <div className="preset-colors">
+                  {[
+                    "#2563eb",
+                    "#16a34a",
+                    "#dc2626",
+                    "#9333ea",
+                    "#f59e0b",
+                    "#0f172a",
+                  ].map((c) => (
+                    <span
+                      key={c}
+                      className={`preset-dot ${primaryColor === c ? "active" : ""
+                        }`}
+                      style={{ backgroundColor: c }}
+                      onClick={() => setPrimaryColor(c)}
+                    />
+                  ))}
+                </div>
+
+                {/* Custom Picker */}
+                <ChromePicker
+                  color={primaryColor}
+                  onChange={(c) => setPrimaryColor(c.hex)}
+                  disableAlpha
+                />
+              </div>
+            )}
+          </div>
         </div>
+
 
         {/* WELCOME MESSAGE */}
         <div className="welcome-message">
