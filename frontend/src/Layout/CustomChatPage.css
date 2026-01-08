@@ -209,7 +209,7 @@ select {
   .customizer-panel {
     position: relative;
     margin: 20px auto;
-    left: auto;
+    left: 0px !important;
     right: auto;
     width: 92%;
     max-width: 340px;
