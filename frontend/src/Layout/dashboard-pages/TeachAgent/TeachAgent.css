@@ -190,9 +190,7 @@
 @media (max-width: 768px) {
 
   .teach-chat-container {
-   height: calc(100vh - 120px);
     margin: 0;
-    /* 🔥 mobile viewport fix */
   }
 
   .divider {
