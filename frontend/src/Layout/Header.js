@@ -36,8 +36,9 @@ function Header({ user, setUser }) {
   const handleLogout = () => {
     localStorage.clear();
     setUser(null);
-    window.location.href = "/login";
+    navigate("/login", { replace: true });
   };
+
 
   const isTrainActive =
     location.pathname.startsWith("/dashboard") &&
@@ -145,18 +146,16 @@ function Header({ user, setUser }) {
 
         <div
           onClick={handleCustomizeClick}
-          className={`jf-tab ${
-            location.pathname.startsWith("/custom-chat") ? "active" : ""
-          }`}
+          className={`jf-tab ${location.pathname.startsWith("/custom-chat") ? "active" : ""
+            }`}
         >
           CUSTOMIZE
         </div>
 
         <div
           onClick={handlePublishClick}
-          className={`jf-tab ${
-            location.pathname.startsWith("/embed-code") ? "active" : ""
-          }`}
+          className={`jf-tab ${location.pathname.startsWith("/embed-code") ? "active" : ""
+            }`}
         >
           PUBLISH
         </div>

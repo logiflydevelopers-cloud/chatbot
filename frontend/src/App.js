@@ -1,5 +1,11 @@
-import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
-import React, { useState } from "react";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Navigate,
+  useLocation,
+} from "react-router-dom";
+import React, { useEffect, useState } from "react";
 import axios from "axios";
 
 /* ================= AUTH ================= */
@@ -35,63 +41,69 @@ import CustomChatPage from "./Layout/CustomChatPage";
 import EmbedCodePage from "./Layout/EmbedCodePage";
 import ChatBotDrawerEmbed from "./Layout/ChatBotDrawerEmbed";
 
-import "./Layout/Home.css";
 import "./App.css";
 
 axios.defaults.withCredentials = true;
 
-function App() {
-  /* 🔑 USER STATE */
-  const [user, setUser] = useState(() => {
+/* ================= PROTECTED ROUTE ================= */
+const ProtectedRoute = ({ user, children }) => {
+  if (!user) return <Navigate to="/login" replace />;
+  return children;
+};
+
+/* ================= APP CONTENT ================= */
+function AppContent() {
+  const location = useLocation();
+
+  const [user, setUser] = useState(null);
+  const [authLoading, setAuthLoading] = useState(true);
+
+  /* 🔥 RESTORE USER ON APP LOAD */
+  useEffect(() => {
     const savedUser = localStorage.getItem("user");
-    return savedUser ? JSON.parse(savedUser) : null;
-  });
+    if (savedUser) {
+      setUser(JSON.parse(savedUser));
+    }
+    setAuthLoading(false);
+  }, []);
 
-  const isEmbedMode = window.location.pathname.startsWith("/embed/chat/");
-  const hideHeaderOnHome = window.location.pathname === "/";
-  const hideHeaderOnEmbed = window.location.pathname.startsWith("/embed/chat/");
+  const isDashboardRoute = location.pathname.startsWith("/dashboard");
+  const isEmbedChat = location.pathname.startsWith("/embed/chat");
 
-  /* ================= PROTECTED ROUTE ================= */
-  const ProtectedRoute = ({ children }) => {
-    if (!user) return <Navigate to="/login" replace />;
-    return children;
-  };
+  if (authLoading) return null; // 🔥 prevents header flicker
 
   return (
-    <Router>
-      {/* HEADER */}
-      {user && !hideHeaderOnHome && !hideHeaderOnEmbed && (
+    <>
+      {/* ✅ HEADER ONLY ON DASHBOARD */}
+      {user && isDashboardRoute && (
         <Header user={user} setUser={setUser} />
       )}
 
-      <main className={isEmbedMode ? "" : "main-content"}>
+      <main className="main-content">
         <Routes>
           {/* HOME */}
-          <Route path="/" element={<Home user={user} />} />
+          <Route path="/" element={<Home />} />
 
           {/* AUTH */}
           <Route
             path="/login"
-            element={!user ? <Login setUser={setUser} /> : <Navigate to="/dashboard" replace />}
+            element={!user ? <Login setUser={setUser} /> : <Navigate to="/dashboard" />}
           />
           <Route
             path="/register"
-            element={!user ? <Register /> : <Navigate to="/dashboard" replace />}
+            element={!user ? <Register /> : <Navigate to="/dashboard" />}
           />
-          <Route
-            path="/google-success"
-            element={<GoogleSuccess setUser={setUser} />}
-          />
+          <Route path="/google-success" element={<GoogleSuccess setUser={setUser} />} />
 
           <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/verify-otp" element={<VerifyOTP />} />
           <Route path="/reset-password" element={<ResetPassword />} />
 
-          {/* USER PROFILE */}
+          {/* USER DETAILS */}
           <Route
             path="/userDetails/:userId"
             element={
-              <ProtectedRoute>
+              <ProtectedRoute user={user}>
                 <UserDetails user={user} setUser={setUser} />
               </ProtectedRoute>
             }
@@ -101,7 +113,7 @@ function App() {
           <Route
             path="/custom-chat"
             element={
-              <ProtectedRoute>
+              <ProtectedRoute user={user}>
                 <CustomChatPage />
               </ProtectedRoute>
             }
@@ -111,50 +123,52 @@ function App() {
           <Route
             path="/embed-code/:userId"
             element={
-              <ProtectedRoute>
+              <ProtectedRoute user={user}>
                 <EmbedCodePage user={user} />
               </ProtectedRoute>
             }
           />
 
-          {/* EMBED CHAT */}
+          {/* EMBED CHAT (NO HEADER) */}
           <Route path="/embed/chat/:userId" element={<ChatBotDrawerEmbed />} />
 
           {/* DASHBOARD */}
           <Route
             path="/dashboard"
             element={
-              <ProtectedRoute>
+              <ProtectedRoute user={user}>
                 <DashboardLayout user={user} />
               </ProtectedRoute>
             }
           >
-            {/* ✅ DEFAULT AFTER LOGIN */}
             <Route index element={<Navigate to="knowledge" replace />} />
-
             <Route path="train" element={<Welcome />} />
 
-            {/* REDIRECTS */}
-            <Route path="customize" element={<Navigate to="/custom-chat" replace />} />
-            <Route path="publish" element={<Navigate to={`/embed-code/${user?._id}`} replace />} />
-
-            {/* DASHBOARD PAGES */}
             <Route path="persona" element={<AIPersona />} />
             <Route path="knowledge" element={<Knowledge />} />
             <Route path="knowledge/file" element={<FileUpload />} />
             <Route path="knowledge/qa" element={<QAPage />} />
             <Route path="knowledge/qa/new" element={<EditQA />} />
             <Route path="knowledge/qa/edit/:id" element={<EditQA />} />
+
             <Route path="add-website" element={<AddWebsiteForm user={user} />} />
             <Route path="teach" element={<TeachAgent user={user} />} />
             <Route path="voice-agent" element={<VoiceAgent />} />
           </Route>
         </Routes>
 
-        {!isEmbedMode && <DataDisplay />}
+        {/* DATA DISPLAY (NOT FOR EMBED) */}
+        {!isEmbedChat && <DataDisplay />}
       </main>
-    </Router>
+    </>
   );
 }
 
-export default App;
+/* ================= ROOT ================= */
+export default function App() {
+  return (
+    <Router>
+      <AppContent />
+    </Router>
+  );
+}
