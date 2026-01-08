@@ -167,7 +167,8 @@ const CustomChatPage = () => {
   const avatarKeys = Object.keys(avatarMap);
 
   return (
-    <div className="custom-chat-page">
+    <div className={`custom-chat-page align-${alignment}`}>
+
       {/* =========================
           CUSTOMIZER PANEL
       ========================= */}

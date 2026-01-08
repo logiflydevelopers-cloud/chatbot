@@ -7,16 +7,32 @@
 /* LEFT PANEL */
 .customizer-panel {
   position: absolute;
+  top: 30px;
+  left: 30px;
+  /* DEFAULT = LEFT */
   width: 300px;
   max-height: calc(100vh - 60px);
   background: #fff;
   box-shadow: 0px 4px 4px #00000035;
-  margin: 30px;
   overflow-y: auto;
   z-index: 99;
   border-radius: 30px;
   padding-bottom: 20px;
 }
+
+
+/* CHAT LEFT → CUSTOMIZER RIGHT */
+.align-left .customizer-panel {
+  left: auto;
+  right: 30px;
+}
+
+/* CHAT RIGHT → CUSTOMIZER LEFT */
+.align-right .customizer-panel {
+  left: 30px;
+  right: auto;
+}
+
 
 
 .customize-btn {
