@@ -178,8 +178,9 @@ select {
     margin: 20px auto;
     left: auto;
     right: auto;
-    width: 90%;
+    width: 92%;
     max-width: 340px;
+    max-height: auto;
   }
 }
 
