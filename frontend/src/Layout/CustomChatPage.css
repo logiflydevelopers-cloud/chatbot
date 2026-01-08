@@ -7,7 +7,6 @@
 /* LEFT PANEL */
 .customizer-panel {
   position: absolute;
-  top: 30px;
   left: 30px;
   /* DEFAULT = LEFT */
   width: 300px;
@@ -16,6 +15,7 @@
   box-shadow: 0px 4px 4px #00000035;
   overflow-y: auto;
   z-index: 99;
+  margin: 30px;
   border-radius: 30px;
   padding-bottom: 20px;
 }
