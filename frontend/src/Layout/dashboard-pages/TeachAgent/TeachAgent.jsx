@@ -160,7 +160,7 @@ const TeachAgent = ({ user }) => {
       RENDER
   =============================== */
   return (
-    <div className="persona-container">
+    <div className="teach-chat-container persona-container ">
       {/* HEADER */}
       <div className="teach-header">
         <div className="persona-header">
