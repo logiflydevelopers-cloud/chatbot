@@ -74,91 +74,20 @@
 ========================= */
 
 .color {
-  margin: 20px;
+  margin: 20px; 
   text-align: center;
-}
-
-/* remove default card look */
-.color .sketch-picker {
-  background: transparent !important;
-  box-shadow: none !important;
-  padding: 0 !important;
-  width: 100% !important;
-}
-
-/* gradient square */
-.color .sketch-picker>div:first-child {
-  border-radius: 8px !important;
-  overflow: hidden;
-  margin-bottom: 10px;
-}
-
-/* hide preset boxes */
-.color .sketch-picker>div:nth-child(2) {
-  display: none !important;
-}
-
-/* hue + alpha wrapper */
-.color .sketch-picker>div:nth-child(3) {
-  padding: 0 !important;
-}
-
-/* hue slider */
-.color .hue-horizontal {
-  height: 12px !important;
-  border-radius: 6px !important;
-  margin-bottom: 8px;
-}
-
-/* alpha slider */
-.color .alpha-horizontal {
-  height: 12px !important;
-  border-radius: 6px !important;
-}
-
-/* slider pointers */
-.color .hue-horizontal>div,
-.color .alpha-horizontal>div {
-  width: 16px !important;
-  height: 16px !important;
-  border-radius: 50% !important;
-  box-shadow: 0 0 0 2px #fff !important;
-}
-
-/* RGB + preview row */
-.color .flexbox-fix {
-  justify-content: space-between !important;
-  align-items: center !important;
-  margin-top: 10px;
 }
 
 /* RGB inputs */
 .color input {
-  width: 48px !important;
+  width: 220px !important;
   border-radius: 6px !important;
-  border: 1px solid #ddd !important;
+  border: 2px solid #2563eb;
   text-align: center;
   font-size: 12px;
 }
 
-/* color preview circle (right side) */
-.color .flexbox-fix>div:last-child span {
-  width: 26px !important;
-  height: 26px !important;
-  border-radius: 50% !important;
-  border: 2px solid #fff !important;
-  box-shadow: 0 0 0 1px #aaa;
-}
 
-/* =========================
-   HIDE COLOR SWATCH BOXES
-========================= */
-
-/* Completely hide preset color boxes */
-.color .sketch-picker>div:nth-child(2),
-.color .sketch-picker>div:nth-child(4) {
-  display: none !important;
-}
 
 
 
