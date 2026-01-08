@@ -1,8 +1,12 @@
-import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Navigate,
+  useLocation,
+} from "react-router-dom";
 import React, { useState } from "react";
 import axios from "axios";
-import { useLocation } from "react-router-dom";
-
 
 /* ================= AUTH ================= */
 import Login from "./Components/Auth/Login";
@@ -42,14 +46,15 @@ import "./App.css";
 
 axios.defaults.withCredentials = true;
 
-function App() {
+/* 🔥 ROUTES WRAPPER (Router ની અંદર) */
+function AppContent() {
+  const location = useLocation();
+
   /* 🔑 USER STATE */
   const [user, setUser] = useState(() => {
     const savedUser = localStorage.getItem("user");
     return savedUser ? JSON.parse(savedUser) : null;
   });
-
-  const location = useLocation();
 
   const hideHeaderRoutes = [
     "/",
@@ -66,7 +71,6 @@ function App() {
 
   const isEmbedMode = location.pathname.startsWith("/embed/chat/");
 
-
   /* ================= PROTECTED ROUTE ================= */
   const ProtectedRoute = ({ children }) => {
     if (!user) return <Navigate to="/login" replace />;
@@ -74,12 +78,11 @@ function App() {
   };
 
   return (
-    <Router>
+    <>
       {/* HEADER */}
       {user && !hideHeader && (
         <Header user={user} setUser={setUser} />
       )}
-
 
       <main className={isEmbedMode ? "" : "main-content"}>
         <Routes>
@@ -89,12 +92,21 @@ function App() {
           {/* AUTH */}
           <Route
             path="/login"
-            element={!user ? <Login setUser={setUser} /> : <Navigate to="/dashboard" replace />}
+            element={
+              !user ? (
+                <Login setUser={setUser} />
+              ) : (
+                <Navigate to="/dashboard" replace />
+              )
+            }
           />
           <Route
             path="/register"
-            element={!user ? <Register /> : <Navigate to="/dashboard" replace />}
+            element={
+              !user ? <Register /> : <Navigate to="/dashboard" replace />
+            }
           />
+
           <Route
             path="/google-success"
             element={<GoogleSuccess setUser={setUser} />}
@@ -135,7 +147,10 @@ function App() {
           />
 
           {/* EMBED CHAT */}
-          <Route path="/embed/chat/:userId" element={<ChatBotDrawerEmbed />} />
+          <Route
+            path="/embed/chat/:userId"
+            element={<ChatBotDrawerEmbed />}
+          />
 
           {/* DASHBOARD */}
           <Route
@@ -146,30 +161,49 @@ function App() {
               </ProtectedRoute>
             }
           >
-            {/* ✅ DEFAULT AFTER LOGIN */}
             <Route index element={<Navigate to="knowledge" replace />} />
-
             <Route path="train" element={<Welcome />} />
 
-            {/* REDIRECTS */}
-            <Route path="customize" element={<Navigate to="/custom-chat" replace />} />
-            <Route path="publish" element={<Navigate to={`/embed-code/${user?._id}`} replace />} />
+            <Route
+              path="customize"
+              element={<Navigate to="/custom-chat" replace />}
+            />
+            <Route
+              path="publish"
+              element={
+                <Navigate to={`/embed-code/${user?._id}`} replace />
+              }
+            />
 
-            {/* DASHBOARD PAGES */}
             <Route path="persona" element={<AIPersona />} />
             <Route path="knowledge" element={<Knowledge />} />
             <Route path="knowledge/file" element={<FileUpload />} />
             <Route path="knowledge/qa" element={<QAPage />} />
             <Route path="knowledge/qa/new" element={<EditQA />} />
             <Route path="knowledge/qa/edit/:id" element={<EditQA />} />
-            <Route path="add-website" element={<AddWebsiteForm user={user} />} />
-            <Route path="teach" element={<TeachAgent user={user} />} />
+            <Route
+              path="add-website"
+              element={<AddWebsiteForm user={user} />}
+            />
+            <Route
+              path="teach"
+              element={<TeachAgent user={user} />}
+            />
             <Route path="voice-agent" element={<VoiceAgent />} />
           </Route>
         </Routes>
 
         {!isEmbedMode && <DataDisplay />}
       </main>
+    </>
+  );
+}
+
+/* 🔥 MAIN APP */
+function App() {
+  return (
+    <Router>
+      <AppContent />
     </Router>
   );
 }
