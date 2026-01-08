@@ -158,8 +158,8 @@ export default function ChatBotDrawer({
                       color: m.from === "user" ? "#fff" : "#111",
                       borderRadius:
                         m.from === "user"
-                          ? "14px 14px 0 14px"
-                          : "0 14px 14px 14px",
+                          ? "10px 10px 0 10px"
+                          : "0 10px 10px 10px",
                     }}
                   >
                     {m.typing ? (
