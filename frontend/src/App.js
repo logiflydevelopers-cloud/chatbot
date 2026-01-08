@@ -51,14 +51,13 @@ const ProtectedRoute = ({ user, children }) => {
   return children;
 };
 
-/* ================= APP CONTENT ================= */
 function AppContent() {
   const location = useLocation();
 
   const [user, setUser] = useState(null);
   const [authLoading, setAuthLoading] = useState(true);
 
-  /* 🔥 RESTORE USER ON APP LOAD */
+  /* 🔥 Restore user on refresh */
   useEffect(() => {
     const savedUser = localStorage.getItem("user");
     if (savedUser) {
@@ -67,15 +66,26 @@ function AppContent() {
     setAuthLoading(false);
   }, []);
 
-  const isDashboardRoute = location.pathname.startsWith("/dashboard");
-  const isEmbedChat = location.pathname.startsWith("/embed/chat");
+  /* ❌ PAGES WHERE HEADER SHOULD NOT SHOW */
+  const hideHeaderRoutes = [
+    "/",
+    "/login",
+    "/register",
+    "/forgot-password",
+    "/verify-otp",
+    "/reset-password",
+  ];
 
-  if (authLoading) return null; // 🔥 prevents header flicker
+  const shouldHideHeader =
+    hideHeaderRoutes.includes(location.pathname) ||
+    location.pathname.startsWith("/embed/chat");
+
+  if (authLoading) return null; // 🔥 prevents blank / flicker
 
   return (
     <>
-      {/* ✅ HEADER ONLY ON DASHBOARD */}
-      {user && isDashboardRoute && (
+      {/* ✅ HEADER LOGIC */}
+      {!shouldHideHeader && user && (
         <Header user={user} setUser={setUser} />
       )}
 
@@ -94,7 +104,6 @@ function AppContent() {
             element={!user ? <Register /> : <Navigate to="/dashboard" />}
           />
           <Route path="/google-success" element={<GoogleSuccess setUser={setUser} />} />
-
           <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/verify-otp" element={<VerifyOTP />} />
           <Route path="/reset-password" element={<ResetPassword />} />
@@ -157,8 +166,8 @@ function AppContent() {
           </Route>
         </Routes>
 
-        {/* DATA DISPLAY (NOT FOR EMBED) */}
-        {!isEmbedChat && <DataDisplay />}
+        {/* DATA DISPLAY (NOT FOR EMBED CHAT) */}
+        {!location.pathname.startsWith("/embed/chat") && <DataDisplay />}
       </main>
     </>
   );
