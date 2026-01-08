@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { useCallback } from "react";
 import axios from "axios";
 import "./TeachAgent.css";
-import "./train-page.css";
+import "../train-page.css";
 import BotAvatar from "../../../image/Ellipse 90.png";
 import aiIcon from "../../../image/TEACH YOUR AGENT.svg";
 import { FiArrowLeft } from "react-icons/fi";
