@@ -74,17 +74,34 @@
 ========================= */
 
 .color {
-  margin: 20px; 
-  text-align: center;
+  margin: 20px;
 }
 
-/* RGB inputs */
-.color input {
-  width: 220px !important;
-  border-radius: 5px !important;
-  border: 1px solid #2563eb;
-  text-align: center;
-  font-size: 12px;
+/* hide actual input */
+.native-color-input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* button look */
+.color-trigger {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 16px;
+  border-radius: 14px;
+  border: 2px solid #c7c7ff;
+  background: #fff;
+  cursor: pointer;
+}
+
+/* preview circle */
+.color-preview {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  border: 2px solid #ddd;
 }
 
 

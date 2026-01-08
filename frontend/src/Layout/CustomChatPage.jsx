@@ -238,13 +238,30 @@ const CustomChatPage = () => {
         {/* COLOR PICKER */}
         <div className="color">
           <div className="customize-title">Chat Theme Color</div>
+
+          {/* hidden native color input */}
           <input
             type="color"
+            id="nativeColor"
             value={primaryColor}
             onChange={(e) => setPrimaryColor(e.target.value)}
-            style={{ width: "100%", height: "40px" }}
+            className="native-color-input"
           />
+
+          {/* custom trigger UI */}
+          <div
+            className="color-trigger"
+            onClick={() => document.getElementById("nativeColor").click()}
+          >
+            <span>Choose Color</span>
+            <div
+              className="color-preview"
+              style={{ backgroundColor: primaryColor }}
+            />
+          </div>
         </div>
+
+
 
         {/* WELCOME MESSAGE */}
         <div className="welcome-message">
