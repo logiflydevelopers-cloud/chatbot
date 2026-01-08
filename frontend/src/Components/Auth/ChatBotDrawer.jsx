@@ -159,7 +159,7 @@ export default function ChatBotDrawer({
                       borderRadius:
                         m.from === "user"
                           ? "10px 10px 0 10px"
-                          : "0 10px 10px 1px",
+                          : "0 10px 10px 10px",
                     }}
                   >
                     {m.typing ? (

@@ -1,6 +1,8 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import React, { useState } from "react";
 import axios from "axios";
+import { useLocation } from "react-router-dom";
+
 
 /* ================= AUTH ================= */
 import Login from "./Components/Auth/Login";
@@ -47,9 +49,23 @@ function App() {
     return savedUser ? JSON.parse(savedUser) : null;
   });
 
-  const isEmbedMode = window.location.pathname.startsWith("/embed/chat/");
-  const hideHeaderOnHome = window.location.pathname === "/";
-  const hideHeaderOnEmbed = window.location.pathname.startsWith("/embed/chat/");
+  const location = useLocation();
+
+  const hideHeaderRoutes = [
+    "/",
+    "/login",
+    "/register",
+    "/forgot-password",
+    "/verify-otp",
+    "/reset-password",
+  ];
+
+  const hideHeader =
+    hideHeaderRoutes.includes(location.pathname) ||
+    location.pathname.startsWith("/embed/chat/");
+
+  const isEmbedMode = location.pathname.startsWith("/embed/chat/");
+
 
   /* ================= PROTECTED ROUTE ================= */
   const ProtectedRoute = ({ children }) => {
@@ -60,9 +76,10 @@ function App() {
   return (
     <Router>
       {/* HEADER */}
-      {user && !hideHeaderOnHome && !hideHeaderOnEmbed && (
+      {user && !hideHeader && (
         <Header user={user} setUser={setUser} />
       )}
+
 
       <main className={isEmbedMode ? "" : "main-content"}>
         <Routes>
