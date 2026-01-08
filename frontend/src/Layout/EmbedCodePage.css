@@ -1,0 +1,285 @@
+/* ================= BASE ================= */
+.embed-page {
+    padding: 25px;
+    background: #ffffff;
+    min-height: 100vh;
+    font-family: Inter, system-ui, sans-serif;
+    text-align: center;
+}
+
+.embed-header {
+    background: linear-gradient(90deg, #4f46e5, #6366f1);
+    margin: 20px 0 0 0;
+    color: white;
+    padding: 20px;
+    font-size: 24px;
+    font-weight: 600;
+    text-align: center;
+}
+
+.embed-subtitle {
+    margin-top: 28px;
+    color: #4b5563;
+    font-size: 15px;
+}
+
+/* ================= CODE BOX ================= */
+.code-box {
+    background: #f9fafb;
+    padding: 18px;
+    margin: 24px auto;
+    width: 85%;
+    border-radius: 12px;
+    border: 1px solid #e5e7eb;
+    font-family: monospace;
+    font-size: 14px;
+    overflow-x: auto;
+    color: #111827;
+}
+
+/* ================= COPY BUTTON ================= */
+.copy-btn {
+    background: #4f46e5;
+    color: white;
+    padding: 12px 22px;
+    border-radius: 10px;
+    border: none;
+    cursor: pointer;
+    font-size: 14px;
+    transition: all 0.25s ease;
+}
+
+.copy-btn:hover {
+    background: #4338ca;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 18px rgba(79, 70, 229, 0.25);
+}
+
+.copy-toast {
+    margin-top: 12px;
+    color: #16a34a;
+    font-size: 14px;
+    animation: fadeUp 0.3s ease;
+}
+
+/* ================= PLATFORMS ================= */
+.platform-title {
+    margin-top: 50px;
+    font-size: 18px;
+    font-weight: 600;
+}
+
+.platform-slider {
+    display: flex;
+    gap: 16px;
+    margin-top: 22px;
+    padding-bottom: 14px;
+    justify-content: center;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+}
+
+.platform-slider::-webkit-scrollbar {
+    height: 6px;
+}
+
+.platform-slider::-webkit-scrollbar-thumb {
+    background: #d1d5db;
+    border-radius: 10px;
+}
+
+.platform-card {
+    min-width: 130px;
+    background: white;
+    border: 3px solid #e5e7eb;
+    border-radius: 16px;
+    padding: 18px 12px;
+    cursor: pointer;
+    scroll-snap-align: start;
+    transition: all 0.3s ease;
+
+    /* 🔥 CENTER FIX */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+.platform-card:hover {
+    box-shadow: 0 12px 22px rgba(0, 0, 0, 0.08);
+}
+
+.platform-card.active {
+    border-color: #4f46e5;
+    box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.15);
+}
+
+.platform-img {
+    width: 44px;
+    height: 44px;
+    object-fit: contain;
+}
+
+.platform-card span {
+    font-size: 14px;
+    font-weight: 500;
+    color: #111827;
+}
+
+/* ================= CONTENT ================= */
+.platform-content {
+    max-width: 520px;
+    margin: 28px auto;
+    padding: 22px;
+    background: #eef2ff;
+    border-radius: 16px;
+    text-align: left;
+}
+
+.platform-content h4 {
+    margin-bottom: 12px;
+    font-size: 16px;
+}
+
+.platform-content ol {
+    padding-left: 18px;
+    font-size: 14px;
+}
+
+.platform-content li {
+    margin-bottom: 8px;
+}
+
+
+/* ================= STEPS DESIGN (MATCH IMAGE) ================= */
+
+.steps-list {
+    list-style: none;
+    padding: 0;
+    margin-top: 16px;
+}
+
+.steps-list li {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    margin-bottom: 14px;
+}
+
+.step-number {
+    min-width: 23px;
+    height: 23px;
+    background: #e0e7ff;
+    border: 1px solid #4f46e5;
+    color: #4f46e5;
+    font-size: 13px;
+    font-weight: 600;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.step-text {
+    font-size: 14px;
+    color: #111827;
+    line-height: 1.6;
+}
+
+/* platform content box tweak */
+.platform-content {
+    max-width: 640px;
+    margin: 30px auto;
+    padding: 26px;
+    background: #E5E8F8;
+    border-radius: 18px;
+    text-align: left;
+}
+
+.platform-content h4 {
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 10px;
+}
+
+
+/* ================= ANIMATION ================= */
+.animate {
+    animation: slideFade 0.35s ease forwards;
+}
+
+@keyframes slideFade {
+    from {
+        opacity: 0;
+        transform: translateY(12px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeUp {
+    from {
+        opacity: 0;
+        transform: translateY(6px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* ================= MOBILE ================= */
+@media (max-width: 768px) {
+    .code-box {
+        width: 100%;
+    }
+
+    .platform-card {
+        min-width: 110px;
+    }
+
+    .platform-slider {
+        display: flex;
+        gap: 16px;
+        margin-top: 22px;
+        padding-bottom: 14px;
+        justify-content: flex-start;
+        overflow-x: auto;
+        scroll-snap-type: x mandatory;
+    }
+
+    .embed-header {
+        background: linear-gradient(90deg, #4f46e5, #6366f1);
+        margin: 20px 0 0 0;
+        color: white;
+        padding: 10px;
+        font-size: 15px;
+        font-weight: 600;
+        text-align: center;
+    }
+
+    .embed-page {
+        padding: 15px;
+        background: #ffffff;
+        min-height: 100vh;
+        font-family: Inter, system-ui, sans-serif;
+        text-align: center;
+    }
+}
+
+@media (max-width: 480px) {
+    .platform-card {
+        min-width: 100px;
+    }
+
+    .platform-img {
+        width: 38px;
+        height: 38px;
+    }
+}

@@ -6,7 +6,7 @@ import "./Login.css";
 /* Images (Login page same) */
 import desktopImg from "../../image/robot-desktop.png";
 import mobileImg from "../../image/robot-mobile.png";
-import emailIcon from "../../image/mail.svg";
+import emailIcon from "../../image/email.svg";
 
 const ForgotPassword = () => {
   const [email, setEmail] = useState("");
@@ -14,7 +14,7 @@ const ForgotPassword = () => {
 
   const sendOTP = async () => {
     try {
-      await axios.post("https://chatbot-backend-project.vercel.app/api/auth/forgot-password", {
+      await axios.post("http://localhost:4000/api/auth/forgot-password", {
         email,
       });
 

@@ -11,7 +11,7 @@ import chatbotRoutes from "./routes/chatbotRoutes.js";
 import embedRoutes from "./routes/embed.js";
 import proxyRoute from "./routes/proxy.js";
 import qaRoutes from "./routes/qaRoutes.js";
-import teachAgentRoutes from "./routes/teachAgentRoutes.js";
+import personaRoutes from "./routes/personaRoutes.js";
 
 
 
@@ -26,7 +26,7 @@ const PORT = process.env.PORT || 4000;
 ====================================================== */
 app.use(
   cors({
-    origin: "https://chatbot-frontend-mocha-six.vercel.app",
+    origin: "http://localhost:3000",
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"],
@@ -35,7 +35,7 @@ app.use(
 
 // Handle OPTIONS preflight globally
 app.options("*", cors({
-  origin: "https://chatbot-frontend-mocha-six.vercel.app",
+  origin: "http://localhost:3000",
   credentials: true,
 }));
 
@@ -43,8 +43,10 @@ app.options("*", cors({
               CORS FIX COMPLETED ✔
 ====================================================== */
 
-app.use(express.json());
+app.use(express.json({ limit: "10mb" }));
+app.use(express.urlencoded({ extended: true, limit: "10mb" }));
 app.use(cookieParser());
+
 
 // Allow iframe
 app.use((req, res, next) => {
@@ -63,7 +65,7 @@ app.use("/api/chatbot", chatbotRoutes);
 app.use("/embed", embedRoutes);
 app.use("/proxy", proxyRoute);
 app.use("/api/qa", qaRoutes);
-app.use("/teach-agent", teachAgentRoutes);
+app.use("/api/persona", personaRoutes);
 
 
 app.listen(PORT, () =>

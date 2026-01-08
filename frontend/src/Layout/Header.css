@@ -178,3 +178,140 @@
     color: #ffffff;
   }
 }
+
+/* ================= PROFILE POPUP ================= */
+
+.profile-popup {
+  position: absolute;
+  top: 64px;
+  right: 20px;
+  width: 340px;
+  background: #ffffff;
+  border-radius: 14px;
+  box-shadow: 0 20px 40px rgba(15, 23, 42, 0.18);
+  z-index: 10000;
+  padding: 18px;
+}
+
+/* ---------- Header ---------- */
+.profile-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.profile-avatar {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: #ff7a00;
+  color: #ffffff;
+  font-size: 18px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.profile-hello {
+  margin: 0;
+  font-size: 13px;
+  color: #64748b;
+}
+
+.profile-name {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 600;
+  color: #0f172a;
+}
+
+.profile-plan {
+  margin-left: auto;
+  background: #22c55e;
+  color: #ffffff;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: 8px;
+}
+
+/* ---------- Progress ---------- */
+.profile-progress {
+  background: #f8fafc;
+  border-radius: 10px;
+  padding: 12px;
+  margin-bottom: 14px;
+}
+
+.progress-title {
+  display: flex;
+  justify-content: space-between;
+  font-size: 13px;
+  margin-bottom: 8px;
+}
+
+.progress-bar {
+  height: 8px;
+  background: #e5e7eb;
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.progress-bar span {
+  display: block;
+  height: 100%;
+  background: #ef4444;
+}
+
+/* ---------- Button ---------- */
+.upgrade-btn {
+  width: 100%;
+  background: #0f172a;
+  color: #ffffff;
+  border: none;
+  border-radius: 10px;
+  padding: 12px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  margin-bottom: 12px;
+}
+
+/* ---------- Menu ---------- */
+.profile-menu {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  border-top: 1px solid #e5e7eb;
+}
+
+.profile-menu li {
+  padding: 12px 6px;
+  font-size: 14px;
+  cursor: pointer;
+  border-radius: 8px;
+}
+
+.profile-menu li:hover {
+  background: #f1f5f9;
+}
+
+/* ================= MOBILE RESPONSIVE ================= */
+
+@media (max-width: 768px) {
+  .profile-popup {
+    position: fixed;
+    top: 70px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: calc(100% - 24px);
+    max-width: 380px;
+    right: auto;
+  }
+
+  .jf-title {
+    font-size: 14px;
+  }
+}

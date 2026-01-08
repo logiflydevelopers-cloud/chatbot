@@ -1,74 +1,105 @@
 import React, { useState, useEffect, useRef } from "react";
+import { useCallback } from "react";
 import axios from "axios";
 import "./TeachAgent.css";
 import BotAvatar from "../../../image/Ellipse 90.png";
-import aiIcon from "../../../image/ai.svg";
+import aiIcon from "../../../image/TEACH YOUR AGENT.svg";
 import { FiArrowLeft } from "react-icons/fi";
 import { useOutletContext } from "react-router-dom";
-import "../train-page.css";
+
+
 
 const TeachAgent = ({ user }) => {
-  const apiBase = "https://chatbot-backend-project.vercel.app/teach-agent";
+  const apiBase = "http://localhost:4000";
 
-  // 🔹 Freeze username (NO warning, NO rerender)
-  const userNameRef = useRef(
-    user?.name || "User"
-  );
+  /* ===============================
+      REFS
+  =============================== */
+  const userNameRef = useRef(user?.name || "User");
+  const greetedRef = useRef(false);
+  const typingIntervalRef = useRef(null);
 
+  const bottomRef = useRef(null);
+  const { setSidebarOpen } = useOutletContext();
 
-  const buildFirstMessage = (name) =>
-    ` Good evening, ${name}! 😊 It’s truly a pleasure to connect with you—imagine us sharing a cozy cup of tea as we chat. Feel free to share what’s on your mind today!`;
-
+  /* ===============================
+      STATE
+  =============================== */
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
   const [thinking, setThinking] = useState(false);
   const [typingText, setTypingText] = useState("");
   const [isTypewriting, setIsTypewriting] = useState(false);
 
-  const bottomRef = useRef(null);
-  const hasInitialized = useRef(false);
-  const { setSidebarOpen } = useOutletContext();
+  /* ===============================
+      HELPERS
+  =============================== */
+  const buildFirstMessage = (name) =>
+    `Good evening, ${name}! 😊 It’s truly a pleasure to connect with you—imagine us sharing a cozy cup of tea as we chat. Feel free to share what’s on your mind today!`;
 
-  // 🔹 Typewriter (single render)
-  const typeWriterEffect = (text) => {
+
+  /* ===============================
+      TYPEWRITER (DISPLAY ONLY)
+  =============================== */
+  const typeWriterEffect = (text, onDone) => {
+    clearInterval(typingIntervalRef.current);
+
     setIsTypewriting(true);
     setTypingText("");
+
     let index = 0;
 
-    const interval = setInterval(() => {
-      setTypingText((prev) => prev + text.charAt(index));
+    typingIntervalRef.current = setInterval(() => {
       index++;
+      setTypingText(text.slice(0, index));
 
-      if (index === text.length) {
-        clearInterval(interval);
-        setMessages((prev) => [...prev, { sender: "bot", text }]);
-        setTypingText("");
+      if (index >= text.length) {
+        clearInterval(typingIntervalRef.current);
         setIsTypewriting(false);
+        setTypingText("");
+        onDone?.();
       }
-    }, 35);
+    }, 30);
   };
 
-  // 🔹 First greeting (ONCE)
+  /* ===============================
+      START FRESH GREETING
+  =============================== */
+  const startFreshGreeting = useCallback(() => {
+    const msg = buildFirstMessage(userNameRef.current);
+
+    setThinking(true);
+
+    setTimeout(() => {
+      setThinking(false);
+      typeWriterEffect(msg, () => {
+        setMessages([{ sender: "bot", text: msg }]);
+      });
+    }, 600);
+  }, []);
+
+
+  /* ===============================
+      FIRST LOAD GREETING
+  =============================== */
   useEffect(() => {
-  if (hasInitialized.current) return;
-  hasInitialized.current = true;
+    if (greetedRef.current) return;
 
-  const msg = buildFirstMessage(userNameRef.current);
-
-  setThinking(true);
-  setTimeout(() => {
-    setThinking(false);
-    typeWriterEffect(msg);
-  }, 1200);
-}, []);
+    greetedRef.current = true;
+    startFreshGreeting();
+  }, [startFreshGreeting]);
 
 
-  // 🔹 Auto scroll chat ONLY
+  /* ===============================
+      AUTO SCROLL
+  =============================== */
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, typingText]);
 
-  // 🔹 Send message
+  /* ===============================
+      SEND MESSAGE
+  =============================== */
   const sendMessage = async () => {
     if (!input.trim() || thinking || isTypewriting) return;
 
@@ -79,17 +110,27 @@ const TeachAgent = ({ user }) => {
     setThinking(true);
 
     try {
-      const res = await axios.post(`${apiBase}/chat`, {
-        question: userMsg,
-      });
+      const res = await axios.post(
+        `${apiBase}/api/chatbot/chat`,   // ✅ SAME AS ChatBotDrawer
+        {
+          userId: user?.id || user?._id, // ✅ FIXED
+          question: userMsg,
+        }
+      );
 
       const botReply = res.data.answer || "No reply";
 
       setTimeout(() => {
         setThinking(false);
-        typeWriterEffect(botReply);
-      }, 1000);
+        typeWriterEffect(botReply, () => {
+          setMessages((prev) => [
+            ...prev,
+            { sender: "bot", text: botReply },
+          ]);
+        });
+      }, 600);
     } catch (err) {
+      console.error(err);
       setThinking(false);
       setMessages((prev) => [
         ...prev,
@@ -98,22 +139,25 @@ const TeachAgent = ({ user }) => {
     }
   };
 
-  // 🔹 Restart chat
-  const restartChat = async () => {
-    await axios.post(`${apiBase}/restart`);
+
+  /* ===============================
+      RESTART CHAT (FRESH)
+  =============================== */
+  const restartChat = () => {
+    clearInterval(typingIntervalRef.current);
 
     setMessages([]);
     setTypingText("");
-    setThinking(true);
+    setIsTypewriting(false);
+    setThinking(false);
 
-    const msg = buildFirstMessage(userNameRef.current);
-
-    setTimeout(() => {
-      setThinking(false);
-      typeWriterEffect(msg);
-    }, 1200);
+    startFreshGreeting();
   };
 
+
+  /* ===============================
+      RENDER
+  =============================== */
   return (
     <div className="teach-chat-container">
       {/* HEADER */}
@@ -138,21 +182,15 @@ const TeachAgent = ({ user }) => {
         </button>
       </div>
 
-      <hr className="divider" />
-
-      {/* CHAT + INPUT WRAPPER */}
+      {/* CHAT */}
       <div className="chat-wrapper">
-        {/* CHAT */}
         <div className="chat-area">
           {messages.map((m, i) => (
             <div key={i} className="chat-row">
               {m.sender === "bot" && (
                 <img src={BotAvatar} className="msg-avatar" alt="bot" />
               )}
-              <div
-                className={`msg-bubble ${m.sender === "user" ? "user-msg" : "bot-msg"
-                  }`}
-              >
+              <div className={`msg-bubble ${m.sender}-msg`}>
                 {m.text}
               </div>
             </div>
@@ -166,14 +204,14 @@ const TeachAgent = ({ user }) => {
             </div>
           )}
 
-          {/* THINKING */}
+          {/* THINKING DOTS */}
           {thinking && (
             <div className="chat-row">
               <img src={BotAvatar} className="msg-avatar" alt="bot" />
               <div className="typing-dots">
-                <span>.</span>
-                <span>.</span>
-                <span>.</span>
+                <span></span>
+                <span></span>
+                <span></span>
               </div>
             </div>
           )}
@@ -181,7 +219,7 @@ const TeachAgent = ({ user }) => {
           <div ref={bottomRef} />
         </div>
 
-        {/* INPUT FIXED */}
+        {/* INPUT */}
         <div className="input-area">
           <input
             className="chat-input"

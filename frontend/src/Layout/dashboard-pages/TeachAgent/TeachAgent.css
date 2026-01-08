@@ -130,13 +130,27 @@
   cursor: pointer;
 }
 
-/* ===============================
-   THINKING DOTS
-================================ */
+.typing-dots {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 14px;
+  background: #f1f3f5;
+  border-radius: 18px;
+  width: fit-content;
+}
+
 .typing-dots span {
-  font-size: 32px;
-  opacity: 0.3;
-  animation: blink 1.2s infinite;
+  width: 6px;
+  height: 6px;
+  background-color: #9aa0a6;
+  border-radius: 50%;
+  display: inline-block;
+  animation: typingBounce 1.4s infinite ease-in-out both;
+}
+
+.typing-dots span:nth-child(1) {
+  animation-delay: 0s;
 }
 
 .typing-dots span:nth-child(2) {
@@ -147,19 +161,28 @@
   animation-delay: 0.4s;
 }
 
-@keyframes blink {
+@keyframes typingBounce {
   0% {
-    opacity: .2;
+    transform: translateY(0);
+    opacity: 0.4;
   }
 
-  50% {
+  20% {
+    transform: translateY(-6px);
     opacity: 1;
   }
 
+  40% {
+    transform: translateY(0);
+    opacity: 0.6;
+  }
+
   100% {
-    opacity: .2;
+    transform: translateY(0);
+    opacity: 0.4;
   }
 }
+
 
 /* ======================================================
    📱 MOBILE RESPONSIVE (IMPORTANT PART)

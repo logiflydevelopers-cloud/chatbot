@@ -3,6 +3,7 @@
   --sidebar-width: 19.875rem;
   --white: #ffff;
   --black: #000;
+  --grey-light: #E5E8F8;
 }
 
 /* ================= LAYOUT ================= */
@@ -19,7 +20,7 @@
   position: fixed;
   top: var(--header-height);
   left: 0;
-  background: var(--white);
+  background: var(--grey-light);
   padding: 1.5rem 1rem;
   z-index: 1000;
   transition: transform 0.3s ease;
@@ -35,6 +36,7 @@
   padding: 14px;
   margin: 20px 0;
   border-radius: 10px;
+  background-color: var(--white);
   text-decoration: none;
   color: var(--white);
   align-items: center;
@@ -73,7 +75,7 @@
 }
 
 .side-item:hover {
-  box-shadow: 0px 4px 4px 0px #3c4984b5;
+  box-shadow: 0px 4px 4px 0px #00000025;
 }
 
 .icon {

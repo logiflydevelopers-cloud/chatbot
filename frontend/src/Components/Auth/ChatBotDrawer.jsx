@@ -1,346 +1,254 @@
 import React, { useState, useEffect, useRef } from "react";
 import axios from "axios";
-
-// ⭐ IMPORT AVATARS (from src/image)
-import Ellipse90 from "../../image/Ellipse 90.png";
-import Ellipse91 from "../../image/Ellipse 91.png";
-import Ellipse92 from "../../image/Ellipse 92.png";
-import Ellipse93 from "../../image/Ellipse 93.png";
+import ReactMarkdown from "react-markdown";
+import "./ChatBotDrawer.css";
+import sendIcon from "../../image/Group 427320708.svg";
 
 export default function ChatBotDrawer({
   userId,
-  apiBase = "https://chatbot-backend-project.vercel.app",
-  primaryColor: defaultColor = "#2563eb",
-  avatar: defaultAvatar = Ellipse90,        // ⭐ FIXED
-  firstMessage: defaultMsg = "Hi there 👋 How can I help you?",
-  alignment: defaultAlign = "right",
-  onClose = () => { },
-  isCustomizerMode = false,
+  apiBase,
+  primaryColor,
+  avatar,
+  firstMessage,
+  alignment = "right",
+  showChat,
+  showBubble,
+  onClose,
+  onBubbleClick,
+  isEmbed = false,
 }) {
-  const [primaryColor, setPrimaryColor] = useState(defaultColor);
-  const [avatar, setAvatar] = useState(defaultAvatar);
-  const [firstMessage, setFirstMessage] = useState(defaultMsg);
-  const [alignment, setAlignment] = useState(defaultAlign);
-
   const [input, setInput] = useState("");
   const [messages, setMessages] = useState([]);
-  const [suggestions, setSuggestions] = useState([]);
-  const [isTyping, setIsTyping] = useState(false);
+  const [questions, setQuestions] = useState([]);
 
   const chatRef = useRef(null);
 
-  // ⭐ MAP DB avatar string to actual image
-  const mapAvatar = (key) => {
-    switch (key) {
-      case "Ellipse91": return Ellipse91;
-      case "Ellipse92": return Ellipse92;
-      case "Ellipse93": return Ellipse93;
-      default: return Ellipse90;
-    }
-  };
-
-  /* LOAD SETTINGS */
+  /* =================================================
+      LOAD WELCOME MESSAGE (ONLY ONCE / UPDATE)
+  ================================================= */
   useEffect(() => {
-    const loadSettings = async () => {
-      try {
-        const res = await axios.get(`${apiBase}/api/chatbot/${userId}`);
+    if (!showChat) return;
 
-        if (res.data.success && res.data.settings) {
-          const s = res.data.settings;
-
-          setPrimaryColor(s.primaryColor || defaultColor);
-          setAvatar(mapAvatar(s.avatar));                // ⭐ FIXED
-          setFirstMessage(s.firstMessage || defaultMsg);
-          setAlignment(s.alignment || defaultAlign);
-        }
-      } catch (error) {
-        console.log("Settings load failed");
+    setMessages((prev) => {
+      if (prev.length === 0) {
+        return [{ from: "bot", text: firstMessage }];
       }
 
-      // Load LocalStorage overrides
-      const stored = localStorage.getItem("chatbot_settings");
-      if (stored) {
-        const s = JSON.parse(stored);
-        setPrimaryColor(s.primaryColor || defaultColor);
-        setAvatar(mapAvatar(s.avatar));                  // ⭐ FIXED
-        setFirstMessage(s.firstMessage || defaultMsg);
-        setAlignment(s.alignment || defaultAlign);
+      if (prev[0].from === "bot") {
+        const updated = [...prev];
+        updated[0] = { ...updated[0], text: firstMessage };
+        return updated;
+      }
+
+      return prev;
+    });
+  }, [showChat, firstMessage]);
+
+  /* =================================================
+      LOAD QUESTIONS (CHIPS)
+  ================================================= */
+  useEffect(() => {
+    if (!showChat) return;
+
+    const loadQuestions = async () => {
+      try {
+        const res = await axios.get(`${apiBase}/api/qa/user/${userId}`);
+        setQuestions(res.data || []);
+      } catch {
+        console.log("QA load failed");
       }
     };
 
-    loadSettings();
-  }, [apiBase, userId]);
+    loadQuestions();
+  }, [showChat, apiBase, userId]);
 
-  /* FIRST MESSAGE */
-  useEffect(() => {
-    setMessages([{ from: "bot", text: firstMessage }]);
-  }, [firstMessage]);
-
-  /* LOAD QA */
-  useEffect(() => {
-    axios
-      .get(`${apiBase}/api/qa/user/${userId}`)
-      .then((res) => setSuggestions(res.data || []))
-      .catch(() => { });
-  }, [apiBase, userId]);
-
-  /* AUTO SCROLL */
+  /* =================================================
+      AUTO SCROLL
+  ================================================= */
   useEffect(() => {
     if (chatRef.current) {
       chatRef.current.scrollTop = chatRef.current.scrollHeight;
     }
-  }, [messages, isTyping]);
+  }, [messages]);
 
-  /* SEND MESSAGE */
+  /* =================================================
+      SEND MESSAGE
+  ================================================= */
   const sendMessage = async () => {
     if (!input.trim()) return;
 
-    const text = input;
+    const userText = input;
     setInput("");
-    setMessages((prev) => [...prev, { from: "user", text }]);
 
-    setIsTyping(true);
+    // add user msg + typing placeholder
+    setMessages((prev) => [
+      ...prev,
+      { from: "user", text: userText },
+      { from: "bot", typing: true },
+    ]);
 
     try {
       const res = await axios.post(`${apiBase}/api/chatbot/chat`, {
         userId,
-        question: text,
+        question: userText,
       });
 
-      setIsTyping(false);
+      const answer = res.data?.answer || "No response";
 
-      setMessages((prev) => [
-        ...prev,
-        { from: "bot", text: res.data.answer || "Sorry, I don't know." },
-      ]);
-    } catch {
-      setIsTyping(false);
-      setMessages((prev) => [
-        ...prev,
-        { from: "bot", text: "⚠️ Server error. Try later." },
-      ]);
+      setMessages((prev) => {
+        const updated = [...prev];
+        updated[updated.length - 1] = { from: "bot", text: answer };
+        return updated;
+      });
+    } catch (error) {
+      console.error("Chat error:", error);
+
+      setMessages((prev) => {
+        const updated = [...prev];
+        updated[updated.length - 1] = {
+          from: "bot",
+          text: "⚠️ Server error. Please try again later.",
+        };
+        return updated;
+      });
     }
   };
-
-  /* TYPING DOT STYLE */
-  const typingStyle = {
-    display: "flex",
-    gap: "6px",
-    background: "#e2e8f0",
-    padding: "10px 14px",
-    borderRadius: 14,
-    width: "fit-content",
-    margin: "6px 0",
-  };
-
-  const dotStyle = `
-    @keyframes typingBounce {
-      0%, 60%, 100% { transform: translateY(0); }
-      30% { transform: translateY(-5px); }
-    }
-    .typing-dot {
-      width: 8px;
-      height: 8px;
-      background: #475569;
-      border-radius: 50%;
-      animation: typingBounce 1s infinite;
-    }
-    .typing-dot:nth-child(2) { animation-delay: 0.2s; }
-    .typing-dot:nth-child(3) { animation-delay: 0.4s; }
-  `;
 
   return (
-    <div
-      style={{
-        position: "fixed",
-        bottom: 0,
-        [alignment]: 0,
-        width: 330,
-        height: 460,
-        borderRadius: 16,
-        background: "#fff",
-        display: "flex",
-        flexDirection: "column",
-        boxShadow: "0 8px 25px rgba(0,0,0,0.18)",
-        overflow: "hidden",
-        zIndex: 99999,
-      }}
-    >
-      <style>{dotStyle}</style>
-
-      {/* HEADER */}
-      <div
-        style={{
-          padding: "12px 16px",
-          background: primaryColor,
-          color: "#fff",
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-        }}
-      >
-        <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-          <img
-            src={avatar}           // ⭐ NOW ALWAYS CORRECT
-            alt="chatbot avatar"
-            style={{
-              width: 38,
-              height: 38,
-              borderRadius: "50%",
-              border: "2px solid #fff",
-            }}
-          />
-          <b>AI Chatbot</b>
-        </div>
-
-        <button
-          onClick={onClose}
-          style={{
-            background: "transparent",
-            border: "none",
-            color: "#fff",
-            fontSize: 18,
-            cursor: "pointer",
-          }}
-        >
-          ✖
-        </button>
-      </div>
-
-      {/* SUGGESTIONS (ONLY IF Q&A EXISTS) */}
-      {suggestions.length > 0 && (
+    <>
+      {/* ================= CHAT WINDOW ================= */}
+      {showChat && (
         <div
+          className="chatbot-drawer"
           style={{
-            padding: 10,
-            display: "flex",
-            flexWrap: "wrap",
-            gap: "8px",
-            background: "#fff",
-            borderBottom: "1px solid #eee",
-            maxHeight: 90,
-            overflowY: "auto",
+            [alignment]: isEmbed ? 0 : 25,
+            bottom: isEmbed ? 0 : 25,
+            background: primaryColor,
+            boxShadow: isEmbed ? "none" : "0 4px 8px #00000030",
           }}
         >
-          {suggestions.map((qa, idx) => (
-            <button
-              key={idx}
-              onClick={() =>
-                setMessages((prev) => [
-                  ...prev,
-                  { from: "user", text: qa.question },
-                  { from: "bot", text: qa.answer },
-                ])
-              }
-              style={{
-                background: primaryColor,
-                color: "#fff",
-                border: "none",
-                padding: "6px 12px",
-                borderRadius: 6,
-                cursor: "pointer",
-                fontSize: 13,
-              }}
-            >
-              {qa.question}
+          {/* HEADER */}
+          <div className="chatbot-header" style={{ background: primaryColor }}>
+            <div className="chatbot-title">
+              <img src={avatar} alt="avatar" />
+              <b>AI Chatbot</b>
+            </div>
+            <button onClick={onClose}>✖</button>
+          </div>
+
+          {/* BODY */}
+          <div className="chatbot-body" ref={chatRef}>
+            {messages.map((m, i) => (
+              <React.Fragment key={i}>
+                <div className={`chat-row ${m.from}`}>
+                  {m.from === "bot" && (
+                    <img
+                      src={avatar}
+                      alt="bot"
+                      className="bot-avatar"
+                      style={{ borderColor: primaryColor }}
+                    />
+                  )}
+
+                  <div
+                    className="chat-bubble"
+                    style={{
+                      background:
+                        m.from === "user" ? primaryColor : "#e5e7eb",
+                      color: m.from === "user" ? "#fff" : "#111",
+                      borderRadius:
+                        m.from === "user"
+                          ? "14px 14px 0 14px"
+                          : "0 14px 14px 14px",
+                    }}
+                  >
+                    {m.typing ? (
+                      <div className="typing-dots">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                      </div>
+                    ) : (
+                      <ReactMarkdown>{m.text}</ReactMarkdown>
+                    )}
+                  </div>
+                </div>
+
+                {/* QUESTION CHIPS (ONLY BELOW FIRST BOT MSG) */}
+                {i === 0 && questions.length > 0 && (
+                  <div
+                    className="question-chips"
+                    style={{
+                      display: "flex",
+                      gap: 6,
+                      marginLeft: "auto",
+                      marginRight: 40,
+                      marginTop: 6,
+                      maxWidth: "75%",
+                      flexWrap: "wrap",
+                      justifyContent: "flex-end",
+                    }}
+                  >
+                    {questions.map((qa, idx) => (
+                      <button
+                        key={idx}
+                        onClick={() => {
+                          setMessages((prev) => [
+                            ...prev,
+                            { from: "user", text: qa.question },
+                            { from: "bot", text: qa.answer },
+                          ]);
+                          setQuestions((prev) =>
+                            prev.filter((q) => q.question !== qa.question)
+                          );
+                        }}
+                        style={{
+                          background: primaryColor,
+                          color: "#fff",
+                          border: "none",
+                          padding: "6px 12px",
+                          borderRadius: 999,
+                          fontSize: 13,
+                          cursor: "pointer",
+                        }}
+                      >
+                        {qa.question}
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </React.Fragment>
+            ))}
+          </div>
+
+          {/* INPUT */}
+          <div className="chatbot-input">
+            <input
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              onKeyUp={(e) => e.key === "Enter" && sendMessage()}
+              placeholder="Type here..."
+            />
+            <button onClick={sendMessage} style={{ background: primaryColor }}>
+              <img src={sendIcon} alt="send" />
             </button>
-          ))}
+          </div>
         </div>
       )}
 
-      {/* MESSAGES */}
-      <div
-        ref={chatRef}
-        style={{
-          flex: 1,
-          overflowY: "auto",
-          padding: 12,
-          background: "#f8fafc",
-        }}
-      >
-        {messages.map((m, i) => (
-          <div
-            key={i}
-            style={{
-              margin: "10px 0",
-              display: "flex",
-              justifyContent: m.from === "user" ? "flex-end" : "flex-start",
-            }}
-          >
-            {m.from === "bot" && (
-              <img
-                src={avatar}
-                alt="bot avatar"
-                style={{
-                  width: 28,
-                  height: 28,
-                  borderRadius: "50%",
-                  marginRight: 8,
-                }}
-              />
-            )}
-
-            <div
-              style={{
-                background: m.from === "user" ? primaryColor : "#e2e8f0",
-                color: m.from === "user" ? "#fff" : "#111",
-                padding: "10px 14px",
-                borderRadius: 14,
-                maxWidth: "75%",
-                fontSize: 14,
-              }}
-            >
-              {m.text}
-            </div>
-          </div>
-        ))}
-
-        {isTyping && (
-          <div style={typingStyle}>
-            <span className="typing-dot"></span>
-            <span className="typing-dot"></span>
-            <span className="typing-dot"></span>
-          </div>
-        )}
-      </div>
-
-      {/* INPUT */}
-      <div
-        style={{
-          padding: 8,
-          borderTop: "1px solid #ddd",
-          display: "flex",
-          background: "#fff",
-        }}
-      >
-        <input
-          value={input}
-          onChange={(e) => setInput(e.target.value)}
-          onKeyDown={(e) => e.key === "Enter" && sendMessage()}
-          placeholder="Type message..."
+      {/* ================= FLOATING BUBBLE ================= */}
+      {showBubble && (
+        <div
+          className="chatbot-bubble"
           style={{
-            flex: 1,
-            padding: 10,
-            border: "1px solid #ccc",
-            borderRadius: 8,
+            [alignment]: 20,
+            border: `3px solid ${primaryColor}`,
           }}
-        />
-
-        <button
-          onClick={sendMessage}
-          style={{
-            marginLeft: 8,
-            background: primaryColor,
-            color: "#fff",
-            border: "none",
-            padding: "0 16px",
-            borderRadius: 8,
-            cursor: "pointer",
-            fontSize: 14,
-          }}
+          onClick={onBubbleClick}
         >
-          Send
-        </button>
-      </div>
-    </div>
+          <img src={avatar} alt="bubble" />
+        </div>
+      )}
+    </>
   );
 }

@@ -1,0 +1,277 @@
+.custom-chat-page {
+  display: flex;
+  height: 100vh;
+  width: 100%;
+}
+
+/* LEFT PANEL */
+.customizer-panel {
+  position: absolute;
+  width: 300px;
+  max-height: calc(100vh - 60px);
+  background: #fff;
+  box-shadow: 0px 4px 4px #00000035;
+  margin: 30px;
+  overflow-y: auto;
+  z-index: 99;
+  border-radius: 30px;
+  padding-bottom: 20px;
+}
+
+
+.customize-btn {
+  background: linear-gradient(80deg, #5550ff, #3c4984);
+  padding: 13px;
+  text-align: center;
+  color: #fff;
+  border-radius: 30px;
+}
+
+.customize-title {
+  font-size: 16px;
+  font-weight: 500;
+  text-align: center;
+  margin: 10px 0;
+}
+
+.choose-avatar {
+  margin: 20px 0;
+  text-align: center;
+}
+
+.avatar-list {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.avatar-item {
+  width: 55px;
+  height: 55px;
+  border-radius: 50%;
+  cursor: pointer;
+  border: 2px solid #ccc;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.avatar-item.active {
+  border: 3px solid #2563eb;
+}
+
+.welcome-message {
+  margin: 20px;
+}
+
+.chat-position {
+  margin: 20px;
+}
+
+/* =========================
+   COLOR PICKER – EXACT IMAGE MATCH
+========================= */
+
+.color {
+  margin: 20px;
+  text-align: center;
+}
+
+/* remove default card look */
+.color .sketch-picker {
+  background: transparent !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+  width: 100% !important;
+}
+
+/* gradient square */
+.color .sketch-picker>div:first-child {
+  border-radius: 8px !important;
+  overflow: hidden;
+  margin-bottom: 10px;
+}
+
+/* hide preset boxes */
+.color .sketch-picker>div:nth-child(2) {
+  display: none !important;
+}
+
+/* hue + alpha wrapper */
+.color .sketch-picker>div:nth-child(3) {
+  padding: 0 !important;
+}
+
+/* hue slider */
+.color .hue-horizontal {
+  height: 12px !important;
+  border-radius: 6px !important;
+  margin-bottom: 8px;
+}
+
+/* alpha slider */
+.color .alpha-horizontal {
+  height: 12px !important;
+  border-radius: 6px !important;
+}
+
+/* slider pointers */
+.color .hue-horizontal>div,
+.color .alpha-horizontal>div {
+  width: 16px !important;
+  height: 16px !important;
+  border-radius: 50% !important;
+  box-shadow: 0 0 0 2px #fff !important;
+}
+
+/* RGB + preview row */
+.color .flexbox-fix {
+  justify-content: space-between !important;
+  align-items: center !important;
+  margin-top: 10px;
+}
+
+/* RGB inputs */
+.color input {
+  width: 48px !important;
+  border-radius: 6px !important;
+  border: 1px solid #ddd !important;
+  text-align: center;
+  font-size: 12px;
+}
+
+/* color preview circle (right side) */
+.color .flexbox-fix>div:last-child span {
+  width: 26px !important;
+  height: 26px !important;
+  border-radius: 50% !important;
+  border: 2px solid #fff !important;
+  box-shadow: 0 0 0 1px #aaa;
+}
+
+/* =========================
+   HIDE COLOR SWATCH BOXES
+========================= */
+
+/* Completely hide preset color boxes */
+.color .sketch-picker>div:nth-child(2),
+.color .sketch-picker>div:nth-child(4) {
+  display: none !important;
+}
+
+
+
+textarea,
+select {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #5550ff;
+  border-radius: 10px;
+}
+
+/* SAVE BAR */
+.save-bar {
+  padding: 15px;
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+}
+
+.save-btn {
+  background: linear-gradient(80deg, #5550ff, #3c4984);
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 6px 16px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+/* PREVIEW BUTTON */
+.preview-btn {
+  display: none;
+  background: #fff;
+  color: #5550ff;
+  border: 2px solid #5550ff;
+  border-radius: 6px;
+  padding: 6px 16px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+/* CHAT PREVIEW */
+.chat-preview {
+  flex: 1;
+  position: relative;
+}
+
+/* MOBILE ONLY */
+@media (max-width: 768px) {
+  .preview-btn {
+    display: inline-block;
+  }
+}
+
+
+/* =========================
+   HIDE SCROLLBAR BUT ALLOW SCROLL
+========================= */
+
+/* Chrome, Edge, Safari */
+.customizer-panel::-webkit-scrollbar {
+  width: 0px;
+  background: transparent;
+}
+
+/* Firefox */
+.customizer-panel {
+  scrollbar-width: none;
+  /* hide scrollbar */
+}
+
+/* IE / Edge old */
+.customizer-panel {
+  -ms-overflow-style: none;
+}
+
+
+/* =========================
+   MOBILE – CENTER CUSTOMIZER PANEL
+========================= */
+@media (max-width: 768px) {
+  .custom-chat-page {
+    justify-content: center;
+  }
+
+  .customizer-panel {
+    position: relative;
+    margin: 20px auto;
+    left: auto;
+    right: auto;
+    width: 90%;
+    max-width: 340px;
+  }
+}
+
+
+.custom-avatar-wrapper {
+  position: relative;
+  display: inline-block;
+}
+
+.remove-avatar {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  background: #ff4d4f;
+  color: white;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  font-size: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
