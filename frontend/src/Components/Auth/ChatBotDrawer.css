@@ -1,16 +1,17 @@
 /* DRAWER */
 .chatbot-drawer {
-    position: fixed;
-    bottom: 0;
-    width: 330px;
-    height: 460px;
-    border-radius: 30px;
-    /* margin: 25px; */
-    box-shadow: 0px 4px 4px 0 #00000030;
-    display: flex;
-    flex-direction: column;
-    z-index: 9999;
+  position: fixed;
+  bottom: env(safe-area-inset-bottom); /* 🔥 iOS safe area */
+  width: 330px;
+
+  height: min(460px, calc(100dvh - 20px)); /* 🔥 KEY LINE */
+
+  border-radius: 30px;
+  display: flex;
+  flex-direction: column;
+  z-index: 9999;
 }
+
 
 
 /* HEADER */
@@ -44,12 +45,13 @@
 
 /* BODY */
 .chatbot-body {
-    flex: 1;
-    padding: 12px;
-    background: #fff;
-    border-radius: 0 30px 0 0;
-    overflow-y: auto;
+  flex: 1;
+  padding: 12px;
+  background: #fff;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
 }
+
 
 /* MESSAGE ROW */
 .chat-row {
@@ -82,12 +84,14 @@
 }
 
 .chatbot-input {
-    padding: 15px;
-    display: flex;
-    align-items: center;
-    background: #fff;
-    border-radius: 0 0 30px 30px;
+  flex-shrink: 0;   /* 🔥 prevents keyboard collapse */
+  padding: 15px;
+  display: flex;
+  align-items: center;
+  background: #fff;
+  border-radius: 0 0 30px 30px;
 }
+
 
 /* INPUT PILL */
 .chatbot-input input {
@@ -196,14 +200,13 @@
    MOBILE OPTIMIZATION
 ========================= */
 @media (max-width: 768px) {
+  .chatbot-drawer {
+    width: 92vw;
+    max-width: 360px;
+    border-radius: 22px;
+  }
 
-    /* CHAT DRAWER */
-    .chatbot-drawer {
-        width: 300px;
-        height: 460px;
-    }
-
-    .chatbot-bubble {
-        bottom: 16px;
-    }
+  .chatbot-bubble {
+    bottom: calc(16px + env(safe-area-inset-bottom));
+  }
 }
