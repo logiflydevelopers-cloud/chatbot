@@ -156,7 +156,6 @@
     padding: 0;
     gap: 10px;
     display: flex;
-    background: linear-gradient(90deg, #7b4bff, #4f7cff);
   }
 
   /* TAB */
@@ -174,7 +173,6 @@
 
   /* ACTIVE TAB (LIGHT PURPLE) */
   .jf-tab.active {
-    background: rgba(255, 255, 255, 0.22);
     color: #ffffff;
   }
 }

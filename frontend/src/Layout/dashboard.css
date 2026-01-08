@@ -95,6 +95,7 @@
 
 /* ================= MOBILE ================= */
 @media (max-width: 768px) {
+  
 
   /* SIDEBAR */
   .sidebar {
@@ -137,5 +138,6 @@
 
   .side-item {
     margin: 20px 0;
+    padding: 25px 20px;
   }
 }
