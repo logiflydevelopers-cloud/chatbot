@@ -63,7 +63,7 @@ const KnowledgeBase = () => {
       {/* LINK CARD */}
       <div
         className="kb-card"
-        onClick={() => navigate("/dashboard/add-website")}
+        onClick={() => navigate("/dashboard/knowledge/add-website")}
         style={{ cursor: "pointer" }}
       >
         <div className="kb-icon yellow"><FaLink /></div>

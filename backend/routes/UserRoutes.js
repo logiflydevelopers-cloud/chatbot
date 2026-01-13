@@ -1,33 +1,51 @@
 import express from "express";
 import {
-  getUserDetails,
+  registerUser,
   loginUser,
   logout,
   refreshAccessToken,
-  registerUser,
+  uploadAvatar,
+  updateUser,
 } from "../controllers/UserController.js";
 
+import { avatarUpload } from "../middleware/avatarUpload.js";
 import User from "../models/User.js";
 import { authenticate } from "../middleware/authenticate.js";
 
 const router = express.Router();
 
-/* -----------------------------
+/* =====================================================
+   USER UPDATE (NAME, EMAIL, PHONE)
+   URL: PUT /api/user/update/:id
+===================================================== */
+router.put("/update/:id", updateUser);
+
+/* =====================================================
+   AVATAR UPLOAD
+   URL: POST /api/user/:id/avatar
+===================================================== */
+router.post(
+  "/:id/avatar",
+  avatarUpload.single("avatar"),
+  uploadAvatar
+);
+
+/* =====================================================
    AUTH ROUTES
------------------------------- */
+===================================================== */
 router.post("/register", registerUser);
 router.post("/login", loginUser);
 router.post("/logout", logout);
 router.get("/refresh", refreshAccessToken);
 
-/* ---------------------------------------------------
-   FIXED: SINGLE VALID USER DETAILS ROUTE
---------------------------------------------------- */
+/* =====================================================
+   GET USER DETAILS (PROTECTED)
+===================================================== */
 router.get("/getUser/:userId", authenticate, async (req, res) => {
   try {
     const { userId } = req.params;
 
-    const user = await User.findById(userId);
+    const user = await User.findById(userId).select("-password");
 
     if (!user) {
       return res.status(404).json({ message: "User Not Found" });
@@ -40,9 +58,9 @@ router.get("/getUser/:userId", authenticate, async (req, res) => {
   }
 });
 
-/* ---------------------------------------------------
+/* =====================================================
    SAVE CHATBOT CUSTOMIZATION SETTINGS
---------------------------------------------------- */
+===================================================== */
 router.post("/save-chat-settings", async (req, res) => {
   try {
     const { userId, avatar, primaryColor, firstMessage, alignment } = req.body;
@@ -63,16 +81,19 @@ router.post("/save-chat-settings", async (req, res) => {
       }
     );
 
-    return res.json({ success: true, message: "Chatbot settings saved!" });
+    return res.json({
+      success: true,
+      message: "Chatbot settings saved!",
+    });
   } catch (error) {
     console.error("Save settings error:", error);
     res.status(500).json({ error: "Internal Server Error" });
   }
 });
 
-/* ---------------------------------------------------
+/* =====================================================
    GET USER CHATBOT SETTINGS
---------------------------------------------------- */
+===================================================== */
 router.get("/get-chatbot-settings/:userId", async (req, res) => {
   try {
     const { userId } = req.params;
@@ -85,7 +106,7 @@ router.get("/get-chatbot-settings/:userId", async (req, res) => {
 
     return res.json(user);
   } catch (error) {
-    console.error("Get user settings error:", error);
+    console.error("Get chatbot settings error:", error);
     res.status(500).json({ error: "Internal Server Error" });
   }
 });

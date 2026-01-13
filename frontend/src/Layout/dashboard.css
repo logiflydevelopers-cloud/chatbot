@@ -29,6 +29,11 @@
   overflow: hidden;
 }
 
+.sidebar {
+  transition: transform 0.3s ease;
+}
+
+
 /* SIDEBAR ITEMS */
 .side-item {
   display: flex;
@@ -95,7 +100,7 @@
 
 /* ================= MOBILE ================= */
 @media (max-width: 768px) {
-  
+
 
   /* SIDEBAR */
   .sidebar {

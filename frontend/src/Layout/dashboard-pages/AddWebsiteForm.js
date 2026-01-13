@@ -4,146 +4,80 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import "./train-page.css";
 
-const AddWebsite = ({ user }) => {
+const AddWebsiteForm = ({ user }) => {
   const navigate = useNavigate();
 
   const [url, setUrl] = useState("");
-  const [storedDomain, setStoredDomain] = useState("");
+  const [storedWebsite, setStoredWebsite] = useState(null);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [loading, setLoading] = useState(false);
 
-  /* =====================================================
-        ⭐ LOAD WEBSITE FROM DATABASE (SOURCE OF TRUTH)
-  ===================================================== */
+  const userId = user?._id || user?.id || user?.userId;
+
+  /* ================= LOAD FROM DB ================= */
   useEffect(() => {
-    const loadWebsite = async () => {
-      try {
-        const userId = user?._id || user?.id || user?.userId;
-        if (!userId) return;
+    if (!userId) return;
 
-        const res = await axios.get(
-          `https://chatbot-backend-project.vercel.app/api/chatbot/${userId}`
-        );
-
-        if (res.data?.settings?.website) {
-          setUrl(res.data.settings.website);
-          setStoredDomain(new URL(res.data.settings.website).hostname);
+    axios
+      .get(`http://localhost:4000/api/chatbot/${userId}`)
+      .then((res) => {
+        const website = res.data?.settings?.website;
+        if (website) {
+          setStoredWebsite(website);
+          setUrl(website);
         }
-      } catch (err) {
-        console.error("Failed to fetch website from DB", err);
-      }
-    };
+      })
+      .catch(() => { });
+  }, [userId]);
 
-    loadWebsite();
-  }, [user]);
-
-  /* =====================================================
-        ⭐ CRAWL + SAVE WEBSITE
-  ===================================================== */
+  /* ================= CRAWL WEBSITE ================= */
   const handleCrawl = async () => {
-    setError("");
-    setSuccess("");
-
     if (!url.trim()) {
-      setError("⚠️ Please enter a website URL before crawling.");
-      return;
-    }
-
-    const pattern = /^(https?:\/\/)?([\w-]+\.)+[\w-]{2,}(\/.*)?$/;
-    if (!pattern.test(url.trim())) {
-      setError("❌ Invalid URL. Please enter a valid website link.");
+      setError("⚠️ Please enter a website URL");
       return;
     }
 
     try {
       setLoading(true);
+      setError("");
+      setSuccess("");
 
-      const userId = user?._id || user?.id || user?.userId;
-      if (!userId) {
-        setError("❌ User ID missing. Please login again.");
-        return;
-      }
-
-      const websiteURL = url.trim();
-      const domainName = new URL(websiteURL).hostname;
-
-      /* 1️⃣ SAVE WEBSITE PAGES */
-      await axios.post("https://chatbot-backend-project.vercel.app/api/webhook/add-custom-website", {
-        userId,
-        url: websiteURL,
-        name: domainName,
-      });
-
-      /* 2️⃣ SEND TO N8N */
       await axios.post(
-        "http://localhost:5678/webhook/add-custom-website",
-        { userId, websiteURL },
-        { withCredentials: false }
+        "http://localhost:4000/api/webhook/ingest-website",
+        {
+          userId,
+          source: url.trim(),
+        }
       );
 
-      /* 3️⃣ SAVE WEBSITE IN CHATBOT SETTINGS */
-      await axios.post("https://chatbot-backend-project.vercel.app/api/chatbot/save", {
-        userId,
-        website: websiteURL,
-      });
+      setStoredWebsite(url.trim());
+      setSuccess("✅ Website uploaded. Training started.");
 
-      setStoredDomain(domainName);
-      setSuccess("✅ Website uploaded successfully!");
-    } catch (err) {
-      console.error("UPLOAD ERROR:", err);
-      setError("❌ Failed to upload website. Please try again.");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  /* =====================================================
-        ⭐ REMOVE WEBSITE (DB ONLY)
-  ===================================================== */
-  const removeWebsite = async () => {
-    if (!storedDomain) return;
-
-    if (!window.confirm("Are you sure you want to remove this website?")) return;
-
-    try {
-      const userId = user?._id || user?.id || user?.userId;
-
-      /* 1️⃣ REMOVE WEBSITE PAGES */
-      await axios.delete("https://chatbot-backend-project.vercel.app/api/webhook/remove-website", {
-        data: {
-          userId,
-          name: storedDomain,
-        },
-      });
-
-      /* 2️⃣ CLEAR WEBSITE FROM SETTINGS */
-      await axios.post("https://chatbot-backend-project.vercel.app/api/chatbot/save", {
-        userId,
-        website: null,
-      });
-
-      setUrl("");
-      setStoredDomain("");
-      setSuccess("✅ Website removed successfully!");
     } catch (err) {
       console.error(err);
-      setError("❌ Failed to remove website.");
+      setError(
+        err?.response?.data?.message ||
+        "❌ Failed to upload website"
+      );
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
     <div className="persona-container">
       <div className="link-header-row persona-header">
-        <button className="fu-back-btn" onClick={() => navigate("/dashboard/knowledge")}>
-                    ←
-                </button>
+        <button
+          className="fu-back-btn"
+          onClick={() => navigate("/dashboard/knowledge")}
+        >
+          ←
+        </button>
 
         <div>
           <h2>LINK</h2>
-          <p>
-            Add website URLs to train your Agent with dynamic information
-          </p>
+          <p>Add website URLs to train your Agent</p>
         </div>
       </div>
 
@@ -151,34 +85,36 @@ const AddWebsite = ({ user }) => {
         <label className="label-text">Enter a URL</label>
         <p className="help-text">Provide a URL for your agent to analyze</p>
 
+        {/* 🔒 INPUT LOCK */}
         <input
           type="text"
           className="link-input"
-          placeholder="https://example.com"
           value={url}
+          disabled={!!storedWebsite}
           onChange={(e) => setUrl(e.target.value)}
         />
 
-        {storedDomain && (
-          <button className="remove-url-btn" onClick={removeWebsite}>
-            ❌ Remove Website
-          </button>
+        {storedWebsite && (
+          <p className="info-text">
+            🔒 Website uploaded successfully.
+          </p>
         )}
 
-        <hr className="hrhr"/>
+        <hr className="hrhr" />
 
-        <label className="label-text">Enable Periodic Recrawling</label>
-        <p className="help-text">Agent will automatically recrawl.</p>
-
-        <div className="radio-row">
-          <label><input type="radio" name="freq" /> Daily</label>
-          <label><input type="radio" name="freq" /> Weekly</label>
-          <label><input type="radio" name="freq" defaultChecked /> Monthly</label>
-        </div>
-
-        <button className="crawl-btn" onClick={handleCrawl} disabled={loading}>
+        {/* 🔒 BUTTON LOCK */}
+        <button
+          className="crawl-btn"
+          onClick={handleCrawl}
+          disabled={loading || !!storedWebsite}
+          style={{
+            opacity: storedWebsite ? 0.5 : 1,
+            cursor: storedWebsite ? "not-allowed" : "pointer"
+          }}
+        >
           {loading ? "Uploading..." : "Crawl"}
         </button>
+
 
         {error && <p className="error-msg">{error}</p>}
         {success && <p className="success-msg">{success}</p>}
@@ -187,4 +123,4 @@ const AddWebsite = ({ user }) => {
   );
 };
 
-export default AddWebsite;
+export default AddWebsiteForm;

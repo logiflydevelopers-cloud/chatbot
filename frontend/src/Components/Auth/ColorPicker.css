@@ -1,0 +1,96 @@
+.color-picker-wrapper {
+  width: 100%;
+}
+
+/* ================= PRESET ================= */
+.preset-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 12px;
+  justify-content: center;
+}
+
+.preset-color {
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+}
+
+.custom-color-btn {
+  padding: 8px 14px;
+  background: #e5e7eb;
+  border-radius: 8px;
+  font-weight: 500;
+  border: none;
+  cursor: pointer;
+}
+
+/* ================= CUSTOM PICKER ================= */
+.custom-picker-box {
+  margin-top: 10px;
+  text-align: center;
+  width: 100%;
+}
+
+.react-colorful {
+  width: 100%;
+  height: 180px;
+  border-radius: 10px;
+  touch-action: none;
+  /* 🔥 ANDROID FIX */
+}
+
+.react-colorful__saturation {
+  border-radius: 10px;
+}
+
+.react-colorful__hue {
+  height: 12px;
+  border-radius: 6px;
+  margin-top: 10px;
+}
+
+/* ================= HEX INPUT ================= */
+.hex-wrapper {
+  margin-top: 10px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  padding: 10px;
+}
+
+.hex-wrapper span {
+  font-weight: 600;
+}
+
+.hex-wrapper input {
+  border: none;
+  outline: none;
+  font-family: monospace;
+  font-size: 15px;
+  width: 100%;
+}
+
+/* ================= DONE BUTTON ================= */
+.done-btn {
+  margin-top: 10px;
+  width: 100%;
+  padding: 10px;
+  border-radius: 10px;
+  background: #2563eb;
+  color: #fff;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+}
+
+.react-colorful {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}

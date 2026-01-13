@@ -9,6 +9,7 @@ const DashboardLayout = () => {
   return (
     <div className="dash-wrapper">
       <Sidebar open={sidebarOpen} setOpen={setSidebarOpen} />
+
       <div className="dash-content">
         <Outlet context={{ setSidebarOpen }} />
       </div>

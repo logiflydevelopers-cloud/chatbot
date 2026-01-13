@@ -15,6 +15,14 @@
   z-index: 9999;
 }
 
+.avatar-img {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+
 .jf-left {
   display: flex;
   align-items: center;
@@ -202,11 +210,6 @@
 .profile-avatar {
   width: 44px;
   height: 44px;
-  border-radius: 50%;
-  background: #ff7a00;
-  color: #ffffff;
-  font-size: 18px;
-  font-weight: 600;
   display: flex;
   align-items: center;
   justify-content: center;

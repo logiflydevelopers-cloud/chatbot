@@ -4,16 +4,19 @@ import {
   getQAsByUser,
   getQA,
   updateQA,
-  deleteQA
+  deleteQA,
+  getQALabels
 } from "../controllers/qaController.js";
 
 const router = express.Router();
 
 router.post("/", createQA);
-router.get("/all/:userId", getQAsByUser);   // ⭐ MUST EXIST
+router.get("/all/:userId", getQAsByUser); 
 router.get("/user/:userId", getQAsByUser);
 router.get("/:id", getQA);
 router.put("/:id", updateQA);
 router.delete("/:id", deleteQA);
+router.get("/labels/:userId", getQALabels);
+
 
 export default router;

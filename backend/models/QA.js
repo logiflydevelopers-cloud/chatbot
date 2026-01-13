@@ -1,12 +1,23 @@
 import mongoose from "mongoose";
 
-const QASchema = new mongoose.Schema(
+const qaItemSchema = new mongoose.Schema(
   {
-    userId: { type: String, required: true, index: true },
+    _id: { type: String }, 
+    label: { type: String, required: true },
     question: { type: String, required: true },
     answer: { type: String, required: true },
+    createdAt: { type: Date, default: Date.now }
   },
-  { timestamps: true }
+  { _id: false }
 );
 
-export default mongoose.model("QA", QASchema);
+const qaSchema = new mongoose.Schema({
+  userId: {
+    type: String,
+    required: true,
+    unique: true   // 🔥 ONLY ONE DOCUMENT PER USER
+  },
+  items: [qaItemSchema]
+});
+
+export default mongoose.model("QA", qaSchema);

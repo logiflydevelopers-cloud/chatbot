@@ -1,97 +1,77 @@
 import express from "express";
 import axios from "axios";
-import xml2js from "xml2js";
-import Page from "../models/Page.js";
 import ChatbotSetting from "../models/ChatbotSetting.js";
 
 const router = express.Router();
 
 /* ======================================================
-   ⭐ ADD WEBSITE (CRAWL + SAVE PAGES)
-====================================================== */
-router.post("/add-custom-website", async (req, res) => {
-  try {
-    let { userId, name, url, websiteURL } = req.body;
+   INGEST WEBSITE → DB + PYTHON API
+   ====================================================== */
 
-    url = url || websiteURL;
-    if (!userId || !url) {
-      return res.status(400).json({ error: "Missing userId or URL" });
+router.post("/ingest-website", async (req, res) => {
+  console.log("🚀 /ingest-website HIT");
+
+  try {
+    const { userId, source } = req.body;
+
+    /* ---------- BASIC VALIDATION ---------- */
+    if (!userId || !source) {
+      return res.status(400).json({
+        message: "userId or source missing"
+      });
     }
 
-    name = name || new URL(url).hostname;
+    /* ---------- BLOCK SECOND UPLOAD ---------- */
+    const existing = await ChatbotSetting.findOne({ userId });
 
-    const sitemapUrl = url.endsWith("/")
-      ? `${url}sitemap.xml`
-      : `${url}/sitemap.xml`;
+    if (existing?.website) {
+      return res.status(403).json({
+        message: "Website already uploaded. Remove from DB to upload again."
+      });
+    }
 
-    const response = await axios.get(sitemapUrl);
-    const parsed = await xml2js.parseStringPromise(response.data);
-
-    const urls =
-      parsed?.urlset?.url?.map((u) => ({
-        loc: u.loc?.[0],
-        lastmod: u.lastmod?.[0] || null,
-      })) || [];
-
-    // 🔁 Replace old pages
-    await Page.deleteMany({ userId, siteName: name });
-
-    await Page.insertMany(
-      urls.map((u) => ({
-        userId,
-        siteName: name,
-        url: u.loc,
-        lastModified: u.lastmod,
-      }))
+    /* ---------- SAVE TO DATABASE ---------- */
+    const saved = await ChatbotSetting.findOneAndUpdate(
+      { userId },
+      { website: source },
+      { upsert: true, new: true }
     );
 
+    console.log("✅ Saved to DB:", {
+      userId: saved.userId,
+      website: saved.website
+    });
+
+    /* ---------- PYTHON API CALL ---------- */
+    try {
+      console.log("➡️ Calling Python API...");
+
+      const pyResponse = await axios.post(
+        "https://pinecone-store-api.onrender.com/v1/ingest",
+        { userId, source },
+        {
+          timeout: 30000,
+          headers: { "Content-Type": "application/json" }
+        }
+      );
+
+      console.log("✅ Python API SUCCESS:", pyResponse.data);
+
+    } catch (pyErr) {
+      console.error("❌ PYTHON API FAILED:", pyErr.message);
+    }
+
+    /* ---------- RESPONSE ---------- */
     res.json({
       success: true,
-      message: "Website added",
-      total: urls.length,
+      message: "Website uploaded. Training started."
     });
+
   } catch (err) {
-    console.error("Add website error →", err.message);
-    res.status(500).json({ error: err.message });
-  }
-});
-
-/* ======================================================
-   ⭐ REMOVE WEBSITE
-====================================================== */
-router.delete("/remove-website", async (req, res) => {
-  try {
-    const { userId, name } = req.body;
-
-    if (!userId || !name) {
-      return res.status(400).json({ error: "Missing userId or siteName" });
-    }
-
-    await Page.deleteMany({ userId, siteName: name });
-
-    // ⭐ ALSO CLEAR WEBSITE FROM chatbot settings
-    await ChatbotSetting.updateOne(
-      { userId },
-      { $set: { website: null } }
-    );
-
-    res.json({ success: true, message: "Website removed" });
-  } catch (err) {
-    console.error("Remove website error →", err.message);
-    res.status(500).json({ error: err.message });
-  }
-});
-
-/* ======================================================
-   ⭐ GET WEBSITE PAGES (FOR TRAINING VERIFICATION)
-   👉 THIS FIXES YOUR ERROR
-====================================================== */
-router.get("/website/:userId", async (req, res) => {
-  try {
-    const pages = await Page.find({ userId: req.params.userId });
-    res.json(pages);
-  } catch (err) {
-    res.status(500).json([]);
+    console.error("🔥 SERVER ERROR:", err);
+    res.status(500).json({
+      message: "Website ingest failed"
+    });
   }
 });
 

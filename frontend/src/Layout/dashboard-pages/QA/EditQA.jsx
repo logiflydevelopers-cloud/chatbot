@@ -5,9 +5,10 @@ import { createQA, getQAById, updateQA } from "./qaService";
 import "../train-page.css";
 
 const EditQA = () => {
-  const { id } = useParams(); // id is optional (for edit)
+  const { id } = useParams();
   const navigate = useNavigate();
 
+  const [label, setLabel] = useState("");
   const [question, setQuestion] = useState("");
   const [answer, setAnswer] = useState("");
   const [saving, setSaving] = useState(false);
@@ -27,6 +28,7 @@ const EditQA = () => {
     (async () => {
       try {
         const doc = await getQAById(id);
+        setLabel(doc.label || "");
         setQuestion(doc.question);
         setAnswer(doc.answer);
       } catch (err) {
@@ -38,8 +40,9 @@ const EditQA = () => {
 
   const handleSave = async () => {
     setError("");
-    if (!question.trim() || !answer.trim()) {
-      setError("Both question and answer are required.");
+
+    if (!label.trim() || !question.trim() || !answer.trim()) {
+      setError("Label, question and answer are required.");
       return;
     }
 
@@ -52,9 +55,9 @@ const EditQA = () => {
     setSaving(true);
     try {
       if (id) {
-        await updateQA(id, { question, answer });
+        await updateQA(id, { label, question, answer });
       } else {
-        await createQA({ question, answer, userId });
+        await createQA({ label, question, answer, userId });
       }
       navigate("/dashboard/knowledge/qa");
     } catch (err) {
@@ -75,15 +78,45 @@ const EditQA = () => {
       <div className="editqa-form">
         {error && <div className="editqa-error">{error}</div>}
 
+        <label>Label (Category)</label>
+        <input
+          value={label}
+          onChange={(e) => setLabel(e.target.value)}
+          placeholder="e.g. Service, Pricing, Support"
+        />
+        <small className="hint">
+          User will type a keyword. Chatbot will match using this label.
+        </small>
+
         <label>Question</label>
-        <input value={question} onChange={(e) => setQuestion(e.target.value)} placeholder="Enter a brief, clear question" />
+        <input
+          value={question}
+          onChange={(e) => setQuestion(e.target.value)}
+          placeholder="Enter a brief, clear question"
+        />
 
         <label>Answer</label>
-        <textarea value={answer} onChange={(e) => setAnswer(e.target.value)} placeholder="Provide the answer the agent should use" rows={8} />
+        <textarea
+          value={answer}
+          onChange={(e) => setAnswer(e.target.value)}
+          placeholder="Provide the answer the agent should use"
+          rows={8}
+        />
 
         <div className="editqa-actions">
-          <button className="editqa-save" onClick={handleSave} disabled={saving}>{saving ? "Saving..." : "Save"}</button>
-          <button className="editqa-cancel" onClick={() => navigate("/dashboard/knowledge/qa")}>Cancel</button>
+          <button
+            className="editqa-save"
+            onClick={handleSave}
+            disabled={saving}
+          >
+            {saving ? "Saving..." : "Save"}
+          </button>
+          <button
+            className="editqa-cancel"
+            onClick={() => navigate("/dashboard/knowledge/qa")}
+          >
+            Cancel
+          </button>
         </div>
       </div>
     </div>

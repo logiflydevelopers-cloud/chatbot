@@ -1,0 +1,256 @@
+/* ===============================
+   ACCOUNT PAGE
+================================ */
+.account-page {
+    max-width: 900px;
+}
+
+.account-title {
+    font-size: 26px;
+    font-weight: 600;
+    margin-bottom: 24px;
+    text-align: center;
+}
+
+.account-title span {
+    color: #4f46e5;
+}
+
+/* ===============================
+   ROW LAYOUT
+================================ */
+.acc-row {
+    display: grid;
+    grid-template-columns: 180px 1fr 145px;
+    align-items: center;
+    padding: 22px 0;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.acc-label {
+    font-weight: 600;
+    color: #111827;
+}
+
+.acc-value {
+    color: #374151;
+}
+
+.acc-value input {
+    padding: 8px 10px;
+    width: 100%;
+    max-width: 300px;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    outline: none;
+}
+
+.acc-value input:focus {
+    border-color: #4f46e5;
+}
+
+/* ===============================
+   ACTION LINKS
+================================ */
+.acc-action {
+    text-align: right;
+}
+
+.link {
+    color: #4f46e5;
+    cursor: pointer;
+    font-weight: 500;
+}
+
+.link:hover {
+    text-decoration: underline;
+}
+
+/* ===============================
+   AVATAR
+================================ */
+.avatar-box {
+    display: flex;
+    align-items: center;
+}
+
+.avatar-box img,
+.avatar-fallback {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    object-fit: cover;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    font-weight: bold;
+}
+
+/* ===============================
+   BUTTONS
+================================ */
+.edit-btn,
+.cancel-btn {
+    background: linear-gradient(to right, #7b4bff, #3d8bff);
+    color: #fff;
+    padding: 8px 12px;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+    margin: 0 3px;
+}
+
+button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.btn-upgrade {
+    background: linear-gradient(to right, #7b4bff, #3d8bff);
+    padding: 10px 20px;
+    border-radius: 10px;
+    border: none;
+    color: #fff;
+}
+
+
+/* ===============================
+   SUCCESS MESSAGE
+================================ */
+.acc-success {
+    margin-top: 12px;
+    color: #16a34a;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+/* ===============================
+   LOADING
+================================ */
+.acc-loading {
+    padding: 30px;
+    font-size: 16px;
+}
+
+/* ===============================
+   MOBILE ACCOUNT VIEW
+================================ */
+@media (max-width: 768px) {
+
+    .account-page {
+        background: #f6f7fb;
+    }
+
+    .account-title {
+        display: none;
+        font-size: 22px;
+        margin-bottom: 20px;
+    }
+
+    .settings-title {
+        text-align: center;
+    }
+
+    /* ===============================
+     ROW → CARD
+  ================================ */
+    .acc-row {
+        grid-template-columns: 1fr;
+        background: #ffffff;
+        border-radius: 14px;
+        padding: 16px;
+        margin-bottom: 14px;
+        border: none;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.05);
+    }
+
+    .acc-label {
+        font-size: 14px;
+        color: #6b7280;
+        margin-bottom: 6px;
+    }
+
+    .acc-value {
+        font-size: 16px;
+        font-weight: 500;
+        color: #111827;
+    }
+
+    /* ===============================
+     INPUT
+  ================================ */
+    .acc-value input {
+        width: 100%;
+        max-width: 100%;
+        padding: 12px;
+        font-size: 16px;
+        border-radius: 10px;
+    }
+
+    /* ===============================
+     ACTION
+  ================================ */
+    .acc-action {
+        margin-top: 12px;
+        text-align: left;
+    }
+
+    .link {
+        font-size: 15px;
+        font-weight: 600;
+    }
+
+    /* ===============================
+     BUTTONS
+  ================================ */
+    button {
+        padding: 12px;
+        font-size: 15px;
+        border-radius: 10px;
+    }
+
+    button+button {
+        margin-left: 0;
+        margin-top: 10px;
+    }
+
+    /* ===============================
+     AVATAR
+  ================================ */
+    .avatar-box {
+        margin-top: 10px;
+    }
+
+    .avatar-box img,
+    .avatar-fallback {
+        width: 72px;
+        height: 72px;
+        font-size: 26px;
+    }
+
+    /* ===============================
+     SUCCESS MESSAGE (BOTTOM)
+  ================================ */
+    .success-message {
+        position: fixed;
+        bottom: 16px;
+        left: 16px;
+        right: 16px;
+        background: #16a34a;
+        color: #ffffff;
+        padding: 14px;
+        border-radius: 14px;
+        font-size: 15px;
+        font-weight: 500;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        z-index: 999;
+    }
+
+}

@@ -11,7 +11,7 @@ import { useOutletContext } from "react-router-dom";
 
 
 const TeachAgent = ({ user }) => {
-  const apiBase = "https://chatbot-backend-project.vercel.app";
+  const apiBase = "http://localhost:4000";
 
   /* ===============================
       REFS

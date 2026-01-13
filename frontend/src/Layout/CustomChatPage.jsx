@@ -3,6 +3,7 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import ChatBotDrawer from "../Components/Auth/ChatBotDrawer";
 import "./CustomChatPage.css";
+import ColorPicker from "../Components/Auth/ColorPicker";
 
 /* =========================
    DEFAULT AVATARS
@@ -29,23 +30,29 @@ const avatarMap = {
 };
 
 const CustomChatPage = () => {
-  // 🔥 EMBED MODE DETECTION (ADD THIS)
+  /* =========================
+     EMBED MODE
+  ========================= */
   const params = new URLSearchParams(window.location.search);
   const isEmbed = params.get("embed") === "1";
   const embedUserId = params.get("userId");
 
-
   const navigate = useNavigate();
-  const apiBase = "https://chatbot-backend-project.vercel.app";
+  const apiBase = "http://localhost:4000";
   const fileInputRef = useRef(null);
 
+  /* =========================
+     WEBSITE STATE 🔥
+  ========================= */
+  const [website, setWebsite] = useState(null);
 
-  // 🔥 FINAL USER ID (VERY IMPORTANT)
+  /* =========================
+     USER ID
+  ========================= */
   const storedUser = JSON.parse(localStorage.getItem("user"));
   const userId = isEmbed
     ? embedUserId
     : storedUser?._id || storedUser?.id || storedUser?.userId || null;
-
 
   const isMobile = window.innerWidth <= 768;
 
@@ -60,20 +67,15 @@ const CustomChatPage = () => {
   const [primaryColor, setPrimaryColor] = useState("#2563eb");
   const [alignment, setAlignment] = useState("right");
 
-  // Desktop open | Mobile closed
   const [showChat, setShowChat] = useState(isEmbed ? true : !isMobile);
   const [showBubble, setShowBubble] = useState(isEmbed ? false : isMobile);
-
 
   /* =========================
      AUTH GUARD
   ========================= */
   useEffect(() => {
-    if (!isEmbed && !userId) {
-      navigate("/login");
-    }
+    if (!isEmbed && !userId) navigate("/login");
   }, [isEmbed, userId, navigate]);
-
 
   /* =========================
      LOAD SETTINGS
@@ -92,9 +94,15 @@ const CustomChatPage = () => {
         setAvatar(s.avatar || "b-image-03");
       }
 
-      setFirstMessage(s.firstMessage || "");
+      setFirstMessage(
+        s.firstMessage?.trim() || "Hi there 👋 I'm your assistant!"
+      );
+
       setPrimaryColor(s.primaryColor || "#2563eb");
       setAlignment(s.alignment || "right");
+
+      // 🔥 WEBSITE LOAD
+      setWebsite(s.website || null);
     });
   }, [userId]);
 
@@ -102,7 +110,7 @@ const CustomChatPage = () => {
      RESIZE HANDLER
   ========================= */
   useEffect(() => {
-    if (isEmbed) return; // 🔥 DO NOTHING IN EMBED
+    if (isEmbed) return;
 
     const handleResize = () => {
       const mobile = window.innerWidth <= 768;
@@ -114,9 +122,8 @@ const CustomChatPage = () => {
     return () => window.removeEventListener("resize", handleResize);
   }, [isEmbed]);
 
-
   /* =========================
-     UPLOAD AVATAR
+     AVATAR UPLOAD
   ========================= */
   const handleAvatarUpload = (e) => {
     const file = e.target.files[0];
@@ -143,26 +150,22 @@ const CustomChatPage = () => {
         alignment,
       };
 
-      const res = await axios.post(
-        `${apiBase}/api/chatbot/save`,
-        payload
-      );
+      const res = await axios.post(`${apiBase}/api/chatbot/save`, payload);
 
       if (res.data?.success) {
-        localStorage.setItem("chatbotSaved", "true");
+        localStorage.setItem("chatbotSaved", "true"); 
         alert("✅ Customization Saved Successfully!");
       }
-
     } catch {
       alert("❌ Save Failed");
     }
   };
 
+
   const removeCustomAvatar = () => {
     setCustomAvatar(null);
-    setAvatar("b-image-03"); // fallback default avatar
+    setAvatar("b-image-03");
   };
-
 
   const avatarKeys = Object.keys(avatarMap);
 
@@ -170,18 +173,27 @@ const CustomChatPage = () => {
     <div className={`custom-chat-page align-${alignment}`}>
 
       {/* =========================
+          🌐 WEBSITE BACKGROUND (LIVE)
+      ========================= */}
+      {website && (
+        <iframe
+          src={website}
+          title="Training Website"
+          className="website-background"
+          sandbox="allow-same-origin allow-scripts allow-forms"
+        />
+      )}
+
+      {/* =========================
           CUSTOMIZER PANEL
       ========================= */}
       <div className="customizer-panel">
-        {/* HEADER */}
         <h3 className="customize-btn">Customize</h3>
 
-        {/* CHOOSE AVATAR */}
+        {/* AVATARS */}
         <div className="choose-avatar">
           <div className="customize-title">Choose Avatar</div>
-
           <div className="avatar-list">
-            {/* DEFAULT AVATARS */}
             {avatarKeys.map((key) => (
               <img
                 key={key}
@@ -192,17 +204,14 @@ const CustomChatPage = () => {
               />
             ))}
 
-            {/* CUSTOM AVATAR PREVIEW */}
             {customAvatar && (
               <div className="custom-avatar-wrapper">
                 <img
                   src={customAvatar}
-                  alt="custom-avatar"
+                  alt="custom"
                   className={`avatar-item ${avatar === "custom" ? "active" : ""}`}
                   onClick={() => setAvatar("custom")}
                 />
-
-                {/* REMOVE BUTTON */}
                 <span
                   className="remove-avatar"
                   onClick={(e) => {
@@ -215,10 +224,8 @@ const CustomChatPage = () => {
               </div>
             )}
 
-
-            {/* UPLOAD BUTTON */}
             <div
-              className={`avatar-item upload`}
+              className="avatar-item upload"
               onClick={() => fileInputRef.current.click()}
             >
               +
@@ -231,40 +238,16 @@ const CustomChatPage = () => {
               hidden
               onChange={handleAvatarUpload}
             />
-
           </div>
-
         </div>
 
-        {/* COLOR PICKER */}
+        {/* COLOR */}
         <div className="color">
           <div className="customize-title">Chat Theme Color</div>
-
-          {/* hidden native color input */}
-          <input
-            type="color"
-            id="nativeColor"
-            value={primaryColor}
-            onChange={(e) => setPrimaryColor(e.target.value)}
-            className="native-color-input"
-          />
-
-          {/* custom trigger UI */}
-          <div
-            className="color-trigger"
-            onClick={() => document.getElementById("nativeColor").click()}
-          >
-            <span>Choose Color</span>
-            <div
-              className="color-preview"
-              style={{ backgroundColor: primaryColor }}
-            />
-          </div>
+          <ColorPicker value={primaryColor} onChange={setPrimaryColor} />
         </div>
 
-
-
-        {/* WELCOME MESSAGE */}
+        {/* MESSAGE */}
         <div className="welcome-message">
           <div className="customize-title">Welcome Message</div>
           <textarea
@@ -274,7 +257,7 @@ const CustomChatPage = () => {
           />
         </div>
 
-        {/* CHAT POSITION */}
+        {/* POSITION */}
         <div className="chat-position">
           <div className="customize-title">Chat Position</div>
           <select
@@ -286,27 +269,14 @@ const CustomChatPage = () => {
           </select>
         </div>
 
-        {/* SAVE / PREVIEW BAR */}
         <div className="save-bar">
           <button className="save-btn" onClick={saveCustomization}>
             Save
           </button>
-
-          <button
-            className="preview-btn"
-            onClick={() => {
-              setShowChat(true);
-              setShowBubble(false);
-            }}
-          >
-            Preview
-          </button>
         </div>
       </div>
 
-      {/* =========================
-          CHATBOT PREVIEW
-      ========================= */}
+      {/* CHAT PREVIEW */}
       <ChatBotDrawer
         userId={userId}
         apiBase={apiBase}
@@ -314,23 +284,17 @@ const CustomChatPage = () => {
         avatar={avatar === "custom" ? customAvatar : avatarMap[avatar]}
         firstMessage={firstMessage}
         alignment={alignment}
-        showChat={isEmbed ? true : showChat}
-        showBubble={isEmbed ? false : showBubble}
+        showChat={showChat}
+        showBubble={showBubble}
         onClose={() => {
-          if (isEmbed) {
-            window.parent.postMessage("CLOSE_CHATBOT", "*");
-          } else {
-            setShowChat(false);
-            setShowBubble(true);
-          }
+          setShowChat(false);
+          setShowBubble(true);
         }}
-
         onBubbleClick={() => {
           setShowBubble(false);
           setShowChat(true);
         }}
       />
-
     </div>
   );
 };

@@ -8,9 +8,10 @@ import axios from "axios";
 function Header({ user, setUser }) {
   const navigate = useNavigate();
   const location = useLocation();
-  const apiBase = "https://chatbot-backend-project.vercel.app";
+  const apiBase = "http://localhost:4000";
 
-  const userId = user?._id || user?.id || user?.userId;
+  const userId = user?.id || user?._id;
+
 
   /* ================= PROFILE POPUP ================= */
   const [showProfile, setShowProfile] = useState(false);
@@ -19,18 +20,20 @@ function Header({ user, setUser }) {
   /* ✅ FIXED OUTSIDE CLICK */
   useEffect(() => {
     const handleOutsideClick = (e) => {
-      if (
-        profileRef.current &&
-        !profileRef.current.contains(e.target)
-      ) {
+      if (!profileRef.current?.contains(e.target)) {
         setShowProfile(false);
       }
     };
 
-    document.addEventListener("click", handleOutsideClick);
-    return () =>
-      document.removeEventListener("click", handleOutsideClick);
-  }, []);
+    if (showProfile) {
+      document.addEventListener("mousedown", handleOutsideClick);
+    }
+
+    return () => {
+      document.removeEventListener("mousedown", handleOutsideClick);
+    };
+  }, [showProfile]);
+
 
   /* ================= LOGOUT ================= */
   const handleLogout = () => {
@@ -52,8 +55,8 @@ function Header({ user, setUser }) {
       `${apiBase}/api/chatbot/knowledge-status/${userId}`
     );
 
-    if (!res.data.hasKnowledge) {
-      alert("⚠️ Please upload FILE, LINK or add Q&A first.");
+    if (!res.data.hasWebsite) {
+      alert("⚠️ Please upload WEBSITE first to customize chatbot.");
       navigate("/dashboard/knowledge");
       return;
     }
@@ -88,52 +91,74 @@ function Header({ user, setUser }) {
         <div
           className="jf-right"
           onClick={(e) => {
-            e.stopPropagation(); // 🔥 MOST IMPORTANT
-            setShowProfile((prev) => !prev);
+            e.stopPropagation();
+            setShowProfile(prev => !prev);
           }}
         >
-          <FaUserCircle size={34} className="jf-user-icon" />
+
+          {user?.avatar ? (
+            <img
+              src={`http://localhost:4000${user.avatar}`}
+              alt="avatar"
+              className="jf-user-icon avatar-img"
+            />
+          ) : (
+            <FaUserCircle size={34} className="jf-user-icon" />
+          )}
         </div>
-      </header>
+
+      </header >
 
       {/* ================= PROFILE POPUP ================= */}
-      {showProfile && (
-        <div
-          className="profile-popup"
-          ref={profileRef}
-          onClick={(e) => e.stopPropagation()} // 🔥 MUST
-        >
-          <div className="profile-header">
-            <div className="profile-avatar">
-              {user?.name?.charAt(0)?.toUpperCase()}
+      {
+        showProfile && (
+          <div
+            className="profile-popup"
+            ref={profileRef}
+            onClick={(e) => e.stopPropagation()} // 🔥 MUST
+          >
+            <div className="profile-header">
+              <div className="profile-avatar">
+                {user?.avatar ? (
+                  <img
+                    src={`http://localhost:4000${user.avatar}`}
+                    alt="avatar"
+                    className="jf-user-icon avatar-img"
+                  />
+                ) : (
+                  <FaUserCircle size={34} className="jf-user-icon" />
+                )}
+              </div>
+
+              <div>
+                <p className="profile-hello">Hello,</p>
+                <p className="profile-name">{user?.name}</p>
+              </div>
+
+              <span className="profile-plan">STARTER</span>
             </div>
 
-            <div>
-              <p className="profile-hello">Hello,</p>
-              <p className="profile-name">{user?.name}</p>
+            <div className="profile-progress">
+              <p className="progress-title">
+                Agents <span>7 of 5 used</span>
+              </p>
+              <div className="progress-bar">
+                <span style={{ width: "100%" }} />
+              </div>
             </div>
 
-            <span className="profile-plan">STARTER</span>
+            <button className="upgrade-btn">Upgrade Your Plan</button>
+
+            <ul className="profile-menu">
+              <li onClick={() => navigate("/admin")}>Admin Console</li>
+              <li onClick={() => navigate("/settings")}>Settings</li>
+
+
+              <li onClick={handleLogout}>Logout</li>
+            </ul>
           </div>
-
-          <div className="profile-progress">
-            <p className="progress-title">
-              Agents <span>7 of 5 used</span>
-            </p>
-            <div className="progress-bar">
-              <span style={{ width: "100%" }} />
-            </div>
-          </div>
-
-          <button className="upgrade-btn">Upgrade Your Plan</button>
-
-          <ul className="profile-menu">
-            <li onClick={() => navigate("/admin")}>Admin Console</li>
-            <li onClick={() => navigate("/settings")}>Settings</li>
-            <li onClick={handleLogout}>Logout</li>
-          </ul>
-        </div>
-      )}
+        )
+      }
 
       {/* ================= TOP BAR ================= */}
       <div className="jf-bluebar">

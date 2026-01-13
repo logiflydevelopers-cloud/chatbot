@@ -1,70 +1,103 @@
 import QA from "../models/QA.js";
+import { v4 as uuidv4 } from "uuid";
 
-// CREATE
+/* CREATE QA */
 export const createQA = async (req, res) => {
   try {
-    const { userId, question, answer } = req.body;
-
-    if (!userId || !question || !answer) {
+    const { userId, question, answer, label } = req.body;
+    if (!userId || !question || !answer || !label) {
       return res.status(400).json({ error: "Missing fields" });
     }
 
-    const doc = await QA.create({ userId, question, answer });
-    res.status(201).json(doc);
+    const qaId = "qa_" + uuidv4();
+
+    let doc = await QA.findOne({ userId });
+
+    if (!doc) {
+      doc = await QA.create({
+        userId,
+        items: []
+      });
+    }
+
+    doc.items.push({
+      _id: qaId,
+      label,
+      question,
+      answer,
+      createdAt: new Date()
+    });
+
+    await doc.save();
+
+    res.status(201).json({
+      success: true,
+      _id: qaId,
+      question,
+      answer
+    });
+
   } catch (err) {
-    console.error(err);
+    console.error("QA create error:", err);
     res.status(500).json({ error: "Server error" });
   }
 };
 
-// READ ALL BY USER
+/* GET ALL QAs BY USER */
 export const getQAsByUser = async (req, res) => {
   try {
-    const docs = await QA.find({ userId: req.params.userId }).sort({ createdAt: -1 });
-    res.json(docs);
-  } catch (err) {
+    const doc = await QA.findOne({ userId: req.params.userId });
+    res.json(doc?.items || []);
+  } catch {
     res.status(500).json({ error: "Server error" });
   }
 };
 
-// READ SINGLE
+/* GET SINGLE QA */
 export const getQA = async (req, res) => {
-  try {
-    const doc = await QA.findById(req.params.id);
-    if (!doc) return res.status(404).json({ error: "Not found" });
-    res.json(doc);
-  } catch (err) {
-    res.status(500).json({ error: "Server error" });
-  }
+  const doc = await QA.findOne({ "items._id": req.params.id });
+  if (!doc) return res.status(404).json({ error: "Not found" });
+
+  res.json(doc.items.find(q => q._id === req.params.id));
 };
 
-// UPDATE
+/* UPDATE QA */
 export const updateQA = async (req, res) => {
-  try {
-    const { question, answer } = req.body;
+  const doc = await QA.findOne({ "items._id": req.params.id });
+  if (!doc) return res.status(404).json({ error: "Not found" });
 
-    const doc = await QA.findByIdAndUpdate(
-      req.params.id,
-      { question, answer },
-      { new: true }
-    );
+  const qa = doc.items.find(q => q._id === req.params.id);
 
-    if (!doc) return res.status(404).json({ error: "Not found" });
+  if (req.body.label !== undefined) qa.label = req.body.label;
+  if (req.body.question !== undefined) qa.question = req.body.question;
+  if (req.body.answer !== undefined) qa.answer = req.body.answer;
 
-    res.json(doc);
-  } catch (err) {
-    res.status(500).json({ error: "Server error" });
-  }
+  await doc.save();
+  res.json(qa);
 };
 
-// DELETE
+
+/* DELETE QA */
 export const deleteQA = async (req, res) => {
-  try {
-    const doc = await QA.findByIdAndDelete(req.params.id);
-    if (!doc) return res.status(404).json({ error: "Not found" });
-
-    res.json({ success: true });
-  } catch (err) {
-    res.status(500).json({ error: "Server error" });
-  }
+  await QA.findOneAndUpdate(
+    { "items._id": req.params.id },
+    { $pull: { items: { _id: req.params.id } } }
+  );
+  res.json({ success: true });
 };
+
+
+// GET UNIQUE LABELS + ANSWERS
+export const getQALabels = async (req, res) => {
+  const doc = await QA.findOne({ userId: req.params.userId });
+  if (!doc) return res.json([]);
+
+  res.json(
+    doc.items.map(i => ({
+      label: i.label,
+      question: i.question,
+      answer: i.answer
+    }))
+  );
+};
+

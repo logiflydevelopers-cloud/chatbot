@@ -2,10 +2,10 @@ import express from "express";
 import {
   saveChatbotSettings,
   getChatbotSettings,
-  chatWithBot
+  chatWithBot,
+  registerLead          // ✅ NEW IMPORT
 } from "../controllers/chatbotController.js";
 
-import Page from "../models/Page.js";
 import QA from "../models/QA.js";
 import ChatbotSetting from "../models/ChatbotSetting.js";
 
@@ -16,6 +16,11 @@ const router = express.Router();
 ================================ */
 router.post("/save", saveChatbotSettings);
 router.get("/:userId", getChatbotSettings);
+
+/* ===============================
+   ⭐ REGISTER CHAT LEAD (EMAIL CAPTURE)
+================================ */
+router.post("/register-lead", registerLead);   // ✅ NEW ROUTE
 
 /* ===============================
    MAIN CHAT ENDPOINT
@@ -29,21 +34,19 @@ router.get("/knowledge-status/:userId", async (req, res) => {
   try {
     const { userId } = req.params;
 
-    const hasPages = await Page.exists({ userId });
-    const hasQA = await QA.exists({ userId });
-    const settings = await ChatbotSetting.findOne({ userId });
+    const bot = await ChatbotSetting.findOne({ userId });
 
-    const hasWebsite = !!settings?.website;
+    const hasWebsite = !!bot?.website; // ✅ ONLY WEBSITE
 
     res.json({
-      hasKnowledge: Boolean(hasPages || hasQA || hasWebsite),
-      hasPages: Boolean(hasPages),
-      hasQA: Boolean(hasQA),
       hasWebsite
     });
+
   } catch (err) {
-    console.error("Knowledge status error:", err);
-    res.status(500).json({ hasKnowledge: false });
+    console.error(err);
+    res.status(500).json({
+      message: "Failed to fetch knowledge status"
+    });
   }
 });
 

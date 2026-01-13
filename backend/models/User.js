@@ -18,6 +18,16 @@ const userSchema = new mongoose.Schema({
     required: true,
     minlength: 6,
   },
-},{timestamps:true});
 
-export default mongoose.model("UserData",userSchema)
+  phone: {
+    type: String,
+    default: "",
+  },
+
+  avatar: {
+    type: String,
+    default: "",
+  },
+}, { timestamps: true });
+
+export default mongoose.model("UserData", userSchema)

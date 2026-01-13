@@ -12,6 +12,8 @@ import embedRoutes from "./routes/embed.js";
 import proxyRoute from "./routes/proxy.js";
 import qaRoutes from "./routes/qaRoutes.js";
 import personaRoutes from "./routes/personaRoutes.js";
+import pdfRoutes from "./routes/pdfRoutes.js";
+import path from "path";
 
 
 
@@ -26,7 +28,7 @@ const PORT = process.env.PORT || 4000;
 ====================================================== */
 app.use(
   cors({
-    origin: "https://chatbot-frontend-mocha-six.vercel.app",
+    origin: "http://localhost:3000",
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"],
@@ -35,7 +37,7 @@ app.use(
 
 // Handle OPTIONS preflight globally
 app.options("*", cors({
-  origin: "https://chatbot-frontend-mocha-six.vercel.app",
+  origin: "http://localhost:3000",
   credentials: true,
 }));
 
@@ -66,6 +68,9 @@ app.use("/embed", embedRoutes);
 app.use("/proxy", proxyRoute);
 app.use("/api/qa", qaRoutes);
 app.use("/api/persona", personaRoutes);
+app.use("/api/pdf", pdfRoutes);
+app.use("/uploads", express.static(path.join(process.cwd(), "uploads")));
+
 
 
 app.listen(PORT, () =>

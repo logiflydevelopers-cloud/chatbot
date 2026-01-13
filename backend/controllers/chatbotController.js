@@ -1,10 +1,10 @@
 import fetch from "node-fetch";
 import ChatbotSetting from "../models/ChatbotSetting.js";
-
-console.log("🔥🔥🔥 NEW PYTHON FORWARD CONTROLLER LOADED 🔥🔥🔥");
+import ChatLead from "../models/ChatLead.js";          // ✅ NEW
+import { v4 as uuidv4 } from "uuid";                   // ✅ NEW
 
 /* ============================================================
-    ⭐ SAVE / UPDATE CHATBOT SETTINGS
+   ⭐ SAVE / UPDATE CHATBOT SETTINGS (SAFE)
 ============================================================ */
 export const saveChatbotSettings = async (req, res) => {
   try {
@@ -13,15 +13,12 @@ export const saveChatbotSettings = async (req, res) => {
       avatar,
       firstMessage,
       primaryColor,
-      alignment,
-      website
+      alignment
     } = req.body;
 
     if (!userId) {
       return res.status(400).json({ error: "Missing userId" });
     }
-
-    const safeWebsite = website || null;
 
     let setting = await ChatbotSetting.findOne({ userId });
 
@@ -31,20 +28,21 @@ export const saveChatbotSettings = async (req, res) => {
         avatar,
         firstMessage,
         primaryColor,
-        alignment,
-        website: safeWebsite
+        alignment
       });
     } else {
-      setting.avatar = avatar;
-      setting.firstMessage = firstMessage;
-      setting.primaryColor = primaryColor;
-      setting.alignment = alignment;
-      setting.website = safeWebsite;
+      if (avatar !== undefined) setting.avatar = avatar;
+      if (firstMessage !== undefined) setting.firstMessage = firstMessage;
+      if (primaryColor !== undefined) setting.primaryColor = primaryColor;
+      if (alignment !== undefined) setting.alignment = alignment;
     }
 
     await setting.save();
 
-    return res.json({ success: true, settings: setting });
+    return res.json({
+      success: true,
+      settings: setting
+    });
 
   } catch (err) {
     console.error("❌ Save settings error →", err);
@@ -52,9 +50,8 @@ export const saveChatbotSettings = async (req, res) => {
   }
 };
 
-
 /* ============================================================
-    ⭐ GET CHATBOT SETTINGS
+   ⭐ GET CHATBOT SETTINGS
 ============================================================ */
 export const getChatbotSettings = async (req, res) => {
   try {
@@ -62,7 +59,10 @@ export const getChatbotSettings = async (req, res) => {
 
     const settings = await ChatbotSetting.findOne({ userId });
 
-    return res.json({ success: true, settings });
+    return res.json({
+      success: true,
+      settings
+    });
 
   } catch (err) {
     console.error("❌ Get settings error →", err);
@@ -70,9 +70,70 @@ export const getChatbotSettings = async (req, res) => {
   }
 };
 
+/* ============================================================
+   ⭐ REGISTER CHAT LEAD (EMAIL CAPTURE)
+============================================================ */
+export const registerLead = async (req, res) => {
+  try {
+    const { userId, email } = req.body;
+
+    if (!userId || !email) {
+      return res.status(400).json({ error: "userId & email required" });
+    }
+
+    const leadId = "lead_" + uuidv4();
+
+    const doc = await ChatLead.findOne({ userId });
+
+    // 🔁 IF DOCUMENT EXISTS
+    if (doc) {
+      const already = doc.leads.find(l => l.email === email);
+      if (already) {
+        return res.json({
+          success: true,
+          chatUserId: already._id,
+          name: email.split("@")[0]
+        });
+      }
+
+      doc.leads.push({
+        _id: leadId,
+        email,
+        createdAt: new Date()
+      });
+
+      await doc.save();
+    }
+
+    // 🆕 IF FIRST LEAD FOR USER
+    else {
+      await ChatLead.create({
+        userId,
+        leads: [
+          {
+            _id: leadId,
+            email,
+            createdAt: new Date()
+          }
+        ]
+      });
+    }
+
+    return res.json({
+      success: true,
+      chatUserId: leadId,
+      name: email.split("@")[0]
+    });
+
+  } catch (err) {
+    console.error("❌ Register lead error →", err);
+    res.status(500).json({ error: "Failed to save lead" });
+  }
+};
+
 
 /* ============================================================
-    ⭐ MAIN CHAT FUNCTION — PYTHON API FORWARD
+   ⭐ MAIN CHAT FUNCTION — PYTHON API FORWARD
 ============================================================ */
 export const chatWithBot = async (req, res) => {
   try {
@@ -83,7 +144,7 @@ export const chatWithBot = async (req, res) => {
       {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ userId, question }),
+        body: JSON.stringify({ userId, question })
       }
     );
 
@@ -99,10 +160,12 @@ export const chatWithBot = async (req, res) => {
       "AI did not return a reply";
 
     return res.json({ success: true, answer });
+
   } catch (err) {
     console.error("❌ Chat error:", err);
-    res.status(500).json({ success: false, answer: "Server error" });
+    res.status(500).json({
+      success: false,
+      answer: "Server error"
+    });
   }
 };
-
-

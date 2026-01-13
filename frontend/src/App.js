@@ -41,6 +41,12 @@ import CustomChatPage from "./Layout/CustomChatPage";
 import EmbedCodePage from "./Layout/EmbedCodePage";
 import ChatBotDrawerEmbed from "./Layout/ChatBotDrawerEmbed";
 
+// SETTINGS
+import SettingsLayout from "./Layout/Settings/SettingsLayout";
+import Account from "./Layout/Settings/Account";
+import Security from "./Layout/Settings/Security";
+
+
 import "./App.css";
 
 axios.defaults.withCredentials = true;
@@ -65,6 +71,13 @@ function AppContent() {
     }
     setAuthLoading(false);
   }, []);
+
+  useEffect(() => {
+    if (user) {
+      localStorage.setItem("user", JSON.stringify(user));
+    }
+  }, [user]);
+
 
   /* ❌ PAGES WHERE HEADER SHOULD NOT SHOW */
   const hideHeaderRoutes = [
@@ -160,10 +173,26 @@ function AppContent() {
             <Route path="knowledge/qa/new" element={<EditQA />} />
             <Route path="knowledge/qa/edit/:id" element={<EditQA />} />
 
-            <Route path="add-website" element={<AddWebsiteForm user={user} />} />
+            <Route path="knowledge/add-website" element={<AddWebsiteForm user={user} />} />
             <Route path="teach" element={<TeachAgent user={user} />} />
             <Route path="voice-agent" element={<VoiceAgent />} />
+
           </Route>
+
+          {/* SETTINGS (FULL PAGE) */}
+          <Route
+            path="/settings"
+            element={<SettingsLayout user={user} setUser={setUser} />}
+          >
+            {/* 👇 DEFAULT PAGE */}
+            <Route index element={<Navigate to="account" replace />} />
+
+            <Route path="account" element={<Account />} />
+            <Route path="security" element={<Security />} />
+          </Route>
+
+
+
         </Routes>
 
         {/* DATA DISPLAY (NOT FOR EMBED CHAT) */}

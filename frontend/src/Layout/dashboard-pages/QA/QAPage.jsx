@@ -10,7 +10,6 @@ const QAPage = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
-  // Read user from localStorage
   const getUserId = () => {
     try {
       const u = JSON.parse(localStorage.getItem("user"));
@@ -35,13 +34,11 @@ const QAPage = () => {
       const data = await getUserQAs(userId);
       setQas(data);
 
-      // ⭐ FIXED KNOWLEDGE FLAG
       if (Array.isArray(data) && data.length > 0) {
         localStorage.setItem("hasQA", "true");
       } else {
         localStorage.removeItem("hasQA");
       }
-
     } catch (err) {
       console.error(err);
       setError("Failed to load Q&A");
@@ -62,15 +59,12 @@ const QAPage = () => {
 
     try {
       await deleteQA(id);
-
       const newQas = qas.filter((q) => q._id !== id);
       setQas(newQas);
 
-      // ⭐ FIX — remove hasQA only when list empty
       if (newQas.length === 0) {
         localStorage.removeItem("hasQA");
       }
-
     } catch (err) {
       console.error(err);
       alert("Delete failed");
@@ -78,13 +72,12 @@ const QAPage = () => {
   };
 
   return (
-
-
-
     <div className="persona-container">
-
       <div className="fu-header persona-header">
-        <button className="fu-back-btn" onClick={() => navigate("/dashboard/knowledge")}>
+        <button
+          className="fu-back-btn"
+          onClick={() => navigate("/dashboard/knowledge")}
+        >
           ←
         </button>
 
@@ -117,6 +110,7 @@ const QAPage = () => {
             </div>
 
             <div className="qa-card-middle">
+              <div className="qa-label">{q.label}</div>
               <div className="qa-question">{q.question}</div>
               <div className="qa-answer">{q.answer}</div>
               <div className="qa-date">
@@ -125,8 +119,12 @@ const QAPage = () => {
             </div>
 
             <div className="qa-card-right">
-              <button className="qa-edit" onClick={() => handleEdit(q._id)}>Edit</button>
-              <button className="qa-delete" onClick={() => handleDelete(q._id)}>Delete</button>
+              <button className="qa-edit" onClick={() => handleEdit(q._id)}>
+                Edit
+              </button>
+              <button className="qa-delete" onClick={() => handleDelete(q._id)}>
+                Delete
+              </button>
             </div>
           </div>
         ))}

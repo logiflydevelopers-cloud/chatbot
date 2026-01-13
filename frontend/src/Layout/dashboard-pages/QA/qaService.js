@@ -1,28 +1,33 @@
 import axios from "axios";
 
-const API_BASE = process.env.REACT_APP_API_URL || "https://chatbot-backend-project.vercel.app/api/qa";
+const API = "http://localhost:4000/api/qa";
 
-export const getUserQAs = async (userId) => {
-  const res = await axios.get(`${API_BASE}/user/${userId}`);
-  return res.data;
-};
-
+/* CREATE */
 export const createQA = async (payload) => {
-  const res = await axios.post(`${API_BASE}`, payload);
+  const res = await axios.post(API, payload);
   return res.data;
 };
 
-export const updateQA = async (id, payload) => {
-  const res = await axios.put(`${API_BASE}/${id}`, payload);
+/* GET ALL BY USER */
+export const getUserQAs = async (userId) => {
+  const res = await axios.get(`${API}/all/${userId}`);
   return res.data;
 };
 
-export const deleteQA = async (id) => {
-  const res = await axios.delete(`${API_BASE}/${id}`);
-  return res.data;
-};
-
+/* GET SINGLE */
 export const getQAById = async (id) => {
-  const res = await axios.get(`${API_BASE}/${id}`);
+  const res = await axios.get(`${API}/${id}`);
+  return res.data; // 🔥 must include label
+};
+
+/* UPDATE */
+export const updateQA = async (id, payload) => {
+  const res = await axios.put(`${API}/${id}`, payload);
+  return res.data;
+};
+
+/* DELETE */
+export const deleteQA = async (id) => {
+  const res = await axios.delete(`${API}/${id}`);
   return res.data;
 };
