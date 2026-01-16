@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import ChatBotDrawer from "../Components/Auth/ChatBotDrawer";
 import "./CustomChatPage.css";
 import ColorPicker from "../Components/Auth/ColorPicker";
+import PopupModal from "../Components/Auth/Common/PopupModal"
 
 /* =========================
    DEFAULT AVATARS
@@ -29,6 +30,9 @@ const avatarMap = {
   "b-image-03": bImage03,
 };
 
+
+
+
 const CustomChatPage = () => {
   /* =========================
      EMBED MODE
@@ -38,7 +42,7 @@ const CustomChatPage = () => {
   const embedUserId = params.get("userId");
 
   const navigate = useNavigate();
-  const apiBase = "http://localhost:4000";
+  const apiBase = "https://chatbot-backend-project.vercel.app";
   const fileInputRef = useRef(null);
 
   /* =========================
@@ -153,13 +157,35 @@ const CustomChatPage = () => {
       const res = await axios.post(`${apiBase}/api/chatbot/save`, payload);
 
       if (res.data?.success) {
-        localStorage.setItem("chatbotSaved", "true"); 
-        alert("✅ Customization Saved Successfully!");
+        localStorage.setItem("chatbotSaved", "true");
+
+        setPopup({
+          show: true,
+          title: "Success",
+          message: "✅ Customization Saved Successfully!",
+          onConfirm: () =>
+            setPopup((prev) => ({ ...prev, show: false })),
+        });
       }
+
     } catch {
-      alert("❌ Save Failed");
+      setPopup({
+        show: true,
+        title: "Error",
+        message: "❌ Save Failed. Please try again.",
+        onConfirm: () =>
+          setPopup((prev) => ({ ...prev, show: false })),
+      });
     }
+
   };
+
+  const [popup, setPopup] = useState({
+    show: false,
+    title: "",
+    message: "",
+    onConfirm: null,
+  });
 
 
   const removeCustomAvatar = () => {
@@ -294,6 +320,14 @@ const CustomChatPage = () => {
           setShowBubble(false);
           setShowChat(true);
         }}
+      />
+
+      <PopupModal
+        show={popup.show}
+        title={popup.title}
+        message={popup.message}
+        onClose={() => setPopup((prev) => ({ ...prev, show: false }))}
+        onConfirm={popup.onConfirm}
       />
     </div>
   );

@@ -3,8 +3,6 @@ import {
   FiMessageSquare,
   FiMic,
   FiMail,
-  FiTrash2,
-  FiPlus,
   FiArrowLeft,
 } from "react-icons/fi";
 import { useOutletContext } from "react-router-dom";
@@ -27,21 +25,16 @@ const AIPersona = () => {
   const [isDirty, setIsDirty] = useState(false);
   const [saveMessage, setSaveMessage] = useState("");
 
+
   // ======================
   // PERSONA STATE
   // ======================
   const [persona, setPersona] = useState({
     agentName: "Ella",
-    agentRole: "Customer Support Agent",
+    agentRole: "Help Desk Specialist",
     language: "English",
     tone: "Friendly",
     responseLength: 25,
-    guidelines: [
-      "Your main goal is to promptly answer questions and resolve issues.",
-      "Always provide helpful and clear solutions.",
-      "Be polite and empathetic in all interactions.",
-      "Maintain professionalism while being approachable and friendly.",
-    ],
   });
 
   // ======================
@@ -58,7 +51,7 @@ const AIPersona = () => {
 
       try {
         const res = await fetch(
-          `http://localhost:4000/api/persona/${userId}`
+          `https://chatbot-backend-project.vercel.app/api/persona/${userId}`
         );
         const data = await res.json();
 
@@ -90,32 +83,6 @@ const AIPersona = () => {
 
   const markDirty = () => setIsDirty(true);
 
-  // ======================
-  // GUIDELINES HANDLERS
-  // ======================
-  const addGuideline = () => {
-    setPersona({
-      ...persona,
-      guidelines: [...persona.guidelines, ""],
-    });
-    markDirty();
-  };
-
-  const updateGuideline = (i, v) => {
-    const updated = persona.guidelines.map((g, idx) =>
-      idx === i ? v : g
-    );
-    setPersona({ ...persona, guidelines: updated });
-    markDirty();
-  };
-
-  const deleteGuideline = (i) => {
-    setPersona({
-      ...persona,
-      guidelines: persona.guidelines.filter((_, idx) => idx !== i),
-    });
-    markDirty();
-  };
 
   /* =========================
      💾 SAVE PERSONA
@@ -123,7 +90,7 @@ const AIPersona = () => {
   const savePersona = async () => {
     try {
       const res = await fetch(
-        "http://localhost:4000/api/persona/save",
+        "https://chatbot-backend-project.vercel.app/api/persona/save",
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -146,6 +113,13 @@ const AIPersona = () => {
       console.error("❌ Save failed:", err);
     }
   };
+
+  const AGENT_ROLES = [
+    "Help Desk Specialist",
+    "Client Service Representative",
+    "Technical Support Agent",
+  ];
+
 
   return (
     <div className="persona-container">
@@ -188,45 +162,73 @@ const AIPersona = () => {
             }}
           />
         </section>
-   
+
 
 
         {/* Agent Role */}
         <section className="persona-section">
           <label>Agent Role</label>
-          <input
+          <span>Select one predefined role</span>
+
+          <select
             value={persona.agentRole}
+            className="persona-select"
             onChange={(e) => {
               setPersona({ ...persona, agentRole: e.target.value });
               markDirty();
             }}
-          />
+          >
+            {AGENT_ROLES.map((role) => (
+              <option key={role} value={role}>
+                {role}
+              </option>
+            ))}
+          </select>
         </section>
+
 
         {/* Conversation Style */}
         <section className="persona-section">
           <label>Conversation Style</label>
+
           <div className="tabs">
+            {/* CHAT */}
             <button
               className={activeTab === "chat" ? "active" : ""}
               onClick={() => setActiveTab("chat")}
             >
               <FiMessageSquare /> Chat
             </button>
+
+            {/* VOICE */}
             <button
-              className={activeTab === "voice" ? "active" : ""}
+              className={activeTab === "voice" ? "active disabled-tab" : "disabled-tab"}
               onClick={() => setActiveTab("voice")}
             >
               <FiMic /> Voice
             </button>
+
+            {/* AGENT */}
             <button
-              className={activeTab === "email" ? "active" : ""}
-              onClick={() => setActiveTab("email")}
+              className={activeTab === "agent" ? "active disabled-tab" : "disabled-tab"}
+              onClick={() => setActiveTab("agent")}
             >
-              <FiMail /> Email
+              <FiMail /> Agent
             </button>
           </div>
+
+          {/* 👇 INLINE COMING SOON MESSAGE */}
+          {activeTab !== "chat" && (
+            <div className="coming-soon-inline">
+              🚧{" "}
+              {activeTab === "voice"
+                ? "Voice mode is coming soon. We’re working on it."
+                : "Agent mode is coming soon. We’re working on it."}
+            </div>
+          )}
         </section>
+
+
 
         {/* CHAT SETTINGS */}
         {activeTab === "chat" && (
@@ -276,29 +278,6 @@ const AIPersona = () => {
                   </span>
                 ))}
               </div>
-            </section>
-
-
-            <section className="persona-section">
-              <label>Chat Guidelines</label>
-
-              {persona.guidelines.map((g, i) => (
-                <div className="guideline-row" key={i}>
-                  <input
-                    value={g}
-                    onChange={(e) =>
-                      updateGuideline(i, e.target.value)
-                    }
-                  />
-                  <button onClick={() => deleteGuideline(i)}>
-                    <FiTrash2 />
-                  </button>
-                </div>
-              ))}
-
-              <button className="add-btn" onClick={addGuideline}>
-                <FiPlus /> Add new
-              </button>
             </section>
           </>
         )}

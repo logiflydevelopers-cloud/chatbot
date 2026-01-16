@@ -4,13 +4,6 @@ import ReactMarkdown from "react-markdown";
 import "./ChatBotDrawer.css";
 import sendIcon from "../../image/Group 427320708.svg";
 
-/* 🔒 SYSTEM MESSAGE */
-const SYSTEM_LEAD_MESSAGE =
-  "Good afternoon and welcome to LiveChat. To assist you better, could you please provide your name and email address?";
-
-/* EMAIL VALIDATOR */
-const isEmail = (text) =>
-  /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(text);
 
 /* TYPEWRITER */
 const typeText = (text, onUpdate, onDone) => {
@@ -44,8 +37,16 @@ export default function ChatBotDrawer({
   const [welcomeDone, setWelcomeDone] = useState(false);
   const [conversation, setConversation] = useState([]);
   const [labels, setLabels] = useState([]);
-  const [leadSaved, setLeadSaved] = useState(false);
-  const [labelUsed] = useState(false);
+
+
+  const [showLeadForm, setShowLeadForm] = useState(true);
+  const [leadName, setLeadName] = useState("");
+  const [leadEmail, setLeadEmail] = useState("");
+  const [nameError, setNameError] = useState("");
+  const [emailError, setEmailError] = useState("");
+
+
+
 
 
 
@@ -66,45 +67,23 @@ export default function ChatBotDrawer({
     if (!showChat || initialized.current) return;
     initialized.current = true;
 
-    const welcomeText =
-      firstMessage || "Hi there 👋 I'm your assistant!";
+    const welcomeText = firstMessage || "Hi there 👋 I'm your assistant!";
 
-    // STEP 1: typing welcome
     setConversation([{ from: "bot", typing: true }]);
 
     setTimeout(() => {
       typeText(
         welcomeText,
-        (typedWelcome) => {
-          setConversation([{ from: "bot", text: typedWelcome }]);
+        (typed) => {
+          setConversation([{ from: "bot", text: typed }]);
         },
         () => {
-          // STEP 2: show labels AFTER welcome
           setWelcomeDone(true);
-
-          // STEP 3: show system AFTER labels (small delay)
-          setTimeout(() => {
-
-
-            setConversation((prev) => [
-              ...prev,
-              { from: "system", typing: true },
-            ]);
-
-            typeText(
-              SYSTEM_LEAD_MESSAGE,
-              (typedSystem) => {
-                setConversation((prev) => [
-                  prev[0],
-                  { from: "system", text: typedSystem },
-                ]);
-              }
-            );
-          }, 600);
         }
       );
     }, 400);
   }, [showChat, firstMessage]);
+
 
 
   /* ================= AUTO SCROLL ================= */
@@ -116,7 +95,10 @@ export default function ChatBotDrawer({
 
   /* ================= LABEL CLICK ================= */
   const handleLabelClick = (item) => {
-    // USER QUESTION (RIGHT)
+
+    // 🔒 BLOCK UNTIL START CHAT
+    if (showLeadForm) return;
+
     setConversation((prev) => [
       ...prev,
       {
@@ -125,7 +107,6 @@ export default function ChatBotDrawer({
       },
     ]);
 
-    // BOT ANSWER (LEFT)
     setTimeout(() => {
       setConversation((prev) => [
         ...prev,
@@ -137,6 +118,7 @@ export default function ChatBotDrawer({
       ]);
     }, 400);
   };
+
 
 
 
@@ -153,28 +135,6 @@ export default function ChatBotDrawer({
     ]);
 
     try {
-      if (!leadSaved && isEmail(userText)) {
-        const res = await axios.post(
-          `${apiBase}/api/chatbot/register-lead`,
-          { userId, email: userText }
-        );
-        const name = res.data?.name || userText.split("@")[0];
-        setLeadSaved(true);
-
-        setTimeout(() => {
-          setConversation((prev) => {
-            const updated = [...prev];
-            updated[updated.length - 1] = {
-              from: "bot",
-              text: `Thank you, ${name || "there"}! How can we assist you today?`,
-              animated: true,
-            };
-            return updated;
-          });
-        }, 500);
-        return;
-      }
-
       const res = await axios.post(`${apiBase}/api/chatbot/chat`, {
         userId,
         question: userText,
@@ -203,6 +163,7 @@ export default function ChatBotDrawer({
     }
   };
 
+
   return (
     <>
       {showChat && (
@@ -222,7 +183,11 @@ export default function ChatBotDrawer({
             <button onClick={onClose}>✖</button>
           </div>
 
-          <div className="chatbot-body" ref={chatRef}>
+          <div
+            className={`chatbot-body ${showLeadForm ? "lead-mode" : "chat-mode"}`}
+            ref={chatRef}
+          >
+
             {/* WELCOME */}
             {conversation.slice(0, 1).map((m, i) => (
               <div key={i} className={`chat-row ${m.from}`}>
@@ -234,36 +199,116 @@ export default function ChatBotDrawer({
             ))}
 
             {/* LABELS */}
-            {welcomeDone && !labelUsed && labels.length > 0 && (
+            {welcomeDone && labels.length > 0 && (
               <div className="chatbot-labels">
                 {labels.map((item, i) => (
                   <button
-                    key={i}
-                    className="label-chip"
+                    className={`label-chip ${showLeadForm ? "disabled" : ""}`}
                     onClick={() => handleLabelClick(item)}
-                    style={{ border: `2px solid ${primaryColor}` }}
+                    style={{
+                      border: `2px solid ${primaryColor}`,
+                      opacity: showLeadForm ? 0.5 : 1,
+                      cursor: showLeadForm ? "not-allowed" : "pointer"
+                    }}
                   >
                     {item.label}
                   </button>
+
                 ))}
+              </div>
+            )}
+
+            {welcomeDone && showLeadForm && userId && (
+              <div className="chat-row bot">
+                {/* LEFT AVATAR */}
+                <img
+                  src={avatar}
+                  alt="bot"
+                  className="bot-avatar"
+                  style={{ border: `2px solid ${primaryColor}` }}
+                />
+
+                {/* FORM AS CHAT BUBBLE */}
+                <div className="lead-chat-bubble">
+                  <p className="lead-title">
+                    Let's chat! Fill in a few details to get started.
+                  </p>
+
+                  <input
+                    type="text"
+                    placeholder="Name"
+                    value={leadName}
+                    onChange={(e) => {
+                      setLeadName(e.target.value);
+                      setNameError("");
+                    }}
+                  />
+                  {nameError && <div className="form-error">{nameError}</div>}
+
+
+                  <input
+                    type="email"
+                    placeholder="Email"
+                    value={leadEmail}
+                    onChange={(e) => {
+                      setLeadEmail(e.target.value);
+                      setEmailError("");
+                    }}
+                  />
+                  {emailError && <div className="form-error">{emailError}</div>}
+
+
+                  <button
+                    style={{ background: primaryColor }}
+                    onClick={async () => {
+
+                      let hasError = false;
+
+                      if (!leadName.trim()) {
+                        setNameError("Name is required");
+                        hasError = true;
+                      }
+
+                      if (!leadEmail.trim()) {
+                        setEmailError("Email is required");
+                        hasError = true;
+                      }
+
+                      if (hasError) return;
+
+                      await axios.post(`${apiBase}/api/chatbot/register-lead`, {
+                        userId,
+                        name: leadName,
+                        email: leadEmail
+                      });
+
+                      setShowLeadForm(false);
+
+                      setConversation((prev) => [
+                        ...prev,
+                        {
+                          from: "bot",
+                          text: `Thanks ${leadName}! How can I help you today?`,
+                          animated: true
+                        }
+                      ]);
+                    }}
+                  >
+                    Start the chat
+                  </button>
+
+
+                </div>
               </div>
             )}
 
 
 
-            {/* SYSTEM MESSAGE (ANCHOR) */}
-            {/* <div className="chat-row system">
-              <img src={avatar} alt="bot" style={{ border: `2px solid ${primaryColor}` }} className="bot-avatar" />
-              <div className="chat-bubble system">
-                {SYSTEM_LEAD_MESSAGE}
-              </div>
-            </div> */}
-
             {/* CONVERSATION AFTER SYSTEM MESSAGE */}
             {conversation.slice(1).map((m, i) => (
               <div key={i} className={`chat-row ${m.from}`} >
                 {(m.from === "bot" || m.from === "system") && (
-                  <img src={avatar} alt="bot" className="bot-avatar" />
+                  <img src={avatar} style={{ border: `2px solid ${primaryColor}` }} alt="bot" className="bot-avatar" />
                 )}
                 <div className={`chat-bubble ${m.from}`}
                   style={{
@@ -283,17 +328,19 @@ export default function ChatBotDrawer({
             ))}
           </div>
 
-          <div className="chatbot-input">
-            <input
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-              onKeyDown={(e) => e.key === "Enter" && sendMessage()}
-              placeholder="Type here..."
-            />
-            <button onClick={sendMessage} style={{ background: primaryColor }}>
-              <img src={sendIcon} alt="send" />
-            </button>
-          </div>
+          {!showLeadForm && (
+            <div className="chatbot-input">
+              <input
+                value={input}
+                onChange={(e) => setInput(e.target.value)}
+                onKeyDown={(e) => e.key === "Enter" && sendMessage()}
+                placeholder="Type here..."
+              />
+              <button onClick={sendMessage} style={{ background: primaryColor }}>
+                <img src={sendIcon} alt="send" />
+              </button>
+            </div>
+          )}
         </div>
       )}
 

@@ -41,11 +41,18 @@ import CustomChatPage from "./Layout/CustomChatPage";
 import EmbedCodePage from "./Layout/EmbedCodePage";
 import ChatBotDrawerEmbed from "./Layout/ChatBotDrawerEmbed";
 
-// SETTINGS
+/* ================= SETTINGS ================= */
 import SettingsLayout from "./Layout/Settings/SettingsLayout";
 import Account from "./Layout/Settings/Account";
 import Security from "./Layout/Settings/Security";
 
+/* ================= ADMIN ================= */
+import AdminLayout from "./Layout/Admin-Console/AdminLayout";
+import Dashboard from "./Layout/Admin-Console/Dashboard";
+import Goals from "./Layout/Admin-Console/Goals";
+import Campaigns from "./Layout/Admin-Console/Campaigns";
+import Customers from "./Layout/Admin-Console/Customers";
+import CustomerChat from "./Layout/Admin-Console/CustomerChat";
 
 import "./App.css";
 
@@ -59,27 +66,21 @@ const ProtectedRoute = ({ user, children }) => {
 
 function AppContent() {
   const location = useLocation();
-
   const [user, setUser] = useState(null);
   const [authLoading, setAuthLoading] = useState(true);
 
-  /* 🔥 Restore user on refresh */
+  /* 🔥 Restore user */
   useEffect(() => {
     const savedUser = localStorage.getItem("user");
-    if (savedUser) {
-      setUser(JSON.parse(savedUser));
-    }
+    if (savedUser) setUser(JSON.parse(savedUser));
     setAuthLoading(false);
   }, []);
 
   useEffect(() => {
-    if (user) {
-      localStorage.setItem("user", JSON.stringify(user));
-    }
+    if (user) localStorage.setItem("user", JSON.stringify(user));
   }, [user]);
 
-
-  /* ❌ PAGES WHERE HEADER SHOULD NOT SHOW */
+  /* ❌ HEADER HIDE ROUTES */
   const hideHeaderRoutes = [
     "/",
     "/login",
@@ -91,13 +92,13 @@ function AppContent() {
 
   const shouldHideHeader =
     hideHeaderRoutes.includes(location.pathname) ||
-    location.pathname.startsWith("/embed/chat");
+    location.pathname.startsWith("/embed/chat") 
 
-  if (authLoading) return null; // 🔥 prevents blank / flicker
+  if (authLoading) return null;
 
   return (
     <>
-      {/* ✅ HEADER LOGIC */}
+      {/* HEADER */}
       {!shouldHideHeader && user && (
         <Header user={user} setUser={setUser} />
       )}
@@ -116,6 +117,7 @@ function AppContent() {
             path="/register"
             element={!user ? <Register /> : <Navigate to="/dashboard" />}
           />
+
           <Route path="/google-success" element={<GoogleSuccess setUser={setUser} />} />
           <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/verify-otp" element={<VerifyOTP />} />
@@ -131,7 +133,7 @@ function AppContent() {
             }
           />
 
-          {/* CUSTOM CHAT */}
+          {/* CHATBOT */}
           <Route
             path="/custom-chat"
             element={
@@ -141,7 +143,6 @@ function AppContent() {
             }
           />
 
-          {/* EMBED CODE */}
           <Route
             path="/embed-code/:userId"
             element={
@@ -151,7 +152,6 @@ function AppContent() {
             }
           />
 
-          {/* EMBED CHAT (NO HEADER) */}
           <Route path="/embed/chat/:userId" element={<ChatBotDrawerEmbed />} />
 
           {/* DASHBOARD */}
@@ -165,44 +165,57 @@ function AppContent() {
           >
             <Route index element={<Navigate to="knowledge" replace />} />
             <Route path="train" element={<Welcome />} />
-
             <Route path="persona" element={<AIPersona />} />
             <Route path="knowledge" element={<Knowledge />} />
             <Route path="knowledge/file" element={<FileUpload />} />
             <Route path="knowledge/qa" element={<QAPage />} />
             <Route path="knowledge/qa/new" element={<EditQA />} />
             <Route path="knowledge/qa/edit/:id" element={<EditQA />} />
-
             <Route path="knowledge/add-website" element={<AddWebsiteForm user={user} />} />
             <Route path="teach" element={<TeachAgent user={user} />} />
             <Route path="voice-agent" element={<VoiceAgent />} />
-
           </Route>
 
-          {/* SETTINGS (FULL PAGE) */}
+          {/* SETTINGS */}
           <Route
             path="/settings"
-            element={<SettingsLayout user={user} setUser={setUser} />}
+            element={
+              <ProtectedRoute user={user}>
+                <SettingsLayout user={user} setUser={setUser} />
+              </ProtectedRoute>
+            }
           >
-            {/* 👇 DEFAULT PAGE */}
             <Route index element={<Navigate to="account" replace />} />
-
             <Route path="account" element={<Account />} />
             <Route path="security" element={<Security />} />
           </Route>
 
-
-
+          {/* ADMIN CONSOLE */}
+          <Route
+            path="/admin"
+            element={
+              <ProtectedRoute user={user}>
+                <AdminLayout />
+              </ProtectedRoute>
+            }
+          >
+            <Route index element={<Navigate to="dashboard" replace />} />
+            <Route path="dashboard" element={<Dashboard />} />
+            <Route path="goals" element={<Goals />} />
+            <Route path="campaigns" element={<Campaigns />} />
+            <Route path="customers" element={<Customers />} />
+            <Route path="customers/:id" element={<CustomerChat />} />
+          </Route>
         </Routes>
 
-        {/* DATA DISPLAY (NOT FOR EMBED CHAT) */}
+        {/* DATA DISPLAY */}
         {!location.pathname.startsWith("/embed/chat") && <DataDisplay />}
       </main>
     </>
   );
 }
 
-/* ================= ROOT ================= */
+/* ROOT */
 export default function App() {
   return (
     <Router>

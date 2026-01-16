@@ -40,10 +40,6 @@ const KnowledgeBase = () => {
 
       {/* Search Row */}
       <div className="kb-search-row">
-        <input className="kb-search" type="text" placeholder="Search" />
-        <select className="kb-dropdown">
-          <option>See All</option>
-        </select>
       </div>
 
       {/* FILE CARD */}

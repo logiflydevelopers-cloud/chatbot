@@ -58,6 +58,7 @@
   display: flex;
   gap: 10px;
   margin: 20px 0;
+  border: 1px solid #d6d6f3;
 }
 
 .kb-search {

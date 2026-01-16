@@ -20,7 +20,7 @@ const AddWebsiteForm = ({ user }) => {
     if (!userId) return;
 
     axios
-      .get(`http://localhost:4000/api/chatbot/${userId}`)
+      .get(`https://chatbot-backend-project.vercel.app/api/chatbot/${userId}`)
       .then((res) => {
         const website = res.data?.settings?.website;
         if (website) {
@@ -44,7 +44,7 @@ const AddWebsiteForm = ({ user }) => {
       setSuccess("");
 
       await axios.post(
-        "http://localhost:4000/api/webhook/ingest-website",
+        "https://chatbot-backend-project.vercel.app/api/webhook/ingest-website",
         {
           userId,
           source: url.trim(),

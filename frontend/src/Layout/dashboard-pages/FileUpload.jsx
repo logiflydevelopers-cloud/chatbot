@@ -28,7 +28,7 @@ const FileUpload = () => {
         if (!userId) return;
 
         axios
-            .get(`http://localhost:4000/api/pdf/status/${userId}`)
+            .get(`https://chatbot-backend-project.vercel.app/api/pdf/status/${userId}`)
             .then((res) => {
                 if (res.data?.hasPdf) {
                     setFile({ name: res.data.pdfName });
@@ -74,7 +74,7 @@ const FileUpload = () => {
 
         try {
             await axios.post(
-                "http://localhost:4000/api/pdf/upload",
+                "https://chatbot-backend-project.vercel.app/api/pdf/upload",
                 formData,
                 {
                     headers: { "Content-Type": "multipart/form-data" },

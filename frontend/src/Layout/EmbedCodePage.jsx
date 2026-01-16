@@ -119,14 +119,14 @@ const PLATFORMS = [
 const EmbedCodePage = ({ user }) => {
   const { userId } = useParams();
   const navigate = useNavigate();
-  const [activePlatform, setActivePlatform] = useState(null);
+  const [activePlatform, setActivePlatform] = useState("WordPress");
   const [copied, setCopied] = useState(false);
 
   useEffect(() => {
     if (!user) navigate("/login");
   }, [user, navigate]);
 
-  const embedCode = `<script src="http://localhost:4000/embed/${userId}.js" async></script>`;
+  const embedCode = `<script src="https://chatbot-backend-project.vercel.app/embed/${userId}.js" async></script>`;
 
   const copyCode = () => {
     navigator.clipboard.writeText(embedCode);

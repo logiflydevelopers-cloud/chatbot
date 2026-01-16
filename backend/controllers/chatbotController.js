@@ -75,54 +75,54 @@ export const getChatbotSettings = async (req, res) => {
 ============================================================ */
 export const registerLead = async (req, res) => {
   try {
-    const { userId, email } = req.body;
-
-    if (!userId || !email) {
-      return res.status(400).json({ error: "userId & email required" });
+    const { userId, name, email } = req.body;
+    if (!userId || !name || !email) {
+      return res.status(400).json({ error: "userId, name & email required" });
     }
 
+    const normalizedEmail = email.toLowerCase();
     const leadId = "lead_" + uuidv4();
 
     const doc = await ChatLead.findOne({ userId });
 
-    // 🔁 IF DOCUMENT EXISTS
     if (doc) {
-      const already = doc.leads.find(l => l.email === email);
+      const already = doc.leads.find(
+        l => l.email.toLowerCase() === normalizedEmail
+      );
+
       if (already) {
         return res.json({
           success: true,
+          alreadyExists: true,
           chatUserId: already._id,
-          name: email.split("@")[0]
+          name: already.name
         });
       }
 
       doc.leads.push({
         _id: leadId,
-        email,
+        name,
+        email: normalizedEmail,
         createdAt: new Date()
       });
 
       await doc.save();
-    }
-
-    // 🆕 IF FIRST LEAD FOR USER
-    else {
+    } else {
       await ChatLead.create({
         userId,
-        leads: [
-          {
-            _id: leadId,
-            email,
-            createdAt: new Date()
-          }
-        ]
+        leads: [{
+          _id: leadId,
+          name,
+          email: normalizedEmail,
+          createdAt: new Date()
+        }]
       });
     }
 
     return res.json({
       success: true,
       chatUserId: leadId,
-      name: email.split("@")[0]
+      name
     });
 
   } catch (err) {
@@ -130,6 +130,7 @@ export const registerLead = async (req, res) => {
     res.status(500).json({ error: "Failed to save lead" });
   }
 };
+
 
 
 /* ============================================================

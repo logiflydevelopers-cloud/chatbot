@@ -1,0 +1,232 @@
+/* ================= LAYOUT ================= */
+.admin-root {
+  display: flex;
+  min-height: 100vh;
+  background: #f4f6fb;
+}
+
+.admin-sidebar {
+  width: 240px;
+  background: #0f172a;
+  padding: 20px;
+}
+
+.admin-link {
+  display: block;
+  padding: 14px;
+  margin-bottom: 6px;
+  color: #94a3b8;
+  text-decoration: none;
+  border-radius: 8px;
+  transition: all 0.25s ease;
+}
+
+.admin-link:hover,
+.admin-link.active {
+  background: #1e293b;
+  color: #fff;
+}
+
+.admin-content {
+  flex: 1;
+  padding: 20px;
+}
+
+/* ================= MOBILE ================= */
+.admin-mobile-home {
+  padding: 20px;
+}
+
+.admin-title {
+  font-size: 22px;
+  margin-bottom: 20px;
+}
+
+.admin-card {
+  background: #fff;
+  padding: 18px;
+  border-radius: 14px;
+  margin-bottom: 14px;
+  font-weight: 600;
+  box-shadow: 0 6px 20px rgba(0,0,0,.08);
+  cursor: pointer;
+  transition: transform .25s ease;
+}
+
+.admin-card:hover {
+  transform: translateY(-2px);
+}
+
+.admin-mobile-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.back-btn {
+  border: none;
+  background: #fff;
+  padding: 10px 14px;
+  border-radius: 12px;
+  font-size: 18px;
+  cursor: pointer;
+  box-shadow: 0 4px 10px rgba(0,0,0,.1);
+}
+
+/* ================= DASHBOARD ================= */
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 16px;
+}
+
+.dash-card {
+  background: linear-gradient(135deg, #1e293b, #334155);
+  color: #fff;
+  padding: 22px;
+  border-radius: 16px;
+  box-shadow: 0 10px 30px rgba(0,0,0,.15);
+}
+
+/* ================= ANIMATIONS ================= */
+.fade-in {
+  animation: fade .4s ease-in;
+}
+
+.zoom-in {
+  animation: zoom .35s ease;
+}
+
+.slide-down {
+  animation: slide .3s ease;
+}
+
+@keyframes fade {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes zoom {
+  from { transform: scale(.95); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+@keyframes slide {
+  from { transform: translateY(-10px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+
+
+.customer-card {
+  background: #fff;
+  padding: 16px;
+  border-radius: 14px;
+  margin-bottom: 12px;
+  cursor: pointer;
+  box-shadow: 0 6px 20px rgba(0,0,0,.08);
+  transition: transform .2s;
+}
+
+.customer-card:hover {
+  transform: translateY(-2px);
+}
+
+.chat-box {
+  margin-top: 20px;
+  background: #f1f5f9;
+  padding: 16px;
+  border-radius: 12px;
+}
+
+.chat-msg {
+  padding: 10px 14px;
+  border-radius: 14px;
+  margin-bottom: 10px;
+  max-width: 70%;
+}
+
+.chat-msg.bot {
+  background: #e2e8f0;
+}
+
+.chat-msg.user {
+  background: #6366f1;
+  color: #fff;
+  margin-left: auto;
+}
+
+
+/* ================= COMMON ================= */
+.page-wrapper {
+  background: #f8fafc;
+  min-height: 100%;
+}
+
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.primary-btn {
+  background: #6366f1;
+  color: #fff;
+  border: none;
+  padding: 10px 16px;
+  border-radius: 10px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+/* ================= GOALS ================= */
+.goal-list {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.goal-card {
+  background: #fff;
+  padding: 16px;
+  border-radius: 14px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 6px 20px rgba(0,0,0,.08);
+}
+
+/* ================= CAMPAIGNS ================= */
+.campaign-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 16px;
+}
+
+.campaign-card {
+  background: #fff;
+  padding: 18px;
+  border-radius: 16px;
+  box-shadow: 0 6px 20px rgba(0,0,0,.1);
+}
+
+/* ================= STATUS ================= */
+.status-badge {
+  padding: 6px 12px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.status-badge.active {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.status-badge.inactive {
+  background: #fee2e2;
+  color: #991b1b;
+}
+

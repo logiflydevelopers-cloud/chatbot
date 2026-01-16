@@ -10,14 +10,14 @@ router.get("/:userId.js", async (req, res) => {
   const alignment = setting?.alignment === "left" ? "left" : "right";
 
   const FRONTEND_URL =
-    process.env.FRONTEND_URL || "http://localhost:3000";
+    process.env.FRONTEND_URL || "https://chatbot-frontend-mocha-six.vercel.app";
   const BACKEND_URL =
-    process.env.BACKEND_URL || "http://localhost:4000";
+    process.env.BACKEND_URL || "https://chatbot-backend-project.vercel.app";
 
   /* ======================================================
         🔥 AVATAR KEY → PUBLIC URL
         DB:  b-image-03
-        URL: http://localhost:3000/avatars/b-image-03.svg
+        URL: https://chatbot-frontend-mocha-six.vercel.app/avatars/b-image-03.svg
   ====================================================== */
   const avatarKey = setting?.avatar || "";
   const avatarUrl = avatarKey

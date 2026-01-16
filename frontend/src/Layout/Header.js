@@ -4,13 +4,22 @@ import "./Header.css";
 import { FaUserCircle } from "react-icons/fa";
 import logo from "../image/logo.png";
 import axios from "axios";
+import PopupModal from "../Components/Auth/Common/PopupModal"
+
 
 function Header({ user, setUser }) {
   const navigate = useNavigate();
   const location = useLocation();
-  const apiBase = "http://localhost:4000";
+  const apiBase = "https://chatbot-backend-project.vercel.app";
 
   const userId = user?.id || user?._id;
+
+  const [popup, setPopup] = useState({
+    show: false,
+    title: "",
+    message: "",
+    onConfirm: null,
+  });
 
 
   /* ================= PROFILE POPUP ================= */
@@ -56,19 +65,33 @@ function Header({ user, setUser }) {
     );
 
     if (!res.data.hasWebsite) {
-      alert("⚠️ Please upload WEBSITE first to customize chatbot.");
-      navigate("/dashboard/knowledge");
+      setPopup({
+        show: true,
+        title: "Website Required",
+        message: "Please upload WEBSITE first to customize chatbot.",
+        onConfirm: () => {
+          setPopup({ ...popup, show: false });
+          navigate("/dashboard/knowledge");
+        },
+      });
       return;
     }
+
 
     navigate("/custom-chat");
   };
 
   const handlePublishClick = () => {
     if (!localStorage.getItem("chatbotSaved")) {
-      alert("⚠️ Please customize and SAVE chatbot first.");
+      setPopup({
+        show: true,
+        title: "Action Required",
+        message: "Please customize and SAVE chatbot first.",
+        onConfirm: () => setPopup({ ...popup, show: false }),
+      });
       return;
     }
+
     navigate(`/embed-code/${userId}`);
   };
 
@@ -98,7 +121,7 @@ function Header({ user, setUser }) {
 
           {user?.avatar ? (
             <img
-              src={`http://localhost:4000${user.avatar}`}
+              src={`https://chatbot-backend-project.vercel.app${user.avatar}`}
               alt="avatar"
               className="jf-user-icon avatar-img"
             />
@@ -106,6 +129,16 @@ function Header({ user, setUser }) {
             <FaUserCircle size={34} className="jf-user-icon" />
           )}
         </div>
+
+
+        <PopupModal
+          show={popup.show}
+          title={popup.title}
+          message={popup.message}
+          onClose={() => setPopup({ ...popup, show: false })}
+          onConfirm={popup.onConfirm}
+        />
+
 
       </header >
 
@@ -121,7 +154,7 @@ function Header({ user, setUser }) {
               <div className="profile-avatar">
                 {user?.avatar ? (
                   <img
-                    src={`http://localhost:4000${user.avatar}`}
+                    src={`https://chatbot-backend-project.vercel.app${user.avatar}`}
                     alt="avatar"
                     className="jf-user-icon avatar-img"
                   />
@@ -138,20 +171,19 @@ function Header({ user, setUser }) {
               <span className="profile-plan">STARTER</span>
             </div>
 
-            <div className="profile-progress">
-              <p className="progress-title">
-                Agents <span>7 of 5 used</span>
-              </p>
-              <div className="progress-bar">
-                <span style={{ width: "100%" }} />
-              </div>
-            </div>
+            {/* <div className="profile-progress">
+                <p className="progress-title">
+                  Agents <span>7 of 5 used</span>
+                </p>
+                <div className="progress-bar">
+                  <span style={{ width: "100%" }} />
+                </div>
+              </div> */}
 
-            <button className="upgrade-btn">Upgrade Your Plan</button>
+            {/* <button className="upgrade-btn">Upgrade Your Plan</button> */}
 
             <ul className="profile-menu">
               <li onClick={() => navigate("/admin")}>Admin Console</li>
-              <li onClick={() => navigate("/settings")}>Settings</li>
 
 
               <li onClick={handleLogout}>Logout</li>

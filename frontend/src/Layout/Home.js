@@ -1,7 +1,5 @@
 import { useState } from "react";
-import { useEffect } from "react";
-// import { useNavigate } from "react-router-dom";
-
+import { useEffect, useRef } from "react";
 import axios from "axios";
 import "./Home.css";
 import { Link } from "react-router-dom";
@@ -81,7 +79,7 @@ const reviews = [
 
 const googleLogin = async () => {
   try {
-    const res = await axios.get("http://localhost:4000/api/auth/google");
+    const res = await axios.get("https://chatbot-backend-project.vercel.app/api/auth/google");
     window.location.href = res.data.url; // 🔥 direct Google login
   } catch (err) {
     console.error("Google login failed", err);
@@ -141,6 +139,8 @@ function FAQAccordion() {
     setActiveId(activeId === id ? null : id);
   };
 
+
+
   return (
     <div className="faq-grid">
       {/* LEFT COLUMN */}
@@ -169,6 +169,16 @@ function FAQAccordion() {
     </div>
   );
 }
+
+const handleGoogleSignup = async () => {
+  try {
+    const res = await axios.get("https://chatbot-backend-project.vercel.app/api/auth/google");
+    window.location.href = res.data.url; // 🔥 direct Google login
+  } catch (err) {
+    console.error("Google signup failed", err);
+  }
+};
+
 
 function FAQItem({ item, isOpen, onClick }) {
   return (
@@ -244,7 +254,47 @@ export default function Home() {
 
 
 
+  const sliderRef = useRef(null);
 
+  useEffect(() => {
+    const slider = sliderRef.current;
+    if (!slider) return;
+
+    let rafId;
+
+    const isMobile = window.innerWidth < 768;
+    const speed = isMobile ? 0.25 : 0.6;
+
+    const loop = () => {
+      slider.scrollLeft += speed;
+
+      const resetPoint = slider.scrollWidth / 2;
+
+      // 🔥 TRUE INFINITE (NO JUMP)
+      if (slider.scrollLeft >= resetPoint) {
+        slider.scrollLeft -= resetPoint;
+      }
+
+      rafId = requestAnimationFrame(loop);
+    };
+
+    rafId = requestAnimationFrame(loop);
+
+    // pause on hover (desktop only)
+    const stop = () => cancelAnimationFrame(rafId);
+    const start = () => (rafId = requestAnimationFrame(loop));
+
+    if (!isMobile) {
+      slider.addEventListener("mouseenter", stop);
+      slider.addEventListener("mouseleave", start);
+    }
+
+    return () => {
+      cancelAnimationFrame(rafId);
+      slider.removeEventListener("mouseenter", stop);
+      slider.removeEventListener("mouseleave", start);
+    };
+  }, []);
 
 
   return (
@@ -536,7 +586,7 @@ export default function Home() {
     TESTIMONIALS SECTION
 ========================= */}
       <section className="testimonials">
-        <div className="container">
+        <div className="">
 
           {/* HEADER */}
           <div className="testimonials-header animate fade-up">
@@ -544,15 +594,15 @@ export default function Home() {
 
             <div className="testimonials-meta">
               <div className="rating">
-                <div className="stars-row">
+                <div className="stars-row-up">
                   {[...Array(5)].map((_, i) => (
-                    <img key={i} src={starIcon} alt="star" />
+                    <img key={i} src={starIcon} alt="Rating star" />
                   ))}
                 </div>
-
-                <span>4.8 out of 5 based on<br />743 reviews</span>
+                <span>
+                  4.8 out of 5 based on<br />743 reviews
+                </span>
               </div>
-
 
               <div className="customers">
                 <div className="avatars">
@@ -567,14 +617,17 @@ export default function Home() {
           </div>
 
           {/* SLIDER */}
-          <div className="testimonial-slider">
+          <div
+            className="testimonial-slider"
+            ref={sliderRef}
+            onWheel={(e) => (e.currentTarget.scrollLeft += e.deltaY)}
+          >
             <div className="testimonial-track">
-
               {[...reviews, ...reviews].map((r, i) => (
                 <div className="testimonial-card animate fade-up" key={i}>
                   <div className="stars-row">
-                    {[...Array(5)].map((_, i) => (
-                      <img key={i} src={starIcon} alt="star" />
+                    {[...Array(5)].map((_, j) => (
+                      <img key={j} src={starIcon} alt="Star" />
                     ))}
                   </div>
 
@@ -583,14 +636,13 @@ export default function Home() {
 
                   <div className="author">
                     <img src={r.avatar} alt={r.name} />
-                    <div>
+                    <div className="author-info">
                       <strong className="testimonial-author">{r.name}</strong>
                       <span className="testimonial-date">{r.date}</span>
                     </div>
                   </div>
                 </div>
               ))}
-
             </div>
           </div>
 
@@ -634,7 +686,10 @@ export default function Home() {
               type="email"
               placeholder="Enter your business email"
             />
-            <button>Sign Up free</button>
+            <button onClick={handleGoogleSignup}>
+              Sign Up free
+            </button>
+
           </div>
 
           <div className="cta-points animate fade-up delay-2">

@@ -11,7 +11,7 @@ import { useOutletContext } from "react-router-dom";
 
 
 const TeachAgent = ({ user }) => {
-  const apiBase = "http://localhost:4000";
+  const apiBase = "https://chatbot-backend-project.vercel.app";
 
   /* ===============================
       REFS
@@ -160,7 +160,7 @@ const TeachAgent = ({ user }) => {
       RENDER
   =============================== */
   return (
-    <div className="teach-chat-container persona-container ">
+    <div className="teach-chat-container ">
       {/* HEADER */}
       <div className="teach-header">
         <div className="persona-header">
