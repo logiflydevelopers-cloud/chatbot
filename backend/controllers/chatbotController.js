@@ -138,14 +138,14 @@ export const registerLead = async (req, res) => {
 ============================================================ */
 export const chatWithBot = async (req, res) => {
   try {
-    const { question, userId } = req.body;
+    const { question, userId, leadId } = req.body;
 
     const response = await fetch(
       "https://ai-persona-api.onrender.com/v1/chat",
       {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ userId, question })
+        body: JSON.stringify({ userId, leadId, question })
       }
     );
 

@@ -44,6 +44,8 @@ export default function ChatBotDrawer({
   const [leadEmail, setLeadEmail] = useState("");
   const [nameError, setNameError] = useState("");
   const [emailError, setEmailError] = useState("");
+  const [leadId, setLeadId] = useState(null);
+
 
 
 
@@ -137,6 +139,7 @@ export default function ChatBotDrawer({
     try {
       const res = await axios.post(`${apiBase}/api/chatbot/chat`, {
         userId,
+        leadId,
         question: userText,
       });
 
@@ -282,6 +285,7 @@ export default function ChatBotDrawer({
                         email: leadEmail
                       });
 
+                      setLeadId(res.data.chatUserId);
                       setShowLeadForm(false);
 
                       setConversation((prev) => [
