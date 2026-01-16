@@ -2,12 +2,20 @@ import multer from "multer";
 import path from "path";
 import fs from "fs";
 
-const uploadDir = "uploads/avatars";
+/* ======================================================
+   SAFE UPLOAD DIRECTORY (ABSOLUTE PATH)
+====================================================== */
 
-// 🔥 ENSURE FOLDER EXISTS
+const uploadDir = path.join(process.cwd(), "uploads", "avatars");
+
+// ✅ ENSURE FOLDER EXISTS (VERCEL SAFE)
 if (!fs.existsSync(uploadDir)) {
   fs.mkdirSync(uploadDir, { recursive: true });
 }
+
+/* ======================================================
+   MULTER STORAGE
+====================================================== */
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
@@ -19,6 +27,10 @@ const storage = multer.diskStorage({
   },
 });
 
+/* ======================================================
+   FILE FILTER
+====================================================== */
+
 const fileFilter = (req, file, cb) => {
   if (file.mimetype.startsWith("image/")) {
     cb(null, true);
@@ -27,8 +39,14 @@ const fileFilter = (req, file, cb) => {
   }
 };
 
+/* ======================================================
+   EXPORT UPLOAD MIDDLEWARE
+====================================================== */
+
 export const avatarUpload = multer({
   storage,
   fileFilter,
-  limits: { fileSize: 5 * 1024 * 1024 }, // 5MB
+  limits: {
+    fileSize: 5 * 1024 * 1024, // 5MB
+  },
 });
