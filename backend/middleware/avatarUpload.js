@@ -3,12 +3,13 @@ import path from "path";
 import fs from "fs";
 
 /* ======================================================
-   SAFE UPLOAD DIRECTORY (ABSOLUTE PATH)
+   ✅ VERCEL SAFE WRITABLE DIRECTORY
 ====================================================== */
 
-const uploadDir = path.join(process.cwd(), "uploads", "avatars");
+// ONLY writable directory on Vercel
+const uploadDir = path.join("/tmp", "uploads", "avatars");
 
-// ✅ ENSURE FOLDER EXISTS (VERCEL SAFE)
+// Ensure folder exists
 if (!fs.existsSync(uploadDir)) {
   fs.mkdirSync(uploadDir, { recursive: true });
 }
@@ -40,13 +41,13 @@ const fileFilter = (req, file, cb) => {
 };
 
 /* ======================================================
-   EXPORT UPLOAD MIDDLEWARE
+   EXPORT
 ====================================================== */
 
 export const avatarUpload = multer({
   storage,
   fileFilter,
   limits: {
-    fileSize: 5 * 1024 * 1024, // 5MB
+    fileSize: 5 * 1024 * 1024,
   },
 });
