@@ -452,7 +452,7 @@ export default function Home() {
               <img src={integrationsCard} alt="Integrations" />
             </div>
             <div className="feature-content animate fade-right delay-1">
-              <img src={integrationsRow} className="feature-icons" />
+              <img src={integrationsRow} alt="Integrations" className="feature-icons" />
               <h3>Instant setup, no coding required</h3>
               <p>
                 Grab your embed code and drop it into your site. That’s all
