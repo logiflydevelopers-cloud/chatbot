@@ -122,6 +122,17 @@ export default function ChatBotDrawer({
   };
 
 
+  useEffect(() => {
+    const storedLeadId = localStorage.getItem("chatbot_leadId");
+
+    if (storedLeadId) {
+      setLeadId(storedLeadId);
+      setShowLeadForm(false); // 👈 skip lead form
+    }
+  }, []);
+
+
+
 
 
   /* ================= USER INPUT ================= */
@@ -264,7 +275,6 @@ export default function ChatBotDrawer({
                   <button
                     style={{ background: primaryColor }}
                     onClick={async () => {
-
                       let hasError = false;
 
                       if (!leadName.trim()) {
@@ -279,27 +289,43 @@ export default function ChatBotDrawer({
 
                       if (hasError) return;
 
-                      await axios.post(`${apiBase}/api/chatbot/register-lead`, {
-                        userId,
-                        name: leadName,
-                        email: leadEmail
-                      });
+                      try {
+                        const res = await axios.post(
+                          `${apiBase}/api/chatbot/register-lead`,
+                          {
+                            userId,
+                            name: leadName,
+                            email: leadEmail
+                          }
+                        );
 
-                      setLeadId(res.data.chatUserId);
-                      setShowLeadForm(false);
+                        const leadIdFromApi = res.data.chatUserId;
 
-                      setConversation((prev) => [
-                        ...prev,
-                        {
-                          from: "bot",
-                          text: `Thanks ${leadName}! How can I help you today?`,
-                          animated: true
-                        }
-                      ]);
+                        // ✅ SAVE IN STATE
+                        setLeadId(leadIdFromApi);
+
+                        // ✅ SAVE IN LOCALSTORAGE
+                        localStorage.setItem("chatbot_leadId", leadIdFromApi);
+
+                        setShowLeadForm(false);
+
+                        setConversation((prev) => [
+                          ...prev,
+                          {
+                            from: "bot",
+                            text: `Thanks ${res.data.name}! How can I help you today?`,
+                            animated: true
+                          }
+                        ]);
+
+                      } catch (err) {
+                        console.error("Lead register error", err);
+                      }
                     }}
                   >
                     Start the chat
                   </button>
+
 
 
                 </div>
