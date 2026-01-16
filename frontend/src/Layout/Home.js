@@ -312,13 +312,14 @@ export default function Home() {
 
           {/* CENTER (DESKTOP) */}
           <nav className="nav-pill">
-            <a className="active" href="#">Prompts</a>
-            <a href="#">Tools</a>
-            <a href="#">Product</a>
-            <a href="#">Pricing</a>
-            <a href="#">Contact Us</a>
-            <a href="#">Blog</a>
+            <Link className="active" to="/prompts">Prompts</Link>
+            <Link to="/">Tools</Link>
+            <Link to="/">Product</Link>
+            <Link to="/">Pricing</Link>
+            <Link to="/">Contact Us</Link>
+            <Link to="/">Blog</Link>
           </nav>
+
 
           {/* RIGHT (DESKTOP) */}
           <div className="nav-right">
