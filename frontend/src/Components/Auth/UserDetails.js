@@ -1,7 +1,8 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import styles from "./Auth.module.css";
 import axios from "axios";
 import { useNavigate, useParams } from "react-router-dom";
+
 
 const UserDetails = ({ user, setUser }) => {
   const navigate = useNavigate();
@@ -10,15 +11,18 @@ const UserDetails = ({ user, setUser }) => {
   const [loading, setLoading] = useState(true);
 
   // Fetch specific user details by ID
-  const fetchUserDetails = async (token) => {
-    return await axios.get(
-      `http://localhost:4000/api/auth/getUserDetails/${userId}`,
-      {
-        headers: { Authorization: `Bearer ${token}` },
-        withCredentials: true,
-      }
-    );
-  };
+  const fetchUserDetails = useCallback(
+    async (token) => {
+      return await axios.get(
+        `https://chatbot-backend-project.vercel.app/api/auth/getUserDetails/${userId}`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+          withCredentials: true,
+        }
+      );
+    },
+    [userId]
+  );
 
   useEffect(() => {
     const loadUser = async () => {
@@ -40,7 +44,7 @@ const UserDetails = ({ user, setUser }) => {
           try {
             console.log("Access token expired. Refreshing...");
             const refreshRes = await axios.get(
-              "http://localhost:4000/api/auth/refresh",
+              "https://chatbot-backend-project.vercel.app/api/auth/refresh",
               { withCredentials: true }
             );
 
@@ -63,12 +67,13 @@ const UserDetails = ({ user, setUser }) => {
     };
 
     loadUser();
-  }, [navigate, userId, setUser]);
+}, [navigate, setUser, fetchUserDetails]);
+
 
   const handleLogout = async () => {
     try {
       await axios.post(
-        "http://localhost:4000/api/user/logout",
+        "https://chatbot-backend-project.vercel.app/api/user/logout",
         {},
         { withCredentials: true }
       );
