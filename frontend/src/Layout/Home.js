@@ -247,10 +247,11 @@ export default function Home() {
   useEffect(() => {
     const interval = setInterval(() => {
       setToolIndex((prev) => (prev + 1) % toolItems.length);
-    }, 3200); // ⏱ smooth + premium speed
+    }, 3200);
 
     return () => clearInterval(interval);
-  }, []);
+  }, [toolItems.length]);
+
 
 
 
