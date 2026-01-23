@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API = "https://chatbot-backend-project.vercel.app/api/qa";
+const API = "http://localhost:4000/api/qa";
 
 /* CREATE */
 export const createQA = async (payload) => {

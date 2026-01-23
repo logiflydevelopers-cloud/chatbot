@@ -236,6 +236,7 @@
     width: 40px;
     height: 40px;
     font-size: 18px;
+    padding: 0 !important;
   }
 }
 
@@ -251,4 +252,52 @@
   .typing-dots span {
     font-size: 26px;
   }
+}
+
+
+
+/* === LEAD FORM BUBBLE === */
+.lead-chat-bubble {
+  background: #f6f7fb;
+  border-radius: 18px;
+  padding: 18px;
+  width: 100%;
+  max-width: 320px;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.06);
+}
+
+.lead-chat-bubble p {
+  margin-bottom: 12px;
+  font-size: 14px;
+  color: #333;
+}
+
+.lead-chat-bubble input {
+  width: 100%;
+  padding: 12px 14px;
+  margin-bottom: 10px;
+  border-radius: 10px;
+  border: 1px solid #ddd;
+  font-size: 14px;
+  outline: none;
+}
+
+.lead-chat-bubble input:focus {
+  border-color: #667eeb;
+}
+
+.lead-start-btn {
+  width: 100%;
+  padding: 12px;
+  background: #667eeb;
+  color: #fff;
+  border: none;
+  border-radius: 12px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.lead-start-btn:hover {
+  background: #556de0;
 }

@@ -9,22 +9,16 @@ const AIPersonaSchema = new mongoose.Schema(
       index: true,
     },
 
-    agentName: String,
+    agentName: {
+      type: String,
+      required: true,
+      default: "Ella",
+    },
     agentRole: String,
     language: String,
     tone: String,
     responseLength: Number,
 
-    guidelines: {
-      type: [String],
-      default: [],
-    },
-
-    // ✅ USER PYTHON API KEY
-    pythonApiKey: {
-      type: String,
-      required: true,
-    },
   },
   { timestamps: true }
 );

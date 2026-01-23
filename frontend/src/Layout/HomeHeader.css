@@ -1,0 +1,471 @@
+/* =========================
+   NAVBAR
+========================= */
+.navbar {
+    background: var(--green-lime);
+}
+
+.navbar-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 18px 24px;
+}
+
+/* LEFT */
+.nav-left {
+    display: flex;
+    align-items: center;
+}
+
+.nav-logo {
+    height: 30px;
+    width: auto;
+    cursor: pointer;
+}
+
+
+/* CENTER PILL */
+.nav-pill {
+    background: var(--bg-pill);
+    padding: 6px;
+    border-radius: 40px;
+    display: flex;
+    gap: 6px;
+}
+
+.nav-pill a {
+    color: var(--white);
+    text-decoration: none;
+    padding: 10px 18px;
+    border-radius: 30px;
+    font-size: 14px;
+    transition: var(--transition-fast);
+}
+
+.nav-pill a.active {
+    background: #313035;
+    color: #fff;
+}
+
+
+/* RIGHT */
+.nav-right {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+.login-btn {
+    color: var(--black);
+    text-decoration: none;
+}
+
+.signup-btn {
+    background: var(--green-main);
+    color: var(--white);
+    padding: 10px 18px;
+    border-radius: 20px;
+    text-decoration: none;
+}
+
+/* HAMBURGER */
+.hamburger {
+    display: none;
+    font-size: 26px;
+    cursor: pointer;
+}
+
+/* =========================
+   MOBILE MENU
+========================= */
+.mobile-overlay {
+    position: fixed;
+    inset: 0;
+    background: var(--bg-overlay);
+    opacity: 0;
+    pointer-events: none;
+    transition: var(--transition-slow);
+    z-index: 998;
+}
+
+.mobile-overlay.show {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.mobile-menu {
+    position: fixed;
+    top: 0;
+    right: -320px;
+    width: 300px;
+    height: 100vh;
+    background: var(--bg-pill);
+    color: var(--white);
+    padding: 20px;
+    z-index: 999;
+    transition: var(--transition-slow);
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+.mobile-menu.open {
+    right: 0;
+}
+
+.mobile-header {
+    display: flex;
+    justify-content: space-between;
+    font-size: 18px;
+    position: sticky;
+    top: 0;
+    padding-bottom: 14px;
+    z-index: 10;
+}
+
+.close {
+    cursor: pointer;
+}
+
+.mobile-menu ul {
+    list-style: none;
+}
+
+.mobile-menu ul li {
+    margin: 16px 0;
+}
+
+.mobile-actions {
+    margin-top: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.mobile-actions a {
+    color: var(--white);
+    text-decoration: none;
+}
+
+.mobile-signup {
+    background: var(--green-main);
+    padding: 12px;
+    text-align: center;
+    border-radius: 20px;
+}
+
+/* =========================
+   HERO
+========================= */
+.hero {
+    padding: 100px 0;
+}
+
+.hero h1 {
+    font-size: 48px;
+    margin-bottom: 16px;
+}
+
+.hero p {
+    max-width: 600px;
+    font-size: 18px;
+}
+
+/* =========================
+   RESPONSIVE
+========================= */
+@media (max-width: 900px) {
+
+    .nav-pill,
+    .nav-right {
+        display: none;
+    }
+
+    .hamburger {
+        display: block;
+    }
+
+    .navbar-inner {
+        padding: 18px 12px;
+    }
+
+    .nav-logo {
+        height: 25px;
+    }
+}
+
+
+
+
+
+/* =========================
+   SUPPORT DROPDOWN
+========================= */
+
+.support-dropdown {
+    position: relative;
+}
+
+.nav-link {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 10px 18px;
+    border-radius: 30px;
+    color: var(--white);
+    cursor: pointer;
+    transition: var(--transition-fast);
+    font-size: 14px;
+}
+
+.nav-link:hover {
+    background: #313035;
+}
+
+.nav-arrow {
+    width: 12px;
+    transition: transform 0.3s ease;
+}
+
+/* Dropdown box */
+.dropdown-menu {
+    position: absolute;
+    top: 115%;
+    left: 50%;
+    transform: translateX(-50%) translateY(10px);
+    background: #ffffff;
+    border-radius: 14px;
+    min-width: 220px;
+    padding: 10px;
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.18);
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+    z-index: 999;
+}
+
+.nav-arrow-icon {
+    color: #ffffff;
+    /* ✅ white icon */
+    font-size: 14px;
+    transition: transform 0.3s ease;
+}
+
+/* rotate on hover */
+.support-dropdown:hover .nav-arrow-icon {
+    transform: rotate(180deg);
+}
+
+
+/* Links inside dropdown */
+.dropdown-menu a {
+    display: block;
+    padding: 12px 20px;
+    margin: 5px 0;
+    font-size: 14px;
+    color: #111;
+    text-decoration: none;
+    transition: background 0.25s ease, padding-left 0.25s ease;
+}
+
+.dropdown-menu a:hover {
+    background: #f4f4ff;
+    padding-left: 26px;
+     color: #111;
+}
+
+/* Hover interaction */
+.support-dropdown:hover .dropdown-menu {
+    opacity: 1;
+    visibility: visible;
+    transform: translateX(-50%) translateY(0);
+}
+
+.support-dropdown:hover .nav-arrow {
+    transform: rotate(180deg);
+}
+
+/* Mobile – disable dropdown */
+@media (max-width: 900px) {
+    .support-dropdown {
+        display: none;
+    }
+}
+
+
+/* =========================
+   MOBILE SUPPORT DROPDOWN
+========================= */
+
+.mobile-nav-list {
+    list-style: none;
+    padding: 0;
+}
+
+.mobile-nav-list li {
+    color: #fff;
+    font-size: 16px;
+    padding: 14px 0;
+    cursor: pointer;
+}
+
+/* Header row */
+.mobile-support-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* Arrow icon */
+.mobile-arrow-icon {
+    color: #fff;
+    font-size: 18px;
+    transition: transform 0.3s ease;
+}
+
+/* Rotate when open */
+.mobile-support.open .mobile-arrow-icon {
+    transform: rotate(180deg);
+}
+
+/* Dropdown */
+.mobile-support-dropdown {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.35s ease;
+    padding-left: 10px;
+}
+
+/* Open state */
+.mobile-support.open .mobile-support-dropdown {
+    max-height: 200px;
+    margin-top: 10px;
+}
+
+/* Links */
+.mobile-support-dropdown a {
+    display: block;
+    padding: 10px 0;
+    font-size: 14px;
+    color: #ddd;
+    text-decoration: none;
+}
+
+.mobile-support-dropdown a:hover {
+    color: #fff;
+}
+
+
+/* =========================
+   INTEGRATIONS DROPDOWN
+========================= */
+
+.integrations-dropdown {
+    position: relative;
+}
+
+.integrations-menu {
+    position: absolute;
+    top: 115%;
+    left: 50%;
+    transform: translateX(-50%) translateY(10px);
+    background: #fff;
+    border-radius: 18px;
+    padding: 18px 20px;
+    width: 420px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.18);
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+    z-index: 999;
+}
+
+.integrations-dropdown:hover .integrations-menu {
+    opacity: 1;
+    visibility: visible;
+    transform: translateX(-50%) translateY(0);
+}
+
+/* Grid */
+.integrations-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 14px 20px;
+}
+
+/* Item */
+.integration-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: background 0.25s ease, transform 0.2s ease;
+}
+
+.integration-item img {
+    width: 28px;
+    height: 28px;
+    object-fit: contain;
+}
+
+.integration-item span {
+    font-size: 14px;
+    color: #111;
+    font-weight: 500;
+}
+
+.integration-item:hover {
+    background: #f4f6ff;
+    transform: translateX(4px);
+}
+
+/* Mobile disable */
+@media (max-width: 900px) {
+    .integrations-dropdown {
+        display: none;
+    }
+}
+
+
+
+/* =========================
+   MOBILE INTEGRATIONS DROPDOWN
+========================= */
+
+.mobile-integrations-dropdown {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.4s ease;
+    margin-top: 10px;
+}
+
+.mobile-integrations.open .mobile-integrations-dropdown {
+    max-height: 500px;
+}
+
+/* Integration item */
+.mobile-integration-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 0;
+}
+
+.mobile-integration-item img {
+    width: 26px;
+    height: 26px;
+    object-fit: contain;
+}
+
+.mobile-integration-item span {
+    font-size: 14px;
+    color: #ddd;
+}
+
+.mobile-integration-item:hover span {
+    color: #fff;
+}

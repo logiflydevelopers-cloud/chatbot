@@ -72,6 +72,10 @@
 .avatar-item {
   width: 55px;
   height: 55px;
+  object-fit: contain;
+  /* 🔥 blur fix */
+  image-rendering: auto;
+  /* 🔥 */
   border-radius: 50%;
   cursor: pointer;
   border: 2px solid #ccc;
@@ -317,4 +321,63 @@ select {
 
 .chatbot-bubble {
   z-index: 25;
+}
+
+
+
+
+.popup-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+
+.popup-box {
+  background: #fff;
+  padding: 24px;
+  border-radius: 12px;
+  width: 320px;
+  text-align: center;
+}
+
+.loader {
+  width: 40px;
+  height: 40px;
+  border: 4px solid #ddd;
+  border-top: 4px solid #2563eb;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin: 0 auto 15px;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.popup-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+.publish-btn {
+  background: #2563eb;
+  color: white;
+  padding: 8px 16px;
+  border-radius: 6px;
+  border: none;
+}
+
+.cancel-btn {
+  background: #e5e7eb;
+  padding: 8px 16px;
+  border-radius: 6px;
+  border: none;
 }

@@ -35,10 +35,6 @@ const Security = () => {
         ********
       </Row>
 
-      {/* SESSION / SECURITY INFO (OPTIONAL) */}
-      <Row label="Last Login">
-        Recently
-      </Row>
     </div>
   );
 };

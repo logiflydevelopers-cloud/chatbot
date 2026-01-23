@@ -1,11 +1,22 @@
-import { NavLink, Outlet, useLocation, useNavigate } from "react-router-dom";
+import {
+  NavLink,
+  Outlet,
+  useLocation,
+  useNavigate,
+  useParams,
+} from "react-router-dom";
 import { useEffect, useState } from "react";
 import "./admin.css";
 
 const AdminLayout = () => {
   const location = useLocation();
   const navigate = useNavigate();
+  const { userId } = useParams();
+
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+
+  // 🔥 NEW: mobile home controller (JUST LIKE SIDEBAR)
+  const [showMobileHome, setShowMobileHome] = useState(true);
 
   useEffect(() => {
     const onResize = () => setIsMobile(window.innerWidth < 768);
@@ -13,40 +24,79 @@ const AdminLayout = () => {
     return () => window.removeEventListener("resize", onResize);
   }, []);
 
-  const isAdminHome =
-    location.pathname === "/admin" ||
-    location.pathname === "/admin/";
+  // whenever route changes → hide mobile home
+  useEffect(() => {
+    if (!location.pathname.endsWith(`/dashboard/${userId}`)) {
+      setShowMobileHome(false);
+    }
+  }, [location.pathname, userId]);
 
   const pageTitleMap = {
-    "/admin/dashboard": "Dashboard",
-    "/admin/goals": "Goals",
-    "/admin/campaigns": "Campaigns",
-    "/admin/customers": "Customers",
+    [`/admin/dashboard/${userId}`]: "Dashboard",
+    [`/admin/goals/${userId}`]: "Goals",
+    [`/admin/campaigns/${userId}`]: "Campaigns",
+    [`/admin/customers/${userId}`]: "Customers",
   };
 
   const pageTitle = pageTitleMap[location.pathname];
 
-  /* ================= MOBILE HOME (LIST ONLY) ================= */
-  if (isMobile && isAdminHome) {
+  /* ================= MOBILE HOME ================= */
+  if (isMobile && showMobileHome) {
     return (
       <div className="admin-mobile-home fade-in">
-        <h2 className="admin-title">Admin Console</h2>
 
-        <div className="admin-card" onClick={() => navigate("/admin/dashboard")}>
+        {/* ✅ MOBILE BACK HEADER (LIKE SETTINGS) */}
+        <div className="admin-mobile-header">
+          <button
+            className="back-btn"
+            onClick={() => navigate("/dashboard/knowledge")}
+          >
+            ←
+          </button>
+
+          <h2 className="admin-title">Admin Console</h2>
+        </div>
+
+        <div
+          className="admin-card"
+          onClick={() => {
+            setShowMobileHome(false);
+            navigate(`/admin/dashboard/${userId}`);
+          }}
+        >
           Dashboard
         </div>
 
-        <div className="admin-card" onClick={() => navigate("/admin/goals")}>
+        <div
+          className="admin-card"
+          onClick={() => {
+            setShowMobileHome(false);
+            navigate(`/admin/goals/${userId}`);
+          }}
+        >
           Goals
         </div>
 
-        <div className="admin-card" onClick={() => navigate("/admin/campaigns")}>
+        <div
+          className="admin-card"
+          onClick={() => {
+            setShowMobileHome(false);
+            navigate(`/admin/campaigns/${userId}`);
+          }}
+        >
           Campaigns
         </div>
 
-        <div className="admin-card" onClick={() => navigate("/admin/customers")}>
+        <div
+          className="admin-card"
+          onClick={() => {
+            setShowMobileHome(false);
+            navigate(`/admin/customers/${userId}`);
+          }}
+        >
           Customers
         </div>
+
       </div>
     );
   }
@@ -54,19 +104,19 @@ const AdminLayout = () => {
   /* ================= MAIN LAYOUT ================= */
   return (
     <div className="admin-root fade-in">
-      {/* ===== DESKTOP SIDEBAR ===== */}
+      {/* ===== SIDEBAR (DESKTOP) ===== */}
       {!isMobile && (
         <aside className="admin-sidebar">
-          <NavLink to="/admin/dashboard" className="admin-link">
+          <NavLink to={`/admin/dashboard/${userId}`} className="admin-link">
             Dashboard
           </NavLink>
-          <NavLink to="/admin/goals" className="admin-link">
+          <NavLink to={`/admin/goals/${userId}`} className="admin-link">
             Goals
           </NavLink>
-          <NavLink to="/admin/campaigns" className="admin-link">
+          <NavLink to={`/admin/campaigns/${userId}`} className="admin-link">
             Campaigns
           </NavLink>
-          <NavLink to="/admin/customers" className="admin-link">
+          <NavLink to={`/admin/customers/${userId}`} className="admin-link">
             Customers
           </NavLink>
         </aside>
@@ -74,12 +124,12 @@ const AdminLayout = () => {
 
       {/* ===== CONTENT ===== */}
       <main className="admin-content">
-        {/* ✅ MOBILE HEADER (ONLY WHEN PAGE OPEN) */}
+        {/* 🔥 MOBILE HEADER */}
         {isMobile && pageTitle && (
           <div className="admin-mobile-header slide-down">
             <button
               className="back-btn"
-              onClick={() => navigate("/admin")}
+              onClick={() => setShowMobileHome(true)}
             >
               ←
             </button>

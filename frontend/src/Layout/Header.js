@@ -1,8 +1,7 @@
 import { NavLink, useNavigate, useLocation } from "react-router-dom";
 import { useState, useRef, useEffect } from "react";
 import "./Header.css";
-import { FaUserCircle } from "react-icons/fa";
-import logo from "../image/logo.png";
+import logo from "../image/SellChat Logo.png";
 import axios from "axios";
 import PopupModal from "../Components/Auth/Common/PopupModal"
 
@@ -10,7 +9,7 @@ import PopupModal from "../Components/Auth/Common/PopupModal"
 function Header({ user, setUser }) {
   const navigate = useNavigate();
   const location = useLocation();
-  const apiBase = "https://chatbot-backend-project.vercel.app";
+  const apiBase = "http://localhost:4000";
 
   const userId = user?.id || user?._id;
 
@@ -21,10 +20,26 @@ function Header({ user, setUser }) {
     onConfirm: null,
   });
 
+  const getInitials = (name = "") => {
+    return name
+      .split(" ")
+      .map(n => n[0])
+      .join("")
+      .toUpperCase()
+      .slice(0, 2);
+  };
+
+
+
+  const isAdminRoute = location.pathname.startsWith("/admin");
+
+
+
 
   /* ================= PROFILE POPUP ================= */
   const [showProfile, setShowProfile] = useState(false);
   const profileRef = useRef(null);
+
 
   /* ✅ FIXED OUTSIDE CLICK */
   useEffect(() => {
@@ -121,13 +136,16 @@ function Header({ user, setUser }) {
 
           {user?.avatar ? (
             <img
-              src={`https://chatbot-backend-project.vercel.app${user.avatar}`}
+              src={`http://localhost:4000${user.avatar}`}
               alt="avatar"
               className="jf-user-icon avatar-img"
             />
           ) : (
-            <FaUserCircle size={34} className="jf-user-icon" />
+            <div className="avatar-initials">
+              {getInitials(user?.name)}
+            </div>
           )}
+
         </div>
 
 
@@ -154,13 +172,16 @@ function Header({ user, setUser }) {
               <div className="profile-avatar">
                 {user?.avatar ? (
                   <img
-                    src={`https://chatbot-backend-project.vercel.app${user.avatar}`}
+                    src={`http://localhost:4000${user.avatar}`}
                     alt="avatar"
                     className="jf-user-icon avatar-img"
                   />
                 ) : (
-                  <FaUserCircle size={34} className="jf-user-icon" />
+                  <div className="avatar-initials">
+                    {getInitials(user?.name)}
+                  </div>
                 )}
+
               </div>
 
               <div>
@@ -183,40 +204,60 @@ function Header({ user, setUser }) {
             {/* <button className="upgrade-btn">Upgrade Your Plan</button> */}
 
             <ul className="profile-menu">
-              <li onClick={() => navigate("/admin")}>Admin Console</li>
+              <li
+                onClick={() => {
+                  setShowProfile(false); // 🔥 CLOSE POPUP
+                  navigate(`/admin/dashboard/${userId}`);
+                }}
+              >
+                Admin Console
+              </li>
 
 
-              <li onClick={handleLogout}>Logout</li>
+
+
+              <li
+                onClick={() => {
+                  setShowProfile(false); // 🔥 CLOSE POPUP
+                  handleLogout();
+                }}
+              >
+                Logout
+              </li>
+
             </ul>
           </div>
         )
       }
 
       {/* ================= TOP BAR ================= */}
-      <div className="jf-bluebar">
-        <NavLink
-          to="/dashboard/knowledge"
-          className={`jf-tab ${isTrainActive ? "active" : ""}`}
-        >
-          TRAIN
-        </NavLink>
+      {!isAdminRoute && (
+        <div className="jf-bluebar">
+          <NavLink
+            to="/dashboard/knowledge"
+            className={`jf-tab ${isTrainActive ? "active" : ""}`}
+          >
+            TRAIN
+          </NavLink>
 
-        <div
-          onClick={handleCustomizeClick}
-          className={`jf-tab ${location.pathname.startsWith("/custom-chat") ? "active" : ""
-            }`}
-        >
-          CUSTOMIZE
-        </div>
+          <div
+            onClick={handleCustomizeClick}
+            className={`jf-tab ${location.pathname.startsWith("/custom-chat") ? "active" : ""
+              }`}
+          >
+            CUSTOMIZE
+          </div>
 
-        <div
-          onClick={handlePublishClick}
-          className={`jf-tab ${location.pathname.startsWith("/embed-code") ? "active" : ""
-            }`}
-        >
-          PUBLISH
+          <div
+            onClick={handlePublishClick}
+            className={`jf-tab ${location.pathname.startsWith("/embed-code") ? "active" : ""
+              }`}
+          >
+            PUBLISH
+          </div>
         </div>
-      </div>
+      )}
+
     </>
   );
 }

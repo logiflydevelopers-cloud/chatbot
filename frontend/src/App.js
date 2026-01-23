@@ -54,6 +54,23 @@ import Campaigns from "./Layout/Admin-Console/Campaigns";
 import Customers from "./Layout/Admin-Console/Customers";
 import CustomerChat from "./Layout/Admin-Console/CustomerChat";
 
+/* ================= SUPPORT ================= */
+import ContactSupport from "./Layout/ContactSupport";
+import FAQPage from "./Layout/FAQPage";
+import PricingPage from "./Layout/PricingPage";
+import BlogPage from "./Layout/Blog/BlogPage";
+import BlogDetail from "./Layout/Blog/BlogDetail";
+
+import Terms from "./Layout/Footer/Terms";
+import Privacy from "./Layout/Footer/Privacy";
+import About from "./Layout/Footer/About";
+
+
+
+
+
+
+
 import "./App.css";
 
 axios.defaults.withCredentials = true;
@@ -88,11 +105,13 @@ function AppContent() {
     "/forgot-password",
     "/verify-otp",
     "/reset-password",
+    "/contact-support",
+    "/faq",
   ];
 
   const shouldHideHeader =
     hideHeaderRoutes.includes(location.pathname) ||
-    location.pathname.startsWith("/embed/chat") 
+    location.pathname.startsWith("/embed/chat")
 
   if (authLoading) return null;
 
@@ -107,6 +126,18 @@ function AppContent() {
         <Routes>
           {/* HOME */}
           <Route path="/" element={<Home />} />
+
+          {/* SUPPORT */}
+          <Route path="/contact-support" element={<ContactSupport />} />
+          <Route path="/faq" element={<FAQPage />} />
+          <Route path="/pricing" element={<PricingPage />} />
+          <Route path="/blog" element={<BlogPage />} />
+          <Route path="/blog/:slug" element={<BlogDetail />} />
+
+          <Route path="/terms" element={<Terms />} />
+          <Route path="/privacy" element={<Privacy />} />
+          <Route path="/about" element={<About />} />
+
 
           {/* AUTH */}
           <Route
@@ -200,12 +231,14 @@ function AppContent() {
             }
           >
             <Route index element={<Navigate to="dashboard" replace />} />
-            <Route path="dashboard" element={<Dashboard />} />
-            <Route path="goals" element={<Goals />} />
-            <Route path="campaigns" element={<Campaigns />} />
-            <Route path="customers" element={<Customers />} />
-            <Route path="customers/:id" element={<CustomerChat />} />
+
+            <Route path="dashboard/:userId" element={<Dashboard />} />
+            <Route path="goals/:userId" element={<Goals />} />
+            <Route path="campaigns/:userId" element={<Campaigns />} />
+            <Route path="customers/:userId" element={<Customers />} />
+            <Route path="customers/:userId/:id" element={<CustomerChat />} />
           </Route>
+
         </Routes>
 
         {/* DATA DISPLAY */}

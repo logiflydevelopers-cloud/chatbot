@@ -1,0 +1,98 @@
+/* =========================
+   LEGAL PAGES (TERMS / PRIVACY / ABOUT)
+========================= */
+
+.legal-page {
+  padding: 80px 0;
+}
+
+.legal-container {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+/* PAGE TITLE */
+.legal-container h1 {
+  font-size: 42px;
+  font-weight: 800;
+  margin-bottom: 10px;
+  color: #111;
+}
+
+/* LAST UPDATED */
+.legal-container > p:first-of-type {
+  font-size: 14px;
+  color: #666;
+  margin-bottom: 40px;
+}
+
+/* SECTION HEADINGS */
+.legal-container h2 {
+  font-size: 22px;
+  font-weight: 700;
+  margin-top: 40px;
+  margin-bottom: 12px;
+  color: #111;
+}
+
+/* PARAGRAPHS */
+.legal-container p {
+  font-size: 15px;
+  line-height: 1.8;
+  color: #444;
+  margin-bottom: 14px;
+}
+
+/* LISTS */
+.legal-container ul {
+  margin: 16px 0 24px 20px;
+  padding-left: 10px;
+}
+
+.legal-container ul li {
+  font-size: 15px;
+  line-height: 1.7;
+  color: #444;
+  margin-bottom: 8px;
+}
+
+/* STRONG */
+.legal-container strong {
+  font-weight: 600;
+  color: #000;
+}
+
+/* LINKS */
+.legal-container a {
+  color: #2563eb;
+  text-decoration: none;
+}
+
+.legal-container a:hover {
+  text-decoration: underline;
+}
+
+/* =========================
+   MOBILE RESPONSIVE
+========================= */
+
+@media (max-width: 768px) {
+  .legal-page {
+    padding: 50px 0;
+  }
+
+  .legal-container h1 {
+    font-size: 28px;
+  }
+
+  .legal-container h2 {
+    font-size: 18px;
+    margin-top: 30px;
+  }
+
+  .legal-container p,
+  .legal-container ul li {
+    font-size: 14px;
+  }
+}

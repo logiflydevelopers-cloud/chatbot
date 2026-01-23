@@ -23,17 +23,35 @@ const SettingsLayout = ({ user, setUser }) => {
   const pageTitle = pageTitleMap[location.pathname];
 
   /* ================= MOBILE SETTINGS HOME ================= */
+  /* ================= MOBILE SETTINGS HOME ================= */
   if (isMobile && isSettingsHome) {
     return (
       <div className="settings-mobile-home">
-        <h2 className="settings-title">Settings</h2>
 
-        <div className="settings-card" onClick={() => navigate("/settings/account")}>
+        {/* ✅ MOBILE BACK HEADER */}
+        <div className="settings-mobile-header">
+          <button
+            className="fu-back-btn"
+            onClick={() => navigate("/dashboard/knowledge")}
+          >
+            ←
+          </button>
+
+          <h2 className="settings-title">Settings</h2>
+        </div>
+
+        <div
+          className="settings-card"
+          onClick={() => navigate("/settings/account")}
+        >
           <span>Account</span>
           <p>Profile & personal info</p>
         </div>
 
-        <div className="settings-card" onClick={() => navigate("/settings/security")}>
+        <div
+          className="settings-card"
+          onClick={() => navigate("/settings/security")}
+        >
           <span>Security</span>
           <p>Password & authentication</p>
         </div>
@@ -41,6 +59,7 @@ const SettingsLayout = ({ user, setUser }) => {
       </div>
     );
   }
+
 
   /* ================= DETAIL PAGE ================= */
   return (
@@ -60,7 +79,7 @@ const SettingsLayout = ({ user, setUser }) => {
               ←
             </button>
 
-            
+
             <h2>{pageTitle}</h2>
           </div>
         )}

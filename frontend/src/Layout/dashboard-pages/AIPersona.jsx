@@ -18,12 +18,14 @@ const AIPersona = () => {
   // USER ID
   // ======================
   const storedUser = JSON.parse(localStorage.getItem("user"));
-  const userId =
-    storedUser?._id || storedUser?.id || storedUser?.userId || null;
+  const userId = storedUser?.userId || storedUser?.id || null;
+
 
   const [activeTab, setActiveTab] = useState("chat");
   const [isDirty, setIsDirty] = useState(false);
-  const [saveMessage, setSaveMessage] = useState("");
+  const [showSaveModal, setShowSaveModal] = useState(false);
+  const [saveStatus, setSaveStatus] = useState("loading");
+
 
 
   // ======================
@@ -34,13 +36,10 @@ const AIPersona = () => {
     agentRole: "Help Desk Specialist",
     language: "English",
     tone: "Friendly",
-    responseLength: 25,
+    responseLength: 25
   });
 
-  // ======================
-  // PYTHON API KEY
-  // ======================
-  const [pythonApiKey, setPythonApiKey] = useState("");
+
 
   /* ====================================================
      🔥 LOAD PERSONA FROM DATABASE
@@ -51,7 +50,7 @@ const AIPersona = () => {
 
       try {
         const res = await fetch(
-          `https://chatbot-backend-project.vercel.app/api/persona/${userId}`
+          `http://localhost:4000/api/persona/${userId}`
         );
         const data = await res.json();
 
@@ -69,8 +68,6 @@ const AIPersona = () => {
                 : [],
           });
 
-          // ✅ LOAD PYTHON API KEY
-          setPythonApiKey(data.persona.pythonApiKey || "");
           setIsDirty(false);
         }
       } catch (err) {
@@ -88,31 +85,32 @@ const AIPersona = () => {
      💾 SAVE PERSONA
   ========================= */
   const savePersona = async () => {
-    try {
-      const res = await fetch(
-        "https://chatbot-backend-project.vercel.app/api/persona/save",
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            userId,
-            persona,
-            pythonApiKey, // ✅ SEND KEY
-          }),
-        }
-      );
+    // 1️⃣ Popup open + loader
+    setShowSaveModal(true);
+    setSaveStatus("loading");
 
-      const data = await res.json();
+    // 2️⃣ Fire backend save (DB + Python)
+    fetch("http://localhost:4000/api/persona/save", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        userId,
+        persona,
+      }),
+    }).catch((err) => {
+      console.error("❌ Backend save failed:", err);
+    });
 
-      if (data.success) {
-        setIsDirty(false);
-        setSaveMessage("✅ Persona saved successfully");
-        setTimeout(() => setSaveMessage(""), 3000);
-      }
-    } catch (err) {
-      console.error("❌ Save failed:", err);
-    }
+    // 3️⃣ Dummy 2 sec animation (UI only)
+    setTimeout(() => {
+      setSaveStatus("success");
+      setIsDirty(false);
+    }, 2000);
   };
+
+
+
+
 
   const AGENT_ROLES = [
     "Help Desk Specialist",
@@ -142,12 +140,6 @@ const AIPersona = () => {
         </div>
       </div>
 
-      {/* SAVE MESSAGE */}
-      {saveMessage && (
-        <div className="save-success-message global">
-          {saveMessage}
-        </div>
-      )}
 
       <div className="persona-card">
         {/* Agent Name */}
@@ -185,6 +177,27 @@ const AIPersona = () => {
             ))}
           </select>
         </section>
+
+
+        {/* Tone of Voice */}
+        <section className="persona-section">
+          <label>Tone of Voice</label>
+          <span>Select how you want the AI to communicate</span>
+
+          <select
+            className="persona-select"
+            value={persona.tone}
+            onChange={(e) => {
+              setPersona({ ...persona, tone: e.target.value });
+              markDirty();
+            }}
+          >
+            <option value="Friendly">😊 Friendly</option>
+            <option value="Professional">🧑‍💼 Professional</option>
+            <option value="Casual">☕ Casual</option>
+          </select>
+        </section>
+
 
 
         {/* Conversation Style */}
@@ -252,8 +265,6 @@ const AIPersona = () => {
                 }}
               />
 
-
-              {/* CLICKABLE LABELS */}
               <div className="range-labels">
                 {[
                   { label: "Minimal", value: 25 },
@@ -266,18 +277,17 @@ const AIPersona = () => {
                     onClick={() => {
                       setPersona({
                         ...persona,
-                        responseLength: opt.value,
+                        responseLength: opt.value, // 👈 NUMBER
                       });
                       markDirty();
                     }}
-                    className={
-                      persona.responseLength === opt.value ? "active" : ""
-                    }
+                    className={persona.responseLength === opt.value ? "active" : ""}
                   >
                     {opt.label}
                   </span>
                 ))}
               </div>
+
             </section>
           </>
         )}
@@ -291,6 +301,38 @@ const AIPersona = () => {
           </div>
         )}
       </div>
+
+      {showSaveModal && (
+        <div className="save-modal-backdrop">
+          <div className="save-modal">
+
+            {saveStatus === "loading" && (
+              <>
+                <div className="loader"></div>
+                <h3>Saving...</h3>
+              </>
+            )}
+
+            {saveStatus === "success" && (
+              <>
+                <h3>Successfully Saved</h3>
+                <button
+                  className="open-btn"
+                  onClick={() => {
+                    setShowSaveModal(false);
+                    setSaveStatus("loading"); // reset for next time
+                  }}
+                >
+                  OK
+                </button>
+              </>
+            )}
+
+          </div>
+        </div>
+      )}
+
+
     </div>
   );
 };

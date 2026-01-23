@@ -11,7 +11,10 @@ const AddWebsiteForm = ({ user }) => {
   const [storedWebsite, setStoredWebsite] = useState(null);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
-  const [loading, setLoading] = useState(false);
+  const [showPopup, setShowPopup] = useState(false);
+  const [popupLoading, setPopupLoading] = useState(false);
+  const [popupMsg, setPopupMsg] = useState("");
+
 
   const userId = user?._id || user?.id || user?.userId;
 
@@ -20,7 +23,7 @@ const AddWebsiteForm = ({ user }) => {
     if (!userId) return;
 
     axios
-      .get(`https://chatbot-backend-project.vercel.app/api/chatbot/${userId}`)
+      .get(`http://localhost:4000/api/chatbot/${userId}`)
       .then((res) => {
         const website = res.data?.settings?.website;
         if (website) {
@@ -39,31 +42,36 @@ const AddWebsiteForm = ({ user }) => {
     }
 
     try {
-      setLoading(true);
+      setPopupLoading(true);
+      setShowPopup(true);
       setError("");
       setSuccess("");
 
       await axios.post(
-        "https://chatbot-backend-project.vercel.app/api/webhook/ingest-website",
+        "http://localhost:4000/api/webhook/ingest-website",
         {
           userId,
           source: url.trim(),
         }
       );
 
-      setStoredWebsite(url.trim());
-      setSuccess("✅ Website uploaded. Training started.");
+      // ⏳ same FileUpload jevu delay
+      setTimeout(() => {
+        setPopupLoading(false);
+        setPopupMsg("✅ Website uploaded. Training started.");
+        setStoredWebsite(url.trim());
+      }, 2000);
 
     } catch (err) {
-      console.error(err);
+      setPopupLoading(false);
+      setShowPopup(false);
       setError(
         err?.response?.data?.message ||
         "❌ Failed to upload website"
       );
-    } finally {
-      setLoading(false);
     }
   };
+
 
   return (
     <div className="persona-container">
@@ -100,25 +108,49 @@ const AddWebsiteForm = ({ user }) => {
           </p>
         )}
 
-        <hr className="hrhr" />
-
         {/* 🔒 BUTTON LOCK */}
         <button
           className="crawl-btn"
           onClick={handleCrawl}
-          disabled={loading || !!storedWebsite}
+          disabled={popupLoading || !!storedWebsite}
           style={{
             opacity: storedWebsite ? 0.5 : 1,
             cursor: storedWebsite ? "not-allowed" : "pointer"
           }}
         >
-          {loading ? "Uploading..." : "Crawl"}
+          {popupLoading ? "Uploading..." : "Crawl"}
         </button>
+
 
 
         {error && <p className="error-msg">{error}</p>}
         {success && <p className="success-msg">{success}</p>}
       </div>
+
+      {/* ================= POPUP ================= */}
+      {showPopup && (
+        <div className="popup-overlay">
+          <div className="popup-box">
+            {popupLoading ? (
+              <>
+                <div className="loader"></div>
+                <p>Uploading...</p>
+              </>
+            ) : (
+              <>
+                <p>{popupMsg}</p>
+                <button
+                  className="popup-box-btn"
+                  onClick={() => setShowPopup(false)}
+                >
+                  OK
+                </button>
+              </>
+            )}
+          </div>
+        </div>
+      )}
+
     </div>
   );
 };

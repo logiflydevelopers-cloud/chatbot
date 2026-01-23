@@ -6,9 +6,16 @@
 }
 
 .admin-sidebar {
-  width: 240px;
-  background: #0f172a;
-  padding: 20px;
+  width: var(--sidebar-width);
+  height: calc(100vh - var(--header-height));
+  position: fixed;
+  top: var(--header-height);
+  left: 0;
+  background: #1e293b;
+  padding: 1.5rem 1rem;
+  z-index: 1000;
+  transition: transform 0.3s ease;
+  overflow: hidden;
 }
 
 .admin-link {
@@ -23,13 +30,18 @@
 
 .admin-link:hover,
 .admin-link.active {
-  background: #1e293b;
-  color: #fff;
+  background: #e5e8f8;
+  color: #1e293b;
 }
 
 .admin-content {
-  flex: 1;
+  flex: 1 1;
   padding: 20px;
+  margin-left: var(--sidebar-width);
+  width: calc(100% - var(--sidebar-width));
+  padding: 2rem;
+  background: #f6f7fb;
+  position: fixed;
 }
 
 /* ================= MOBILE ================= */
@@ -39,7 +51,6 @@
 
 .admin-title {
   font-size: 22px;
-  margin-bottom: 20px;
 }
 
 .admin-card {
@@ -48,7 +59,7 @@
   border-radius: 14px;
   margin-bottom: 14px;
   font-weight: 600;
-  box-shadow: 0 6px 20px rgba(0,0,0,.08);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, .08);
   cursor: pointer;
   transition: transform .25s ease;
 }
@@ -71,7 +82,7 @@
   border-radius: 12px;
   font-size: 18px;
   cursor: pointer;
-  box-shadow: 0 4px 10px rgba(0,0,0,.1);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, .1);
 }
 
 /* ================= DASHBOARD ================= */
@@ -86,7 +97,7 @@
   color: #fff;
   padding: 22px;
   border-radius: 16px;
-  box-shadow: 0 10px 30px rgba(0,0,0,.15);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, .15);
 }
 
 /* ================= ANIMATIONS ================= */
@@ -103,18 +114,37 @@
 }
 
 @keyframes fade {
-  from { opacity: 0; }
-  to { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
 }
 
 @keyframes zoom {
-  from { transform: scale(.95); opacity: 0; }
-  to { transform: scale(1); opacity: 1; }
+  from {
+    transform: scale(.95);
+    opacity: 0;
+  }
+
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
 }
 
 @keyframes slide {
-  from { transform: translateY(-10px); opacity: 0; }
-  to { transform: translateY(0); opacity: 1; }
+  from {
+    transform: translateY(-10px);
+    opacity: 0;
+  }
+
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
 }
 
 
@@ -125,7 +155,7 @@
   border-radius: 14px;
   margin-bottom: 12px;
   cursor: pointer;
-  box-shadow: 0 6px 20px rgba(0,0,0,.08);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, .08);
   transition: transform .2s;
 }
 
@@ -195,7 +225,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  box-shadow: 0 6px 20px rgba(0,0,0,.08);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, .08);
 }
 
 /* ================= CAMPAIGNS ================= */
@@ -209,7 +239,7 @@
   background: #fff;
   padding: 18px;
   border-radius: 16px;
-  box-shadow: 0 6px 20px rgba(0,0,0,.1);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, .1);
 }
 
 /* ================= STATUS ================= */
@@ -230,3 +260,12 @@
   color: #991b1b;
 }
 
+
+
+@media screen and (max-width:768px) {
+  .admin-content {
+    margin-left: 0px;
+    padding: 20px;
+    position: unset;
+  }
+}

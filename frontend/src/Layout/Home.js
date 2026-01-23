@@ -1,8 +1,11 @@
 import { useState } from "react";
 import { useEffect, useRef } from "react";
 import axios from "axios";
+import HomeHeader from "./HomeHeader";
 import "./Home.css";
-import { Link } from "react-router-dom";
+import Footer from "./Footer/Footer";
+import "../index.css";
+import useScrollAnimation from "../hooks/useScrollAnimation";
 import chatUI from "../image/home-main-image.png";
 import googleIcon from "../image/google.png";
 import companiesDesktop from "../image/companies-desktop.png";
@@ -18,11 +21,12 @@ import iconLaunch from "../image/Group 33.png";
 import iconLanguage from "../image/Group 34.png";
 import iconInbox from "../image/Group 35.png";
 import iconFree from "../image/Group 36.png";
-import avatar1 from "../image/avatar-1.png";
-import avatar2 from "../image/avatar-2.png";
-import avatar3 from "../image/avatar-3.png";
+import review01 from "../image/review-01.png";
+import review02 from "../image/review-02.png";
+import review03 from "../image/review-03.png";
+import review04 from "../image/review-04.png";
+import review05 from "../image/review-05.png";
 import badge20k from "../image/badge-20k.png";
-import guaranteeBadge from "../image/money-back.png";
 import starIcon from "../image/Vector.png";
 import arrowDownIcon from "../image/arrow-down-sign-to-navigate.png";
 import shopIcon from "../image/Group.png";
@@ -30,9 +34,8 @@ import calendarIcon from "../image/Group (1).png";
 import chatIcon from "../image/LiveChat-Logo-Orange-White-Stacked 1.png";
 import headsetIcon from "../image/Stacked_RGB_Green 1.png";
 import headsetIcon1 from "../image/zendesk_logo_icon_147198 1.png";
-import botIcon from "../image/image 65.png";
+import botIcon from "../image/logo-animation.svg";
 import checkIcon from "../image/right-arrow.png";
-import { FaGlobe } from "react-icons/fa";
 
 
 
@@ -41,45 +44,45 @@ import { FaGlobe } from "react-icons/fa";
 /* REVIEWS DATA */
 const reviews = [
   {
-    title: "Great Product 👍",
-    text: "Every day I impress my friends and coworkers with AI skills. Seriously, it’s a game-changer.",
+    title: "Excellent Support & Reliable App",
+    text: "“Great app great customer service always there to help when you have questions or issues to solve. Highly recommend.”",
     name: "Linaa Marcel",
-    date: "@linaa7894 · Jun 2025",
-    avatar: avatar3,
+    date: "@linaa7894 · Jun 2026",
+    avatar: review01,
   },
   {
-    title: "Amazing Experience",
-    text: "Setup was insanely easy. Within minutes my site had a smart chatbot.",
+    title: "Top-Notch Customer Service",
+    text: "“Absolutely recommend for the level of reporting and customer service provided when I had some troubles re-installing the app again.”",
     name: "Rahul Mehta",
-    date: "@rahulm · May 2025",
-    avatar: avatar1,
+    date: "@rahulm · May 2023",
+    avatar: review02,
   },
   {
-    title: "Highly Recommended",
-    text: "It reduced our support tickets drastically. Customers love it.",
+    title: "Fast, Smooth & Bug-Free",
+    text: "“Easy for using, works fast no any bugs at all. Strong recommend for online e-commerce business! Really increase conversion rate!”",
     name: "Emily Carter",
-    date: "@emilyc · Apr 2025",
-    avatar: avatar2,
+    date: "@emilyc · Apr 2022",
+    avatar: review03,
   },
   {
-    title: "Best AI Tool",
-    text: "Hands down the best AI chatbot solution I’ve tried so far.",
+    title: "All-in-One Sales Booster",
+    text: "“The app is great!!! I can literally close sales on the go and handle Instagram and other channels all from ONE PLACE! It’s super reliable, easy to use, and really helps boost my conversions!”",
     name: "Daniel Wong",
     date: "@danw · Mar 2025",
-    avatar: avatar1,
+    avatar: review04,
   },
   {
-    title: "Worth Every Minute",
-    text: "Clean UI, fast setup, and powerful responses. Love this product.",
+    title: "A Game-Changer for E-commerce",
+    text: "“Integrating SellChats into our e-commerce website has been one of the best decisions we’ve made.”",
     name: "Sophia Lee",
-    date: "@sophial · Feb 2025",
-    avatar: avatar3,
+    date: "@sophial · Feb 2024",
+    avatar: review05,
   },
 ];
 
 const googleLogin = async () => {
   try {
-    const res = await axios.get("https://chatbot-backend-project.vercel.app/api/auth/google");
+    const res = await axios.get("http://localhost:4000/api/auth/google");
     window.location.href = res.data.url; // 🔥 direct Google login
   } catch (err) {
     console.error("Google login failed", err);
@@ -172,7 +175,7 @@ function FAQAccordion() {
 
 const handleGoogleSignup = async () => {
   try {
-    const res = await axios.get("https://chatbot-backend-project.vercel.app/api/auth/google");
+    const res = await axios.get("http://localhost:4000/api/auth/google");
     window.location.href = res.data.url; // 🔥 direct Google login
   } catch (err) {
     console.error("Google signup failed", err);
@@ -194,8 +197,10 @@ function FAQItem({ item, isOpen, onClick }) {
       <div
         className="faq-answer-wrapper"
         style={{
-          maxHeight: isOpen ? "160px" : "0px"
+          maxHeight: isOpen ? "200px" : "0",
+          transition: "max-height 0.4s ease"
         }}
+
       >
         <div className="faq-answer">{item.a}</div>
       </div>
@@ -206,31 +211,36 @@ function FAQItem({ item, isOpen, onClick }) {
 
 
 export default function Home() {
-  const [menuOpen, setMenuOpen] = useState(false);
+
   // const navigate = useNavigate();
 
   useEffect(() => {
+    if (!("IntersectionObserver" in window)) return;
+
     const elements = document.querySelectorAll(".animate");
 
     const observer = new IntersectionObserver(
       (entries) => {
-        entries.forEach((entry) => {
+        entries.forEach(entry => {
           if (entry.isIntersecting) {
             entry.target.classList.add("show");
-            observer.unobserve(entry.target); // 🔥 KEY LINE
+            observer.unobserve(entry.target); // ✅ one-time animation
           }
         });
       },
       {
-        threshold: 0.15,
-        rootMargin: "0px 0px -120px 0px",
+        threshold: 0.1,
+        rootMargin: "0px 0px -80px 0px"
       }
     );
 
-    elements.forEach((el) => observer.observe(el));
+    elements.forEach(el => observer.observe(el));
 
     return () => observer.disconnect();
   }, []);
+
+
+
 
 
   const toolItems = [
@@ -262,106 +272,25 @@ export default function Home() {
     if (!slider) return;
 
     let rafId;
-
-    const isMobile = window.innerWidth < 768;
-    const speed = isMobile ? 0.25 : 0.6;
+    const speed = window.innerWidth < 768 ? 0.25 : 0.6;
 
     const loop = () => {
       slider.scrollLeft += speed;
-
-      const resetPoint = slider.scrollWidth / 2;
-
-      // 🔥 TRUE INFINITE (NO JUMP)
-      if (slider.scrollLeft >= resetPoint) {
-        slider.scrollLeft -= resetPoint;
+      if (slider.scrollLeft >= slider.scrollWidth / 2) {
+        slider.scrollLeft = 0;
       }
-
       rafId = requestAnimationFrame(loop);
     };
 
     rafId = requestAnimationFrame(loop);
-
-    // pause on hover (desktop only)
-    const stop = () => cancelAnimationFrame(rafId);
-    const start = () => (rafId = requestAnimationFrame(loop));
-
-    if (!isMobile) {
-      slider.addEventListener("mouseenter", stop);
-      slider.addEventListener("mouseleave", start);
-    }
-
-    return () => {
-      cancelAnimationFrame(rafId);
-      slider.removeEventListener("mouseenter", stop);
-      slider.removeEventListener("mouseleave", start);
-    };
+    return () => cancelAnimationFrame(rafId);
   }, []);
 
+  useScrollAnimation();
 
   return (
     <>
-      {/* NAVBAR */}
-      <header className="navbar">
-        <div className="container navbar-inner">
-
-          {/* LEFT */}
-          <div className="nav-left">
-            <div className="logo-box">⌘</div>
-            <span className="logo-text">ChatAI</span>
-          </div>
-
-          {/* CENTER (DESKTOP) */}
-          <nav className="nav-pill">
-            <Link className="active" to="/prompts">Prompts</Link>
-            <Link to="/">Tools</Link>
-            <Link to="/">Product</Link>
-            <Link to="/">Pricing</Link>
-            <Link to="/">Contact Us</Link>
-            <Link to="/">Blog</Link>
-          </nav>
-
-
-          {/* RIGHT (DESKTOP) */}
-          <div className="nav-right">
-            <Link to="/login" className="login-btn">Login</Link>
-            <Link to="/register" className="signup-btn">Sign up</Link>
-          </div>
-
-
-          {/* MOBILE ICON */}
-          <div className="hamburger" onClick={() => setMenuOpen(true)}>
-            ☰
-          </div>
-        </div>
-      </header>
-
-      {/* MOBILE OVERLAY */}
-      <div
-        className={`mobile-overlay ${menuOpen ? "show" : ""}`}
-        onClick={() => setMenuOpen(false)}
-      />
-
-      {/* MOBILE RIGHT MENU */}
-      <div className={`mobile-menu ${menuOpen ? "open" : ""}`}>
-        <div className="mobile-header">
-          <span>Menu</span>
-          <span className="close" onClick={() => setMenuOpen(false)}>✕</span>
-        </div>
-
-        <ul>
-          <li>Prompts</li>
-          <li>Tools</li>
-          <li>Product</li>
-          <li>Pricing</li>
-          <li>Contact Us</li>
-          <li>Blog</li>
-        </ul>
-
-        <div className="mobile-actions">
-          <Link to="/login" className="login-btn">Login</Link>
-          <Link to="/register" className="mobile-signup">Sign up</Link>
-        </div>
-      </div>
+      <HomeHeader />
 
       {/* HERO SECTION */}
       <section className="hero">
@@ -374,8 +303,9 @@ export default function Home() {
             </h1>
 
             <p>
-              AI chatbot instantly learns from your website and uses that
-              knowledge to answer visitor questions — automatically.
+              SellChats AI Chatbot instantly learns from your <br></br>
+              website and uses that knowledge to<br></br>
+              answer visitor questions — automatically.
             </p>
 
             <div className="hero-buttons">
@@ -438,11 +368,11 @@ export default function Home() {
           {/* HEADER */}
           <div className="features-header animate fade-up">
             <h2>
-              Key features that <span>power your business</span>
+              <span>Key features that </span>power<span> your business</span>
             </h2>
             <p>
-              ChatBot is packed with customer service–ready features designed to
-              reduce support workload while improving customer experience.
+              SellChats is packed with customer service–ready features designed to reduce support workload
+              while improving customer experience.
             </p>
           </div>
 
@@ -455,8 +385,9 @@ export default function Home() {
               <img src={integrationsRow} alt="Integrations" className="feature-icons" />
               <h3>Instant setup, no coding required</h3>
               <p>
-                Grab your embed code and drop it into your site. That’s all
-                Noupe needs to get to work.
+                Grab your embed code and drop it into
+                your site. That's all SellChats needs to get to
+                work.
               </p>
             </div>
           </div>
@@ -469,8 +400,9 @@ export default function Home() {
             <div className="feature-content animate fade-left delay-1">
               <h3>Knowledge Base</h3>
               <p>
-                Train ChatBot with your own content. Add documents and Q&A so
-                your Noupe can answer with your knowledge.
+                Train SellChats with your own content. Add
+                documents and Q&A so your SellChats can
+                answer with your knowledge.
               </p>
             </div>
           </div>
@@ -483,8 +415,9 @@ export default function Home() {
             <div className="feature-content animate fade-right delay-1">
               <h3>Customization Options</h3>
               <p>
-                Make ChatBot fit your site. Adjust size, alignment, color and
-                avatar for a seamless look.
+                Make See fit your site. Adjust size,
+                alignment, color and avatar for a seamless
+                look.
               </p>
             </div>
           </div>
@@ -495,10 +428,11 @@ export default function Home() {
               <img src={firstMessageImage} alt="First Message" />
             </div>
             <div className="feature-content animate fade-left">
-              <h3>First Message</h3>
+              <h3>Knowledge Base</h3>
               <p>
-                Decide what your chatbot says first and welcome customers
-                instantly.
+                Train ChatBot with your own content. Add
+                documents and Q&A so your SellChats  can
+                answer with your knowledge.
               </p>
             </div>
           </div>
@@ -511,7 +445,8 @@ export default function Home() {
             <div className="feature-content animate fade-right">
               <h3>Get conversations</h3>
               <p>
-                Every conversation is sent to your inbox in real time so you can
+                Every conversation is sent to your inbox in
+                real time. See what customers ask and
                 follow up fast.
               </p>
             </div>
@@ -525,7 +460,8 @@ export default function Home() {
             <div className="feature-content animate fade-left">
               <h3>Multi-language support</h3>
               <p>
-                ChatBot detects each visitor’s language and answers automatically.
+                SellChats detects each visitor's language
+                and answers automatically.
               </p>
             </div>
           </div>
@@ -540,11 +476,10 @@ export default function Home() {
         <div className="container">
 
           <div className="why-header animate fade-up">
-            <h2>Why will love ChatBot</h2>
+            <h2>Why will love SellChats</h2>
             <p>
-              ChatBot is the easiest way to deliver automated customer support using AI.
-              Just enter your website URL, and ChatBot AI builds a chatbot that
-              understands your business.
+              SellChats is the easiest way to deliver automated customer support using AI. Just enter
+              your website URL, and SellChats builds a chatbot that understands your business.
             </p>
           </div>
 
@@ -608,10 +543,10 @@ export default function Home() {
 
               <div className="customers">
                 <div className="avatars">
-                  <img src={avatar1} alt="Customer" />
-                  <img src={avatar2} alt="Customer" />
-                  <img src={avatar3} alt="Customer" />
-                  <img src={badge20k} alt="20K+" className="badge" />
+                  <img src={review01} alt="Customer" />
+                  <img src={review02} alt="Customer" />
+                  <img src={review03} alt="Customer" />
+                  <img src={badge20k} alt="20K+" />
                 </div>
                 <span>17,060+ customers</span>
               </div>
@@ -653,33 +588,12 @@ export default function Home() {
 
 
 
-      {/* GUARANTEE SECTION */}
-      <section className="guarantee">
-        <div className="container guarantee-inner">
-
-          <h2 className="guarantee-title animate fade-up">
-            7-Day Risk-Free Guarantee
-          </h2>
-
-          <div className="guarantee-badge animate fade-up delay-1">
-            <img src={guaranteeBadge} alt="100% Money Back Guarantee" />
-          </div>
-
-          <p className="guarantee-text animate fade-up delay-2">
-            If for any reason you are not satisfied, you can request a full
-            refund 7 days after purchase, no questions asked.
-          </p>
-
-        </div>
-      </section>
-
-
       {/* CTA TRIAL SECTION */}
       <section className="cta-trial">
         <div className="container">
 
           <h2 className="cta-title animate fade-up">
-            Get a free ChatBot trial <br />
+            Get a free SellChats trial  <br />
             and become one of them
           </h2>
 
@@ -697,7 +611,7 @@ export default function Home() {
           <div className="cta-points animate fade-up delay-2">
             <span className="cta-point">
               <img src={checkIcon} alt="check" />
-              Free 7-day trial
+              Free 14-day trial
             </span>
 
             <span className="cta-point">
@@ -783,50 +697,8 @@ export default function Home() {
       </section>
 
 
+      <Footer />
 
-      <footer className="noupe-footer">
-        {/* Top Row */}
-        <div className="noupe-footer-top">
-          <ul className="noupe-links">
-            <li>Terms & Conditions</li>
-            <span>|</span>
-            <li>Privacy Policy</li>
-            <span>|</span>
-            <li>About Us</li>
-            <span>|</span>
-            <li>Contact Us</li>
-            <span>|</span>
-            <li>Pricing</li>
-            <span>|</span>
-            <li>Embed Guide</li>
-            <span>|</span>
-            <li>Noupe Magazine</li>
-            <span>|</span>
-            <li>Noupe Blog</li>
-          </ul>
-
-          <div className="noupe-lang">
-            <FaGlobe />
-            <span>English</span>
-          </div>
-        </div>
-
-        {/* Description */}
-        <p className="noupe-desc">
-          Noupe is a <strong>free AI chatbot builder</strong> that creates AI
-          chatbots in minutes, trusted by businesses and websites worldwide for
-          automated website customer support, featuring automatic website
-          learning, multi-language support, and instant setup that streamlines
-          visitor engagement and question answering, engineered for organizations
-          requiring intelligent chatbots without coding or training.
-        </p>
-
-        {/* Bottom Bar */}
-        <div className="noupe-footer-bottom">
-          Noupe (Jotform Inc.) 4 Embarcadero Center, Suite 780, San Francisco CA
-          94111
-        </div>
-      </footer>
     </>
   );
 }

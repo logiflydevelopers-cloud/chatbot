@@ -3,7 +3,7 @@ import axios from "axios";
 import { useOutletContext } from "react-router-dom";
 import "./account.css";
 
-const API = "https://chatbot-backend-project.vercel.app";
+const API = "http://localhost:4000";
 
 /* ================= ROW ================= */
 const Row = ({ label, children, action }) => {
@@ -32,6 +32,16 @@ const Account = () => {
     setSuccessMsg(msg);
     setTimeout(() => setSuccessMsg(""), 3000);
   };
+
+  const getInitials = (name = "") => {
+    return name
+      .split(" ")
+      .map(n => n[0])
+      .join("")
+      .toUpperCase()
+      .slice(0, 2);
+  };
+
 
   /* ================= LOAD WEBSITE ================= */
   useEffect(() => {
@@ -89,34 +99,45 @@ const Account = () => {
     }
   };
 
-  /* ================= AVATAR (FIXED) ================= */
-  const uploadAvatar = async (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
 
-    const form = new FormData();
-    form.append("avatar", file);
-
+  const removeAvatar = async () => {
     try {
-      const res = await axios.post(
-        `${API}/api/user/${userId}/avatar`,
-        form,
-        { headers: { "Content-Type": "multipart/form-data" } }
+      const res = await axios.delete(
+        `${API}/api/user/${userId}/avatar`
       );
 
-      // ✅ CACHE BUSTER (🔥 MAIN FIX)
-      const updatedUser = {
-        ...res.data,
-        avatar: `${res.data.avatar}?t=${Date.now()}`,
-      };
-
-      setUser(updatedUser);
-      localStorage.setItem("user", JSON.stringify(updatedUser));
-      showSuccess("Avatar changed successfully");
+      setUser(res.data);
+      localStorage.setItem("user", JSON.stringify(res.data));
+      showSuccess("Avatar removed successfully");
     } catch {
-      alert("Avatar upload failed");
+      alert("Failed to remove avatar");
     }
   };
+
+
+  /* ================= AVATAR (FIXED) ================= */
+  const uploadAvatar = async (e) => {
+  const file = e.target.files[0];
+  if (!file) return;
+
+  const form = new FormData();
+  form.append("avatar", file);
+
+  try {
+    const res = await axios.post(
+      `${API}/api/user/${userId}/avatar`,
+      form,
+      { headers: { "Content-Type": "multipart/form-data" } }
+    );
+
+    setUser(res.data);
+    localStorage.setItem("user", JSON.stringify(res.data));
+    showSuccess("Avatar changed successfully");
+  } catch {
+    alert("Avatar upload failed");
+  }
+};
+
 
   if (!user) return <p className="acc-loading">Loading account…</p>;
 
@@ -159,7 +180,16 @@ const Account = () => {
         label="Avatar"
         action={
           <>
-            <label htmlFor="avatarUpload" className="link">Change</label>
+            <label htmlFor="avatarUpload" className="link">
+              Change
+            </label>
+
+            {user?.avatar && (
+              <span className="link danger" onClick={removeAvatar}>
+                Remove
+              </span>
+            )}
+
             <input
               type="file"
               id="avatarUpload"
@@ -170,15 +200,21 @@ const Account = () => {
           </>
         }
       >
+
+
         <div className="avatar-box">
-          {user.avatar ? (
-            <img src={`https://chatbot-backend-project.vercel.app${user.avatar}`} alt="avatar" />
+          {user?.avatar ? (
+            <img
+              src={`http://localhost:4000${user.avatar}`}
+              alt="avatar"
+            />
           ) : (
-            <div className="avatar-fallback">
-              {user.name.charAt(0).toUpperCase()}
+            <div className="avatar-initials">
+              {getInitials(user?.name)}
             </div>
           )}
         </div>
+
       </Row>
 
       {/* PHONE */}

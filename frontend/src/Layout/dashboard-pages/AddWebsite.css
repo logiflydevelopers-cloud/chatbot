@@ -55,9 +55,6 @@ p.info-text {
   font-size: .875rem;
 }
 
-.hrhr {
-  margin: 20px 0;
-}
 
 .link-input {
   width: 100%;
@@ -124,5 +121,72 @@ p.info-text {
 
   .link-card {
     padding: 20px;
+  }
+}
+
+
+
+/* ================= POPUP ================= */
+
+.popup-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+
+.popup-box {
+  background: #fff;
+  padding: 30px 35px;
+  border-radius: 14px;
+  min-width: 280px;
+  text-align: center;
+  animation: popupScale 0.35s ease;
+}
+
+.popup-box p {
+  margin-top: 15px;
+  font-size: 16px;
+  font-weight: 500;
+}
+
+.popup-box-btn {
+  margin-top: 18px;
+  padding: 10px 22px;
+  background: #4f46e5;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+/* Loader */
+.loader {
+  width: 42px;
+  height: 42px;
+  border: 4px solid #e0e0ff;
+  border-top: 4px solid #4f46e5;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  margin: auto;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes popupScale {
+  from {
+    transform: scale(0.85);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
   }
 }

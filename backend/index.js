@@ -15,6 +15,8 @@ import proxyRoute from "./routes/proxy.js";
 import qaRoutes from "./routes/qaRoutes.js";
 import personaRoutes from "./routes/personaRoutes.js";
 import pdfRoutes from "./routes/pdfRoutes.js";
+import adminRoutes from "./routes/adminRoutes.js";
+import contactRoute from "./routes/contact.js"
 
 dotenv.config();
 
@@ -27,7 +29,7 @@ const PORT = process.env.PORT || 4000;
 
 const allowedOrigins = [
   "http://localhost:3000",
-  "https://chatbot-frontend-mocha-six.vercel.app",
+  "http://localhost:3000",
 ];
 
 app.use(
@@ -92,6 +94,9 @@ app.use("/proxy", proxyRoute);
 app.use("/api/qa", qaRoutes);
 app.use("/api/persona", personaRoutes);
 app.use("/api/pdf", pdfRoutes);
+app.use("/api/admin", adminRoutes);
+app.use("/api/contact", contactRoute);
+
 
 app.use(
   "/uploads",

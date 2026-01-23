@@ -5,6 +5,7 @@ import {
   logout,
   refreshAccessToken,
   uploadAvatar,
+  removeAvatar,
   updateUser,
 } from "../controllers/UserController.js";
 
@@ -29,6 +30,12 @@ router.post(
   avatarUpload.single("avatar"),
   uploadAvatar
 );
+
+router.delete(
+  "/:id/avatar",
+  removeAvatar
+);
+
 
 /* =====================================================
    AUTH ROUTES

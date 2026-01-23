@@ -19,6 +19,8 @@ const QAPage = () => {
     }
   };
 
+
+
   const fetchQAs = useCallback(async () => {
     setLoading(true);
     setError("");
@@ -103,10 +105,13 @@ const QAPage = () => {
           </div>
         )}
 
-        {qas.map((q) => (
+        {qas.map((q, index) => (
           <div className="qa-card" key={q._id}>
             <div className="qa-card-left">
-              <div className="qa-icon">❓</div>
+              <div className="qa-icon qa-count">
+                {index + 1}
+              </div>
+
             </div>
 
             <div className="qa-card-middle">

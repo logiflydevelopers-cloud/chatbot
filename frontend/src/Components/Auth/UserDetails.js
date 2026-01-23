@@ -14,7 +14,7 @@ const UserDetails = ({ user, setUser }) => {
   const fetchUserDetails = useCallback(
     async (token) => {
       return await axios.get(
-        `https://chatbot-backend-project.vercel.app/api/auth/getUserDetails/${userId}`,
+        `http://localhost:4000/api/auth/getUserDetails/${userId}`,
         {
           headers: { Authorization: `Bearer ${token}` },
           withCredentials: true,
@@ -44,7 +44,7 @@ const UserDetails = ({ user, setUser }) => {
           try {
             console.log("Access token expired. Refreshing...");
             const refreshRes = await axios.get(
-              "https://chatbot-backend-project.vercel.app/api/auth/refresh",
+              "http://localhost:4000/api/auth/refresh",
               { withCredentials: true }
             );
 
@@ -73,7 +73,7 @@ const UserDetails = ({ user, setUser }) => {
   const handleLogout = async () => {
     try {
       await axios.post(
-        "https://chatbot-backend-project.vercel.app/api/user/logout",
+        "http://localhost:4000/api/user/logout",
         {},
         { withCredentials: true }
       );

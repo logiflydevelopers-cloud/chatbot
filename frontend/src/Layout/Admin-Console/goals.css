@@ -1,0 +1,28 @@
+.goals-wrapper {
+  position: relative;
+  height: 100%;
+  overflow: hidden;
+}
+
+.goals-blur-content {
+  filter: blur(4px);
+  pointer-events: none;
+}
+
+.goals-coming-overlay {
+  inset: 0;
+  backdrop-filter: blur(2px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+}
+
+.goals-coming-box {
+  background: #1e293b;
+  color: #fff;
+  padding: 24px 36px;
+  border-radius: 18px;
+  font-size: 26px;
+  font-weight: 700;
+}

@@ -16,7 +16,7 @@
 
 /* HEADER */
 .chatbot-header {
-    padding: 12px 30px 0px 16px;
+    padding: 12px 14px 0px 14px;
     color: #fff;
     display: flex;
     justify-content: space-between;
@@ -90,6 +90,10 @@
     border-radius: 0 14px 14px 14px;
     max-width: 75%;
     font-size: 14px;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    overflow-wrap: anywhere;
+    word-break: break-word;
 }
 
 .chatbot-input {

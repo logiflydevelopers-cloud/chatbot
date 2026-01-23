@@ -53,7 +53,7 @@ export default function ChatBotDrawer({
 
 
   const chatRef = useRef(null);
-  const initialized = useRef(false);
+  // const initialized = useRef(false);
 
   /* ================= LOAD LABELS ================= */
   useEffect(() => {
@@ -65,26 +65,30 @@ export default function ChatBotDrawer({
   }, [userId, apiBase]);
 
   /* ================= WELCOME MESSAGE ================= */
-  useEffect(() => {
-    if (!showChat || initialized.current) return;
-    initialized.current = true;
+useEffect(() => {
+  if (!showChat) return;
 
-    const welcomeText = firstMessage || "Hi there 👋 I'm your assistant!";
+  const welcomeText = firstMessage || "Hi there 👋 I'm your assistant!";
 
-    setConversation([{ from: "bot", typing: true }]);
+  setConversation([]);
+  setWelcomeDone(false);
 
-    setTimeout(() => {
-      typeText(
-        welcomeText,
-        (typed) => {
-          setConversation([{ from: "bot", text: typed }]);
-        },
-        () => {
-          setWelcomeDone(true);
-        }
-      );
-    }, 400);
-  }, [showChat, firstMessage]);
+  setTimeout(() => {
+    typeText(
+      welcomeText,
+      (typed) => {
+        setConversation([{ from: "bot", text: typed }]);
+      },
+      () => {
+        setWelcomeDone(true);
+      }
+    );
+  }, 200);
+
+}, [showChat, firstMessage]);
+
+
+
 
 
 

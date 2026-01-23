@@ -54,7 +54,31 @@ const Sidebar = ({ open, setOpen }) => {
       </div>
 
       <div
-        onClick={() => handleNavigate("/dashboard/teach")}
+        onClick={async () => {
+          try {
+            const storedUser = JSON.parse(localStorage.getItem("user"));
+            const userId =
+              storedUser?._id || storedUser?.id || storedUser?.userId;
+
+            const res = await fetch(
+              `http://localhost:4000/api/chatbot/${userId}`
+            );
+            const data = await res.json();
+
+            // ❌ BLOCK IF WEBSITE NOT UPLOADED
+            if (!data?.settings?.website) {
+              alert("❌ Please upload a website first to use Teach Your Agent");
+              return;
+            }
+
+            // ✅ ALLOW
+            handleNavigate("/dashboard/teach");
+
+          } catch (err) {
+            console.error(err);
+            alert("Something went wrong");
+          }
+        }}
         className={`side-item ${isActive("/dashboard/teach") ? "active" : ""}`}
       >
         <FiMessageSquare className="icon" />
@@ -65,6 +89,7 @@ const Sidebar = ({ open, setOpen }) => {
           </span>
         </div>
       </div>
+
 
       <div
         onClick={() => handleNavigate("/settings")}

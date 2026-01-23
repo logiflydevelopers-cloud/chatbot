@@ -1,0 +1,133 @@
+/* ===============================
+   PAGE
+================================ */
+.admin-chat-page {
+    display: flex;
+}
+
+/* ===============================
+   CONTAINER
+================================ */
+.admin-chat-container {
+    width: 100%;
+    max-width: 660px;
+    display: flex;
+    flex-direction: column;
+    background: #fff;
+    padding: 20px;
+    border-radius: 15px;
+}
+
+/* ===============================
+   DESKTOP HEADER
+================================ */
+.admin-chat-header {
+    margin-bottom: 18px;
+}
+
+.admin-chat-header h2 {
+    font-size: 20px;
+    font-weight: 600;
+}
+
+.admin-chat-header p {
+    font-size: 13px;
+    color: #777;
+}
+
+/* ===============================
+   MOBILE HEADER (NEW)
+================================ */
+.admin-chat-mobile-header {
+    display: none;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 16px;
+}
+
+.chat-back-btn {
+    border: none;
+    background: #f3f4f6;
+    border-radius: 10px;
+    padding: 6px 10px;
+    font-size: 18px;
+    cursor: pointer;
+}
+
+/* ===============================
+   CHAT AREA
+================================ */
+.admin-chat-area {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    padding-bottom: 20px;
+}
+
+.chat-row {
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+}
+
+.msg-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+}
+
+.msg-bubble {
+    max-width: 70%;
+    padding: 14px 18px;
+    border-radius: 16px;
+    font-size: 15px;
+    line-height: 1.5;
+}
+
+/* BOT */
+.bot-msg {
+    background: #fff;
+    border: 1px solid #e8e8ff;
+}
+
+/* USER */
+.user-msg {
+    background: #3b82f6;
+    color: #fff;
+    margin-left: auto;
+}
+
+/* ===============================
+   MOBILE
+================================ */
+@media (max-width: 768px) {
+
+    .admin-chat-container {
+        max-width: 100%;
+    }
+
+    .admin-chat-header {
+        display: none;
+    }
+
+    .admin-chat-mobile-header {
+        display: flex;
+    }
+
+    .msg-avatar {
+        width: 32px;
+        height: 32px;
+    }
+
+    .msg-bubble {
+        max-width: 82%;
+        padding: 10px 14px;
+        font-size: 13px;
+    }
+}
+
+@media (max-width: 480px) {
+    .msg-bubble {
+        max-width: 90%;
+    }
+}

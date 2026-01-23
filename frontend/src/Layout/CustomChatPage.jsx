@@ -4,11 +4,11 @@ import { useNavigate } from "react-router-dom";
 import ChatBotDrawer from "../Components/Auth/ChatBotDrawer";
 import "./CustomChatPage.css";
 import ColorPicker from "../Components/Auth/ColorPicker";
-import PopupModal from "../Components/Auth/Common/PopupModal"
 
 /* =========================
    DEFAULT AVATARS
 ========================= */
+import gImage00 from "../image/chatbot-defulte-logo.svg";
 import gImage01 from "../image/g-image-01.svg";
 import gImage02 from "../image/g-image-02.svg";
 import gImage03 from "../image/g-image-03.svg";
@@ -21,6 +21,7 @@ import bImage03 from "../image/b-image-03.svg";
    AVATAR MAP
 ========================= */
 const avatarMap = {
+  "chatbot-defulte-logo": gImage00,
   "g-image-01": gImage01,
   "g-image-02": gImage02,
   "g-image-03": gImage03,
@@ -41,8 +42,9 @@ const CustomChatPage = () => {
   const isEmbed = params.get("embed") === "1";
   const embedUserId = params.get("userId");
 
+
   const navigate = useNavigate();
-  const apiBase = "https://chatbot-backend-project.vercel.app";
+  const apiBase = "http://localhost:4000";
   const fileInputRef = useRef(null);
 
   /* =========================
@@ -63,12 +65,17 @@ const CustomChatPage = () => {
   /* =========================
      STATES
   ========================= */
-  const [avatar, setAvatar] = useState("b-image-03");
+  const [avatar, setAvatar] = useState("chatbot-defulte-logo");
   const [customAvatar, setCustomAvatar] = useState(null);
   const [firstMessage, setFirstMessage] = useState(
     "Hi there 👋 I'm your assistant!"
   );
-  const [primaryColor, setPrimaryColor] = useState("#2563eb");
+
+  // 🔥 previewMessage should have its own default
+  const [previewMessage, setPreviewMessage] = useState(
+    "Hi there 👋 I'm your assistant!"
+  );
+  const [primaryColor, setPrimaryColor] = useState("#667eeb");
   const [alignment, setAlignment] = useState("right");
 
   const [showChat, setShowChat] = useState(isEmbed ? true : !isMobile);
@@ -91,6 +98,12 @@ const CustomChatPage = () => {
       const s = res.data?.settings;
       if (!s) return;
 
+      const welcome =
+        s.firstMessage?.trim() || "Hi there 👋 I'm your assistant!";
+
+      setFirstMessage(welcome);
+      setPreviewMessage(welcome); // 🔥 sync saved message
+
       if (s.avatar?.startsWith("data:image")) {
         setCustomAvatar(s.avatar);
         setAvatar("custom");
@@ -98,17 +111,12 @@ const CustomChatPage = () => {
         setAvatar(s.avatar || "b-image-03");
       }
 
-      setFirstMessage(
-        s.firstMessage?.trim() || "Hi there 👋 I'm your assistant!"
-      );
-
-      setPrimaryColor(s.primaryColor || "#2563eb");
+      setPrimaryColor(s.primaryColor || "#667eeb");
       setAlignment(s.alignment || "right");
-
-      // 🔥 WEBSITE LOAD
       setWebsite(s.website || null);
     });
   }, [userId]);
+
 
   /* =========================
      RESIZE HANDLER
@@ -133,19 +141,27 @@ const CustomChatPage = () => {
     const file = e.target.files[0];
     if (!file) return;
 
-    const reader = new FileReader();
-    reader.onloadend = () => {
-      setCustomAvatar(reader.result);
-      setAvatar("custom");
-    };
-    reader.readAsDataURL(file);
+    const validTypes = ["image/png", "image/svg+xml"];
+    if (!validTypes.includes(file.type)) {
+      alert("Only PNG or SVG allowed");
+      return;
+    }
+
+    const imageUrl = URL.createObjectURL(file); // 🔥 sharp image
+    setCustomAvatar(imageUrl);
+    setAvatar("custom");
   };
+
+
 
   /* =========================
      SAVE
   ========================= */
   const saveCustomization = async () => {
     try {
+      // 1️⃣ show loading popup immediately
+      setPopup({ show: true, stage: "loading" });
+
       const payload = {
         userId,
         avatar: avatar === "custom" ? customAvatar : avatar,
@@ -154,37 +170,29 @@ const CustomChatPage = () => {
         alignment,
       };
 
+      // 2️⃣ API call
       const res = await axios.post(`${apiBase}/api/chatbot/save`, payload);
 
       if (res.data?.success) {
-        localStorage.setItem("chatbotSaved", "true");
+        setPreviewMessage(firstMessage);
 
-        setPopup({
-          show: true,
-          title: "Success",
-          message: "✅ Customization Saved Successfully!",
-          onConfirm: () =>
-            setPopup((prev) => ({ ...prev, show: false })),
-        });
+        // 3️⃣ wait 2 seconds, then show success
+        setTimeout(() => {
+          setPopup({ show: true, stage: "success" });
+        }, 2000);
       }
-
-    } catch {
-      setPopup({
-        show: true,
-        title: "Error",
-        message: "❌ Save Failed. Please try again.",
-        onConfirm: () =>
-          setPopup((prev) => ({ ...prev, show: false })),
-      });
+    } catch (error) {
+      setTimeout(() => {
+        setPopup({ show: true, stage: "error" });
+      }, 2000);
     }
-
   };
+
+
 
   const [popup, setPopup] = useState({
     show: false,
-    title: "",
-    message: "",
-    onConfirm: null,
+    stage: "loading",
   });
 
 
@@ -260,10 +268,11 @@ const CustomChatPage = () => {
             <input
               ref={fileInputRef}
               type="file"
-              accept="image/*"
+              accept="image/png,image/svg+xml"
               hidden
               onChange={handleAvatarUpload}
             />
+
           </div>
         </div>
 
@@ -279,8 +288,13 @@ const CustomChatPage = () => {
           <textarea
             rows={3}
             value={firstMessage}
-            onChange={(e) => setFirstMessage(e.target.value)}
+            onChange={(e) => {
+              const value = e.target.value;
+              setFirstMessage(value);
+              setPreviewMessage(value);
+            }}
           />
+
         </div>
 
         {/* POSITION */}
@@ -308,7 +322,7 @@ const CustomChatPage = () => {
         apiBase={apiBase}
         primaryColor={primaryColor}
         avatar={avatar === "custom" ? customAvatar : avatarMap[avatar]}
-        firstMessage={firstMessage}
+        firstMessage={previewMessage}
         alignment={alignment}
         showChat={showChat}
         showBubble={showBubble}
@@ -322,13 +336,55 @@ const CustomChatPage = () => {
         }}
       />
 
-      <PopupModal
-        show={popup.show}
-        title={popup.title}
-        message={popup.message}
-        onClose={() => setPopup((prev) => ({ ...prev, show: false }))}
-        onConfirm={popup.onConfirm}
-      />
+
+      {popup.show && (
+        <div className="popup-overlay">
+          <div className="popup-box">
+
+            {/* 🔄 LOADING STATE */}
+            {popup.stage === "loading" && (
+              <>
+                <div className="loader"></div>
+                <p>Saving your customization...</p>
+              </>
+            )}
+
+            {/* ✅ SUCCESS STATE */}
+            {popup.stage === "success" && (
+              <>
+                <h3>🎉 Successfully Saved!</h3>
+                <p>Your chatbot is ready to publish.</p>
+
+                <div className="popup-actions">
+                  <button
+                    className="publish-btn"
+                    onClick={() => navigate(`/embed-code/${userId}`)}
+                  >
+                    Publish
+                  </button>
+
+                  <button
+                    className="cancel-btn"
+                    onClick={() => setPopup({ show: false })}
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </>
+            )}
+
+            {/* ❌ ERROR STATE */}
+            {popup.stage === "error" && (
+              <>
+                <h3>❌ Save Failed</h3>
+                <p>Please try again.</p>
+                <button onClick={() => setPopup({ show: false })}>Close</button>
+              </>
+            )}
+          </div>
+        </div>
+      )}
+
     </div>
   );
 };

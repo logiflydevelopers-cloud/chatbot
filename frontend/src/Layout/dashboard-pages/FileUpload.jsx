@@ -13,6 +13,10 @@ const FileUpload = () => {
     const [success, setSuccess] = useState("");
     const [isUploading, setIsUploading] = useState(false);
 
+    // 🔹 NEW
+    const [showPopup, setShowPopup] = useState(false);
+    const [uploadDone, setUploadDone] = useState(false);
+
     // Load userId
     let userId = null;
     try {
@@ -28,16 +32,17 @@ const FileUpload = () => {
         if (!userId) return;
 
         axios
-            .get(`https://chatbot-backend-project.vercel.app/api/pdf/status/${userId}`)
+            .get(`http://localhost:4000/api/pdf/status/${userId}`)
             .then((res) => {
                 if (res.data?.hasPdf) {
-                    setFile({ name: res.data.pdfName });
+                    setFile({ name: res.data.pdfName }); // only name show
+                    setUploadDone(true);                // 🔒 permanently lock
                 }
             })
             .catch(() => { });
     }, [userId]);
 
-    /* ================= FILE SELECT ================= */
+    /* ================= FILE SELECT (NO AUTO UPLOAD) ================= */
     const handleFileChange = (e) => {
         const selected = e.target.files[0];
         if (!selected) return;
@@ -49,24 +54,28 @@ const FileUpload = () => {
 
         setError("");
         setSuccess("");
-        setFile(selected);
+        setFile(selected); // only set file
+    };
+
+    /* ================= CANCEL FILE ================= */
+    const handleCancel = () => {
+        setFile(null);
+        setError("");
     };
 
     /* ================= UPLOAD ================= */
     const handleUpload = async () => {
-        if (!file || !(file instanceof File)) {
-            return;
-        }
-
+        if (!file || uploadDone || !(file instanceof File)) return;
 
         if (!userId) {
             setError("User ID missing!");
             return;
         }
 
+        setShowPopup(true);
         setIsUploading(true);
         setError("");
-        setSuccess("Processing started…");
+        setSuccess("");
 
         const formData = new FormData();
         formData.append("pdf", file);
@@ -74,25 +83,25 @@ const FileUpload = () => {
 
         try {
             await axios.post(
-                "https://chatbot-backend-project.vercel.app/api/pdf/upload",
+                "http://localhost:4000/api/pdf/upload",
                 formData,
-                {
-                    headers: { "Content-Type": "multipart/form-data" },
-                    timeout: 5000
-                }
+                { headers: { "Content-Type": "multipart/form-data" } }
             );
 
-            setSuccess("PDF uploaded successfully! Training started.");
-            setError("");
+            // ⏳ 2 sec loader
+            setTimeout(() => {
+                setIsUploading(false);
+                setSuccess("PDF uploaded successfully!");
+                setUploadDone(true);
+            }, 2000);
 
         } catch (err) {
+            setIsUploading(false);
+            setShowPopup(false);
             setError(
                 err?.response?.data?.message ||
                 "Upload failed. Try again."
             );
-            setSuccess("");
-        } finally {
-            setIsUploading(false);
         }
     };
 
@@ -114,8 +123,8 @@ const FileUpload = () => {
 
             <div className="fu-card">
 
-                {/* 🔒 Upload box hide when PDF exists */}
-                {!file && (
+                {/* Upload box only when no file & not uploaded before */}
+                {!file && !uploadDone && (
                     <div className="fu-upload-box">
                         <AiOutlineCloudUpload className="fu-upload-icon" />
                         <p className="fu-upload-text">
@@ -134,22 +143,53 @@ const FileUpload = () => {
 
                 {error && <p className="fu-error">{error}</p>}
 
+                {/* Selected file row */}
                 {file && (
                     <div className="fu-file-row">
                         <p className="fu-success">Selected: {file.name}</p>
+
+                        {/* Cancel only if not uploaded */}
+                        {!uploadDone && (
+                            <button
+                                className="fu-cancel-btn"
+                                onClick={handleCancel}
+                            >
+                                ✖
+                            </button>
+                        )}
                     </div>
                 )}
-
-                {success && <p className="fu-success-msg">{success}</p>}
             </div>
 
+            {/* Upload Button */}
             <button
-                className="fu-save-btn"
+                className={`fu-save-btn ${uploadDone ? "blur" : ""}`}
                 onClick={handleUpload}
-                disabled={isUploading || !!file}   // 🔒 LOCK BUTTON
+                disabled={isUploading || uploadDone || !file}
             >
                 {isUploading ? "Uploading..." : "Upload"}
             </button>
+
+            {/* ================= POPUP ================= */}
+            {showPopup && (
+                <div className="popup-overlay">
+                    <div className="popup-box">
+                        {isUploading ? (
+                            <>
+                                <div className="loader"></div>
+                                <p>Uploading...</p>
+                            </>
+                        ) : (
+                            <>
+                                <p>{success}</p>
+                                <button className="popup-box-btn" onClick={() => setShowPopup(false)}>
+                                    OK
+                                </button>
+                            </>
+                        )}
+                    </div>
+                </div>
+            )}
         </div>
     );
 };

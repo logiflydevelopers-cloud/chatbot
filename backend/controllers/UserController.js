@@ -126,21 +126,30 @@ export const logout = async (req, res) => {
 };
 
 
+// ================= AVATAR UPLOAD =================
 export const uploadAvatar = async (req, res) => {
   try {
+    // 1️⃣ File check
     if (!req.file) {
       return res.status(400).json({ message: "Avatar file missing" });
     }
 
+    // 2️⃣ Avatar path (this is what goes into DB)
     const avatarPath = `/uploads/avatars/${req.file.filename}`;
 
+    // 3️⃣ Update user avatar path in DB
     const user = await User.findByIdAndUpdate(
       req.params.id,
       { avatar: avatarPath },
       { new: true }
     ).select("-password");
 
-    res.json(user);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    // 4️⃣ Send updated user back
+    res.status(200).json(user);
   } catch (error) {
     console.error("Avatar upload error:", error);
     res.status(500).json({ message: "Avatar upload failed" });
@@ -169,4 +178,27 @@ export const updateUser = async (req, res) => {
     res.status(500).json({ message: "Update failed" });
   }
 };
+
+
+
+// ================= REMOVE AVATAR =================
+export const removeAvatar = async (req, res) => {
+  try {
+    const user = await User.findByIdAndUpdate(
+      req.params.id,
+      { avatar: "" },   // 🔥 REMOVE FROM DB
+      { new: true }
+    ).select("-password");
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    res.status(200).json(user);
+  } catch (error) {
+    console.error("Remove avatar error:", error);
+    res.status(500).json({ message: "Failed to remove avatar" });
+  }
+};
+
 

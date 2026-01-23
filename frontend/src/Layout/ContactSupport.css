@@ -1,0 +1,311 @@
+/* ===== HERO ===== */
+.cs-hero {
+  background: var(--green-main);
+  padding: 90px 20px;
+  text-align: center;
+  color: #fff;
+}
+
+/* ===== LAYOUT ===== */
+.cs-container {
+  padding: 60px 20px;
+  display: flex;
+  gap: 50px;
+}
+
+/* ===== LEFT ===== */
+.cs-left {
+  width: 32%;
+}
+
+.cs-illus {
+  position: absolute;
+  top: -22%;
+  width: 235px;
+}
+
+.cs-title {
+  font-size: 20px;
+  font-weight: 700;
+  margin-bottom: 20px;
+}
+
+.cs-card {
+  background: #eef1ff;
+  border-radius: 14px;
+  padding: 15px;
+  text-align: center;
+  margin-bottom: 10px;
+}
+
+.cs-card span {
+  font-size: 14px;
+  color: #6b6f93;
+}
+
+.cs-card strong {
+  display: block;
+  font-size: 22px;
+  margin-top: 6px;
+}
+
+.cs-purple {
+  background: #f2efff;
+}
+
+.cs-card a {
+  color: #fff;
+  text-decoration: none;
+}
+
+/* BUTTONS */
+.cs-buttons {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+  margin-top: 16px;
+}
+
+.cs-buttons a {
+  padding: 10px;
+  border-radius: 8px;
+  color: #fff;
+  text-align: center;
+  font-weight: 600;
+}
+
+
+.cs-enterprise-img {
+  width: 100%;
+  border-radius: 12px;
+}
+
+/* ===== RIGHT ===== */
+.cs-right {
+  width: 68%;
+}
+
+.cs-row {
+  display: flex;
+  gap: 15px;
+}
+
+.cs-right input,
+.cs-right textarea {
+  width: 100%;
+  padding: 14px;
+  border-radius: 6px;
+  border: 2px solid #9f9fc4;
+  margin: 12px 0;
+}
+
+h2.cd-right-title {
+  font-size: 1.75rem;
+  line-height: 2rem;
+  margin-bottom: 15px;
+}
+
+p.cs-right-label {
+  font-size: 1.25rem;
+  line-height: 1.5rem;
+  font-weight: 600;
+  margin-bottom: 5px;
+  margin-top: 10px;
+}
+
+.cs-right textarea {
+  min-height: 180px;
+}
+
+.cs-private {
+  background: #f5f6fb;
+  padding: 20px;
+  border-radius: 12px;
+  margin: 24px 0;
+}
+
+.cs-submit {
+  background: var(--green-main);
+  color: #fff;
+  margin-top: 30px;
+  border: none;
+  padding: 14px 40px;
+  border-radius: 8px;
+  font-size: 16px;
+}
+
+/* ===== ANIMATIONS ===== */
+.cs-fade {
+  animation: csFade 0.8s ease forwards;
+}
+
+.cs-slide-left {
+  animation: csLeft 0.9s ease forwards;
+}
+
+.cs-slide-right {
+  animation: csRight 0.9s ease forwards;
+}
+
+@keyframes csFade {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes csLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-40px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes csRight {
+  from {
+    opacity: 0;
+    transform: translateX(40px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* ===== MOBILE ===== */
+@media (max-width: 900px) {
+  .cs-container {
+    flex-direction: column;
+    padding: 60px 0px;
+  }
+
+  .cs-left,
+  .cs-right {
+    width: 100%;
+  }
+
+  .cs-row {
+    flex-direction: column;
+    gap: 0px;
+  }
+
+
+  .cs-submit {
+    width: 100%;
+  }
+
+  .cs-hero {
+    padding: 50px 20px;
+  }
+
+  .cs-right input,
+  .cs-right textarea {
+    margin: 8px 0;
+  }
+
+  label.cs-right-label-des {
+    font-size: 14px;
+    line-height: 1rem;
+  }
+}
+
+
+/* ===== AGENT CARD ===== */
+.cs-agent-card {
+  background: linear-gradient(135deg, #f1ecff, #eef3ff);
+  border-radius: 18px;
+  padding: 26px;
+  text-align: center;
+}
+
+.cs-agent-title {
+  color: #7a3cff;
+  font-weight: 700;
+  font-size: 16px;
+  margin-bottom: 10px;
+}
+
+.cs-agent-number a {
+  font-size: 28px;
+  font-weight: 800;
+  color: #101828;
+  text-decoration: none;
+}
+
+.cs-agent-sub {
+  color: #475467;
+  font-size: 14px;
+  margin-top: 6px;
+  margin-bottom: 22px;
+}
+
+/* ===== BUTTON GRID ===== */
+.cs-agent-buttons {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 9px;
+}
+
+/* COMMON BUTTON */
+.cs-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 9px 11px;
+  border-radius: 10px;
+  color: #fff;
+  font-size: 12px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.cs-btn svg {
+  font-size: 18px;
+}
+
+.cs-enterprise-img {
+  cursor: pointer;
+  transition: transform 0.3s ease;
+}
+
+.cs-enterprise-img:hover {
+  transform: scale(1.03);
+}
+
+
+/* HOVER */
+.cs-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+}
+
+/* COLORS (SEM TO SEM) */
+.cs-whatsapp {
+  background: #208459;
+}
+
+.cs-zoom {
+  background: #0046C7;
+}
+
+.cs-phone {
+  background: #0075e3;
+}
+
+/* ===== MOBILE ===== */
+@media (max-width: 480px) {
+  .cs-agent-buttons {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
