@@ -107,6 +107,14 @@ function AppContent() {
     "/reset-password",
     "/contact-support",
     "/faq",
+    "/pricing",
+    "/blog",
+    "/blog/:slug",
+    "/terms",
+    "/privacy",
+    "/about",
+
+
   ];
 
   const shouldHideHeader =
