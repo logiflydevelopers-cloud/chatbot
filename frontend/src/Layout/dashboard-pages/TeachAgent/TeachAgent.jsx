@@ -8,7 +8,7 @@ import { FiArrowLeft } from "react-icons/fi";
 import { useOutletContext, useNavigate } from "react-router-dom";
 
 const TeachAgent = ({ user }) => {
-  const apiBase = "http://localhost:4000";
+  const apiBase = "https://chatbot-backend-project.vercel.app";
   const userId = user?.id || user?._id;
 
   const { setSidebarOpen } = useOutletContext();

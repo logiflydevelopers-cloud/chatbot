@@ -50,7 +50,7 @@ const AIPersona = () => {
 
       try {
         const res = await fetch(
-          `http://localhost:4000/api/persona/${userId}`
+          `https://chatbot-backend-project.vercel.app/api/persona/${userId}`
         );
         const data = await res.json();
 
@@ -90,7 +90,7 @@ const AIPersona = () => {
     setSaveStatus("loading");
 
     // 2️⃣ Fire backend save (DB + Python)
-    fetch("http://localhost:4000/api/persona/save", {
+    fetch("https://chatbot-backend-project.vercel.app/api/persona/save", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({

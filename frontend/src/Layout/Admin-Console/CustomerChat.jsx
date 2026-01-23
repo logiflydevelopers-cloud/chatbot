@@ -14,7 +14,7 @@ const CustomerChat = () => {
   const [loading, setLoading] = useState(true);
 
   const bottomRef = useRef(null);
-  const apiBase = "http://localhost:4000";
+  const apiBase = "https://chatbot-backend-project.vercel.app";
 
   useEffect(() => {
     const fetchChat = async () => {

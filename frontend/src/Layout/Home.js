@@ -82,7 +82,7 @@ const reviews = [
 
 const googleLogin = async () => {
   try {
-    const res = await axios.get("http://localhost:4000/api/auth/google");
+    const res = await axios.get("https://chatbot-backend-project.vercel.app/api/auth/google");
     window.location.href = res.data.url; // 🔥 direct Google login
   } catch (err) {
     console.error("Google login failed", err);
@@ -175,7 +175,7 @@ function FAQAccordion() {
 
 const handleGoogleSignup = async () => {
   try {
-    const res = await axios.get("http://localhost:4000/api/auth/google");
+    const res = await axios.get("https://chatbot-backend-project.vercel.app/api/auth/google");
     window.location.href = res.data.url; // 🔥 direct Google login
   } catch (err) {
     console.error("Google signup failed", err);

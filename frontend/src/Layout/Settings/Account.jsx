@@ -3,7 +3,7 @@ import axios from "axios";
 import { useOutletContext } from "react-router-dom";
 import "./account.css";
 
-const API = "http://localhost:4000";
+const API = "https://chatbot-backend-project.vercel.app";
 
 /* ================= ROW ================= */
 const Row = ({ label, children, action }) => {
@@ -205,7 +205,7 @@ const Account = () => {
         <div className="avatar-box">
           {user?.avatar ? (
             <img
-              src={`http://localhost:4000${user.avatar}`}
+              src={`https://chatbot-backend-project.vercel.app${user.avatar}`}
               alt="avatar"
             />
           ) : (

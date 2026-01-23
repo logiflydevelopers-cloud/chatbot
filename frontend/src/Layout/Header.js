@@ -9,7 +9,7 @@ import PopupModal from "../Components/Auth/Common/PopupModal"
 function Header({ user, setUser }) {
   const navigate = useNavigate();
   const location = useLocation();
-  const apiBase = "http://localhost:4000";
+  const apiBase = "https://chatbot-backend-project.vercel.app";
 
   const userId = user?.id || user?._id;
 
@@ -136,7 +136,7 @@ function Header({ user, setUser }) {
 
           {user?.avatar ? (
             <img
-              src={`http://localhost:4000${user.avatar}`}
+              src={`https://chatbot-backend-project.vercel.app${user.avatar}`}
               alt="avatar"
               className="jf-user-icon avatar-img"
             />
@@ -172,7 +172,7 @@ function Header({ user, setUser }) {
               <div className="profile-avatar">
                 {user?.avatar ? (
                   <img
-                    src={`http://localhost:4000${user.avatar}`}
+                    src={`https://chatbot-backend-project.vercel.app${user.avatar}`}
                     alt="avatar"
                     className="jf-user-icon avatar-img"
                   />

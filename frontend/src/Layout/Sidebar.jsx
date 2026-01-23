@@ -61,7 +61,7 @@ const Sidebar = ({ open, setOpen }) => {
               storedUser?._id || storedUser?.id || storedUser?.userId;
 
             const res = await fetch(
-              `http://localhost:4000/api/chatbot/${userId}`
+              `https://chatbot-backend-project.vercel.app/api/chatbot/${userId}`
             );
             const data = await res.json();
 

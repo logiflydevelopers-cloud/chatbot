@@ -14,7 +14,7 @@ const ForgotPassword = () => {
 
   const sendOTP = async () => {
     try {
-      await axios.post("http://localhost:4000/api/auth/forgot-password", {
+      await axios.post("https://chatbot-backend-project.vercel.app/api/auth/forgot-password", {
         email,
       });
 

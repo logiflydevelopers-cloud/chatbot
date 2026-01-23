@@ -44,7 +44,7 @@ const CustomChatPage = () => {
 
 
   const navigate = useNavigate();
-  const apiBase = "http://localhost:4000";
+  const apiBase = "https://chatbot-backend-project.vercel.app";
   const fileInputRef = useRef(null);
 
   /* =========================

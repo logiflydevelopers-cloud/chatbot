@@ -35,7 +35,7 @@ export default function ContactSupport() {
 
         try {
             await axios.post(
-                "http://localhost:4000/api/contact",
+                "https://chatbot-backend-project.vercel.app/api/contact",
                 data,
                 { headers: { "Content-Type": "multipart/form-data" } }
             );

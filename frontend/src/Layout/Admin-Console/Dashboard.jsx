@@ -12,7 +12,7 @@ const Dashboard = () => {
 
   useEffect(() => {
     axios
-      .get("http://localhost:4000/api/admin/dashboard-counts", {
+      .get("https://chatbot-backend-project.vercel.app/api/admin/dashboard-counts", {
         params: { userId }
       })
       .then(res => setStats(res.data));

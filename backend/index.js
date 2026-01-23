@@ -28,8 +28,8 @@ const PORT = process.env.PORT || 4000;
 ====================================================== */
 
 const allowedOrigins = [
-  "http://localhost:3000",
-  "http://localhost:3000",
+  "https://chatbot-frontend-mocha-six.vercel.app",
+  "https://chatbot-frontend-mocha-six.vercel.app",
 ];
 
 app.use(
