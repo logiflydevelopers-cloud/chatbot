@@ -3,11 +3,11 @@ import path from "path";
 import fs from "fs";
 
 /* ======================================================
-   UPLOAD DIRECTORY SETUP (VERCEL SAFE)
+   UPLOAD DIRECTORY SETUP
 ====================================================== */
 
-// Use /tmp for serverless (Vercel)
-const uploadDir = path.join("/tmp", "uploads", "avatars");
+// projectRoot/uploads/avatars
+const uploadDir = path.join(process.cwd(), "uploads", "avatars");
 
 // Ensure folder exists
 if (!fs.existsSync(uploadDir)) {

@@ -1,16 +1,21 @@
 import express from "express";
 import nodemailer from "nodemailer";
 import multer from "multer";
-import fs from "fs";
 
 const router = express.Router();
 
-// ensure uploads folder exists
-if (!fs.existsSync("uploads")) {
-  fs.mkdirSync("uploads");
-}
+/* ======================================================
+   MULTER (MEMORY STORAGE — VERCEL SAFE)
+====================================================== */
 
-const upload = multer({ dest: "uploads/" });
+const upload = multer({
+  storage: multer.memoryStorage(),
+  limits: { fileSize: 5 * 1024 * 1024 }, // 5MB
+});
+
+/* ======================================================
+   ROUTE
+====================================================== */
 
 router.post("/", upload.single("file"), async (req, res) => {
   try {
@@ -37,7 +42,12 @@ router.post("/", upload.single("file"), async (req, res) => {
         <p>${message}</p>
       `,
       attachments: req.file
-        ? [{ filename: req.file.originalname, path: req.file.path }]
+        ? [
+            {
+              filename: req.file.originalname,
+              content: req.file.buffer, // 👈 NO FILE SYSTEM
+            },
+          ]
         : [],
     });
 
